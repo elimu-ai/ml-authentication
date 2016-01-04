@@ -21,6 +21,9 @@ android {
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://archiva.educativo.eu:8081/repository/internal/"
+    }
 }
 
 dependencies {
