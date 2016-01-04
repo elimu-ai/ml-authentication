@@ -5,11 +5,11 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "eu.educativo.glexp"
+        applicationId "org.literacyapp"
         minSdkVersion 19
         targetSdkVersion 23
-        versionCode 1000000
-        versionName "1.0.0-SNAPSHOT"
+        versionCode 1001000
+        versionName "1.1.0-SNAPSHOT"
     }
     buildTypes {
         release {
