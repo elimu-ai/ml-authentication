@@ -19,13 +19,6 @@ android {
     }
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        url "http://archiva.educativo.eu:8081/repository/internal/"
-    }
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
