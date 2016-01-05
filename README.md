@@ -1,5 +1,5 @@
 # LiteracyApp
-Android application: https://play.google.com/store/apps/details?id=org.literacyapp
+Android application: ~~https://play.google.com/store/apps/details?id=org.literacyapp~~ https://play.google.com/apps/testing/org.literacyapp
 
 ## Continuous integration
 [![Build Status](https://travis-ci.org/literacyapp-org/literacyapp-android.svg)](https://travis-ci.org/literacyapp-org/literacyapp-android)
