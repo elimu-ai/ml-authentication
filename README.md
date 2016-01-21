@@ -9,7 +9,7 @@ Android application: ~~https://play.google.com/store/apps/details?id=org.literac
 [![Stories in Ready](https://badge.waffle.io/literacyapp-org/literacyapp-android.png?label=ready&title=Ready)](https://waffle.io/literacyapp-org/literacyapp-android)
 
 ## Chat
-[![Join the chat at https://gitter.im/literacyapp-org/chat](https://badges.gitter.im/literacyapp-org/literacyapp-web.svg)](https://gitter.im/literacyapp-org/chat?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/literacyapp-org/chat](https://badges.gitter.im/literacyapp-org/literacyapp-android.svg)](https://gitter.im/literacyapp-org/literacyapp-android?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Mailing list
 Sign up at http://eepurl.com/bGihkr
