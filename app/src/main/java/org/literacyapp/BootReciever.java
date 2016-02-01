@@ -13,4 +13,5 @@ public class BootReciever extends BroadcastReceiver {
         bootintent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(bootintent);
     }
+
 }
