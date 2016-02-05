@@ -9,7 +9,7 @@ Android application: ~~https://play.google.com/store/apps/details?id=org.literac
 [Trello](https://trello.com/b/les4HgKG/team-development)
 
 ## Chat
-[Slack](literacyapp.slack.com/messages/team-development)
+[Slack](https://literacyapp.slack.com/messages/team-development)
 
 ## Mailing list
 Sign up at http://eepurl.com/bGihkr
