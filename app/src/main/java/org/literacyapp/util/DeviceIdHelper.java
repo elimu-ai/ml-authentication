@@ -6,14 +6,14 @@ import android.provider.Settings;
 
 public class DeviceIdHelper extends Application{
 
-    private static String device_id;
+    private static String deviceId;
 
     public static String getDeviceid(Context context){
 
-        device_id = Settings.Secure.getString(context.getContentResolver(),
+        deviceId = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
-        return device_id;
+        return deviceId;
     }
 
 
