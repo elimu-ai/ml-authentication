@@ -8,7 +8,7 @@ public class DeviceIdHelper extends Application{
 
     private static String device_id;
 
-    public static String getDevice_id(Context context){
+    public static String getDeviceid(Context context){
 
         device_id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);

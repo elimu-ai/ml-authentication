@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTextViewID.setText(DeviceIdHelper.getDevice_id(getApplicationContext()));
+                mTextViewID.setText(DeviceIdHelper.getDeviceid(getApplicationContext()));
             }
         });
 
