@@ -4,9 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.provider.Settings;
 
-/**
- * Created by root on 21/02/16.
- */
 public class DeviceIdHelper extends Application{
 
     private static String device_id;
