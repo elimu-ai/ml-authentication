@@ -14,25 +14,4 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:src="@mipmap/ic_launcher" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/unique_id_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GET ID"/>
-
-        <TextView
-            android:id="@+id/unique_id_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20dp" />
-
-
-    </LinearLayout>
-
 </RelativeLayout>
