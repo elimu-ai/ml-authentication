@@ -1,4 +1,4 @@
-package org.literacyapp.Util;
+package org.literacyapp.util;
 
 import org.literacyapp.model.enums.Environment;
 
