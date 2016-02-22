@@ -11,5 +11,4 @@ public class DeviceIdHelper {
                 Settings.Secure.ANDROID_ID);
     }
 
-
 }
