@@ -5,10 +5,9 @@ import android.provider.Settings;
 
 public class DeviceIdHelper {
 
-    public static String getDeviceId(Context context){
+    public static String getDeviceId(Context context) {
+        Log.d(DeviceIdHelper.class.getName(), "onCreate");
 
-        return Settings.Secure.getString(context.getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        return Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
-
 }
