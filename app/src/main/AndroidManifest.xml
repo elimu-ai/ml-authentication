@@ -26,6 +26,8 @@
 
         <activity android:name=".ParallaxActivity" />
 
+        <activity android:name=".RoomActivity"  />
+
         <receiver android:name=".BootReciever">
             <intent-filter >
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
