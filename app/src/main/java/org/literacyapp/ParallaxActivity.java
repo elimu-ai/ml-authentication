@@ -1,5 +1,6 @@
 package org.literacyapp;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.widget.ImageView;
 
 import org.literacyapp.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 public class ParallaxActivity extends AppCompatActivity {
 
     private HorizontalScrollView mHorizontalScrollView;
@@ -17,6 +21,8 @@ public class ParallaxActivity extends AppCompatActivity {
     private ImageView mImageViewParallaxLayer2;
     private ImageView mImageViewParallaxLayer3;
     private ImageView mImageViewParallaxLayer4;
+
+    private MediaPlayer mMediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,10 @@ public class ParallaxActivity extends AppCompatActivity {
     protected void onStart() {
         Log.d(getClass().getName(), "onCreate");
         super.onStart();
+
+        mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.background_forest);
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
 
         mHorizontalScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -57,5 +67,13 @@ public class ParallaxActivity extends AppCompatActivity {
                 mImageViewParallaxLayer4.setX(scrollX / 32);
             }
         });
+    }
+
+    @Override
+    protected void onStop() {
+        Log.d(getClass().getName(), "onCreate");
+        super.onStop();
+
+        mMediaPlayer.release();
     }
 }
