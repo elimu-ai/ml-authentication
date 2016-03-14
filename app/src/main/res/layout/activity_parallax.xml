@@ -24,7 +24,7 @@
             <ImageView android:id="@+id/imageViewParallaxLayer3"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/landscape_layer3"
+                android:src="@drawable/landscape_layer3_house"
                 android:scaleType="fitStart"
                 android:adjustViewBounds="true" />
 
@@ -40,8 +40,7 @@
                 android:layout_height="match_parent"
                 android:src="@drawable/landscape_layer1"
                 android:scaleType="fitStart"
-                android:adjustViewBounds="true"
-                android:paddingTop="100dp" />
+                android:adjustViewBounds="true" />
         </RelativeLayout>
     </HorizontalScrollView>
 </RelativeLayout>

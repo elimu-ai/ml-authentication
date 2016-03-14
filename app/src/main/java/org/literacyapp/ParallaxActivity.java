@@ -1,8 +1,10 @@
 package org.literacyapp;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
@@ -65,6 +67,16 @@ public class ParallaxActivity extends AppCompatActivity {
                 mImageViewParallaxLayer3.setY(scrollX / 16);
 
                 mImageViewParallaxLayer4.setX(scrollX / 32);
+            }
+        });
+
+        mImageViewParallaxLayer3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(getClass().getName(), "onClick");
+
+                Intent roomIntent = new Intent(getApplicationContext(), RoomActivity.class);
+                startActivity(roomIntent);
             }
         });
     }
