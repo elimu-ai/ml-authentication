@@ -1,4 +1,4 @@
-package eu.educativo.glexp;
+package org.literacyapp;
 
 import org.junit.Test;
 
