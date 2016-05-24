@@ -19,6 +19,10 @@ tasks.withType(JavaCompile) {
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
+        maven {
+            url "http://archiva.educativo.eu:8081/repository/internal/"
+        }
     }
 }
 

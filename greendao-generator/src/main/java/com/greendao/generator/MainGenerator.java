@@ -6,7 +6,11 @@ import de.greenrobot.daogenerator.Schema;
 
 public class MainGenerator {
 
-    public static void main (String [] args) {
+    /**
+     * This file is executed when a Gradle build is triggered from the project's root directory.
+     * E.g. "./gradlew clean build"
+     */
+    public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
         Schema schema = new Schema(1, "org.literacyapp.dao");
@@ -15,10 +19,19 @@ public class MainGenerator {
         number.addIdProperty().autoincrement().primaryKey();
         number.addStringProperty("language");
         number.addIntProperty("value");
+        // TODO: map Entity automatically from org.literacyapp.model.json.Number
+
+        // TODO: Letter
+
+        // TODO: Word
+
+        // TODO: Audio
+
+        // TODO: Image
 
         try {
-            DaoGenerator dg = new DaoGenerator();
-            dg.generateAll(schema, "../app/src/main/java");
+            DaoGenerator daoGenerator = new DaoGenerator();
+            daoGenerator.generateAll(schema, "../app/src/main/java");
 
         }  catch (Exception e) {
             e.printStackTrace();
