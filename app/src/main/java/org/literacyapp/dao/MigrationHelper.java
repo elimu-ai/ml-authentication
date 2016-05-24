@@ -1,7 +1,9 @@
 package org.literacyapp.dao;
 
 /**
- * Created by jogrimst on 25/05/16.
+ * Handles SQLite database migration when upgrade to new schema version.
  */
 public class MigrationHelper {
+
+    // TODO
 }
