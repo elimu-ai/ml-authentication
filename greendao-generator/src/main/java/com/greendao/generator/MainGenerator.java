@@ -13,7 +13,10 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        Schema schema = new Schema(1, "org.literacyapp.dao");
+        int versionCode = 1000011; // 1.0.11 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        Schema schema = new Schema(versionCode, "org.literacyapp.dao");
+
+        // TODO: handle database migration when upgrade to new schema version
 
         Entity number = schema.addEntity("Number");
         number.addIdProperty().autoincrement().primaryKey();
@@ -32,7 +35,6 @@ public class MainGenerator {
         try {
             DaoGenerator daoGenerator = new DaoGenerator();
             daoGenerator.generateAll(schema, "../app/src/main/java");
-
         }  catch (Exception e) {
             e.printStackTrace();
         }
