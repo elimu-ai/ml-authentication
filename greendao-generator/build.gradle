@@ -1,5 +1,10 @@
 apply plugin: 'java'
 
+task build(type:JavaExec) {
+    main = "com.greendao.generator.MainGenerator"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 

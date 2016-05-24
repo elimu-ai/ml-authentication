@@ -24,6 +24,13 @@ android {
         }
     }
 }
+
+//project.afterEvaluate {
+//    println("project.afterEvaluate")
+//    println("Compiling greendao-generator...")
+//    preBuild.dependsOn(":greendao-generator:compileJava")
+//}
+
 repositories {
     mavenCentral()
     maven {
