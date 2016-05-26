@@ -21,8 +21,7 @@ public class EntityHelper {
         entity.addIdProperty().autoincrement().primaryKey();
 
         for (Field field : clazz.getDeclaredFields()) {
-            System.out.println("Field type: " + field.getType());
-            System.out.println("Field name: " + field.getName());
+            System.out.println("class name: " + className + ", field type: " + field.getType() + ", field name: " + field.getName());
 
             if ("id".equals(field.getName())) {
                 entity.addLongProperty("serverId");
@@ -38,8 +37,8 @@ public class EntityHelper {
             } else if (field.getType().isAssignableFrom(Integer.class)) {
                 entity.addIntProperty(field.getName());
             } else {
-                entity = null;
                 System.err.println("Missing type support must be added: " + field.getType());
+                entity = null;
             }
         }
 
