@@ -1,5 +1,10 @@
 package com.greendao.generator;
 
+import org.literacyapp.model.json.Audio;
+import org.literacyapp.model.json.Image;
+import org.literacyapp.model.json.Letter;
+import org.literacyapp.model.json.Word;
+
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Schema;
@@ -18,19 +23,11 @@ public class MainGenerator {
 
         // TODO: handle database migration when upgrade to new schema version
 
-        Entity number = schema.addEntity("Number");
-        number.addIdProperty().autoincrement().primaryKey();
-        number.addStringProperty("language");
-        number.addIntProperty("value");
-        // TODO: map Entity automatically from org.literacyapp.model.json.Number
-
-        // TODO: Letter
-
-        // TODO: Word
-
-        // TODO: Audio
-
-        // TODO: Image
+        Entity number = EntityHelper.createEntityFromClass(org.literacyapp.model.json.Number.class, schema);
+        Entity letter = EntityHelper.createEntityFromClass(Letter.class, schema);
+        Entity word = EntityHelper.createEntityFromClass(Word.class, schema);
+        Entity audio = EntityHelper.createEntityFromClass(Audio.class, schema);
+        Entity image = EntityHelper.createEntityFromClass(Image.class, schema);
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();
