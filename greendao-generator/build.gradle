@@ -1,7 +1,20 @@
 apply plugin: 'java'
 
+task build(type:JavaExec) {
+    main = "com.greendao.generator.MainGenerator"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+test {
+    // show standard out and standard error of the test JVM(s) on the console
+    testLogging.showStandardStreams = true
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    testCompile 'junit:junit:4.12'
+
     compile 'de.greenrobot:greendao-generator:2.1.0'
+    compile 'org.literacyapp:literacyapp-model:1.0.11'
 }

@@ -12,9 +12,17 @@ buildscript {
     }
 }
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 allprojects {
     repositories {
         jcenter()
+        mavenCentral()
+        maven {
+            url "http://archiva.educativo.eu:8081/repository/internal/"
+        }
     }
 }
 
