@@ -2,6 +2,7 @@ package org.literacyapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -15,6 +16,10 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(this, DataBaseActivity.class);
+        startActivity(intent);
+
     }
 
     @Override
@@ -46,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass().getName(), "onPostExecute");
             super.onPostExecute(aVoid);
 
-            Intent intent = new Intent(getApplicationContext(), ParallaxActivity.class);
-            startActivity(intent);
+            //Intent intent = new Intent(getApplicationContext(), ParallaxActivity.class);
+            //startActivity(intent);
 
             finish();
         }
