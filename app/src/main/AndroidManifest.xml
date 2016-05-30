@@ -28,6 +28,8 @@
 
         <activity android:name=".RoomActivity"  />
 
+        <activity android:name=".DataBaseActivity" />
+
         <receiver android:name=".BootReciever">
             <intent-filter >
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
