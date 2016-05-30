@@ -1,11 +1,14 @@
 package org.literacyapp.dao;
 
+import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 
 import org.literacyapp.dao.Number;
@@ -27,7 +30,11 @@ public class NumberDao extends AbstractDao<Number, Long> {
         public final static Property ServerId = new Property(1, Long.class, "serverId", false, "SERVER_ID");
         public final static Property Language = new Property(2, String.class, "language", false, "LANGUAGE");
         public final static Property Value = new Property(3, Integer.class, "value", false, "VALUE");
+        public final static Property Symbol = new Property(4, String.class, "symbol", false, "SYMBOL");
+        public final static Property WordId = new Property(5, Long.class, "wordId", false, "WORD_ID");
     };
+
+    private DaoSession daoSession;
 
 
     public NumberDao(DaoConfig config) {
@@ -36,6 +43,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
     
     public NumberDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -45,7 +53,9 @@ public class NumberDao extends AbstractDao<Number, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"SERVER_ID\" INTEGER," + // 1: serverId
                 "\"LANGUAGE\" TEXT," + // 2: language
-                "\"VALUE\" INTEGER);"); // 3: value
+                "\"VALUE\" INTEGER," + // 3: value
+                "\"SYMBOL\" TEXT," + // 4: symbol
+                "\"WORD_ID\" INTEGER);"); // 5: wordId
     }
 
     /** Drops the underlying database table. */
@@ -78,6 +88,22 @@ public class NumberDao extends AbstractDao<Number, Long> {
         if (value != null) {
             stmt.bindLong(4, value);
         }
+ 
+        String symbol = entity.getSymbol();
+        if (symbol != null) {
+            stmt.bindString(5, symbol);
+        }
+ 
+        Long wordId = entity.getWordId();
+        if (wordId != null) {
+            stmt.bindLong(6, wordId);
+        }
+    }
+
+    @Override
+    protected void attachEntity(Number entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -93,7 +119,9 @@ public class NumberDao extends AbstractDao<Number, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // serverId
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // language
-            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3) // value
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // value
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // symbol
+            cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5) // wordId
         );
         return entity;
     }
@@ -105,6 +133,8 @@ public class NumberDao extends AbstractDao<Number, Long> {
         entity.setServerId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setLanguage(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setValue(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setSymbol(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setWordId(cursor.isNull(offset + 5) ? null : cursor.getLong(offset + 5));
      }
     
     /** @inheritdoc */
@@ -130,4 +160,95 @@ public class NumberDao extends AbstractDao<Number, Long> {
         return true;
     }
     
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getWordDao().getAllColumns());
+            builder.append(" FROM NUMBER T");
+            builder.append(" LEFT JOIN WORD T0 ON T.\"WORD_ID\"=T0.\"_id\"");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected Number loadCurrentDeep(Cursor cursor, boolean lock) {
+        Number entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        Word word = loadCurrentOther(daoSession.getWordDao(), cursor, offset);
+        entity.setWord(word);
+
+        return entity;    
+    }
+
+    public Number loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<Number> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<Number> list = new ArrayList<Number>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<Number> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<Number> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }
