@@ -31,6 +31,10 @@ android {
 //    preBuild.dependsOn(":greendao-generator:compileJava")
 //}
 
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 

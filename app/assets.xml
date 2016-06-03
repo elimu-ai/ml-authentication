@@ -4,7 +4,7 @@
   <property name="assets.dir" value="src/main/assets/sync"/>
   <property name="assets.hash.type" value="md5"/>
   <property name="assets.ctl.files"
-    value="**/*.${assets.hash.type},${assets.list.name}"/>
+      value="**/*.${assets.hash.type},${assets.list.name}"/>
 
   <fileset id="assets" dir="${assets.dir}" excludes="${assets.ctl.files}"/>
 
@@ -16,8 +16,8 @@
 
   <target name="list">
     <pathconvert
-      dirsep="/" pathsep="${line.separator}"
-      refid="assets" property="asset.list">
+        dirsep="/" pathsep="${line.separator}"
+        refid="assets" property="asset.list">
       <map from="${basedir}/${assets.dir}/" to=""/>
     </pathconvert>
     <echo message="${asset.list}" file="${assets.dir}/${assets.list.name}"/>
