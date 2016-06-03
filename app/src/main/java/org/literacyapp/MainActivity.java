@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass().getName(), "onPostExecute");
             super.onPostExecute(aVoid);
 
-            Intent intent = new Intent(getApplicationContext(), PocketSphinxActivity.class);
+            Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);
             startActivity(intent);
 
             finish();

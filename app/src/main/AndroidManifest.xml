@@ -37,6 +37,8 @@
 
         <activity android:name="edu.cmu.pocketsphinx.demo.PocketSphinxActivity" />
 
+        <activity android:name=".CategoryActivity" />
+
         <receiver android:name=".BootReciever">
             <intent-filter >
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
