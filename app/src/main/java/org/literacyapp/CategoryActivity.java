@@ -1,8 +1,10 @@
 package org.literacyapp;
 
 import android.animation.ArgbEvaluator;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -15,13 +17,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.literacyapp.deviceadmin.DeviceAdmin;
 import org.literacyapp.util.Log;
-import org.literacyapp.util.Utils;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
 
@@ -49,22 +49,11 @@ public class CategoryActivity extends AppCompatActivity {
 
     CoordinatorLayout mCoordinator;
 
-
-    static final String TAG = "PagerActivity";
-
     int page = 0;   //  to track page position
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().getDecorView().setSystemUiVisibility(
-                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-                getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.black_trans80));
-            }
 
         setContentView(R.layout.activity_category);
 
@@ -134,6 +123,31 @@ public class CategoryActivity extends AppCompatActivity {
 
             }
         });
+
+        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        boolean isDeviceOwnerApp = devicePolicyManager.isDeviceOwnerApp(getPackageName());
+        Log.d(getClass().getName(), "isDeviceOwnerApp: " + isDeviceOwnerApp);
+        if (isDeviceOwnerApp) {
+            ComponentName componentName = new ComponentName(this, DeviceAdmin.class);
+            devicePolicyManager.setLockTaskPackages(componentName, new String[]{ getPackageName() });
+            startLockTask();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(getClass().getName(), "onStart");
+        super.onStart();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     void updateIndicators(int position) {

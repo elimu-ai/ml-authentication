@@ -6,7 +6,7 @@ import android.content.Intent;
 
 import org.literacyapp.util.Log;
 
-public class BootReciever extends BroadcastReceiver {
+public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

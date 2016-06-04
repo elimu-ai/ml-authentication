@@ -147,6 +147,8 @@ public class PocketSphinxActivity extends Activity implements
             recognizer.cancel();
             recognizer.shutdown();
         }
+
+        stopLockTask();
     }
 
     /**
