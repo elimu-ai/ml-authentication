@@ -23,6 +23,7 @@ import android.widget.TextView;
 import org.literacyapp.deviceadmin.DeviceAdmin;
 import org.literacyapp.number.NumberListActivity;
 import org.literacyapp.util.Log;
+import org.literacyapp.word.WordListActivity;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
 
@@ -94,7 +95,7 @@ public class CategoryActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.d(getClass(), "onPageScrolled");
+//                Log.d(getClass(), "onPageScrolled");
 
                 /*
                 color update
@@ -252,8 +253,8 @@ public class CategoryActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         Log.d(getClass(), "onClick");
 
-//                        Intent intent = new Intent(getActivity(), LetterActivity.class);
-//                        startActivity(intent);
+                        Intent intent = new Intent(getActivity(), WordListActivity.class);
+                        startActivity(intent);
                     }
                 });
             }

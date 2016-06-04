@@ -1,42 +1,43 @@
-package org.literacyapp.number;
+package org.literacyapp.word;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import org.literacyapp.R;
 import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.Number;
-import org.literacyapp.dao.NumberDao;
+import org.literacyapp.dao.Word;
+import org.literacyapp.dao.WordDao;
 import org.literacyapp.util.Log;
 
 import java.util.List;
 
-public class NumberListActivity extends AppCompatActivity {
+public class WordListActivity extends AppCompatActivity {
 
     private SQLiteDatabase db;
     private DaoMaster daoMaster;
     private DaoSession daoSession;
-    private NumberDao numberDao;
+    private WordDao wordDao;
 
-    private TextView mTextViewNumberList;
+    private TextView mTextViewWordList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(getClass(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_number_list);
+        setContentView(R.layout.activity_word_list);
 
         DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp", null);
         db = openHelper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
-        numberDao = daoSession.getNumberDao();
+        wordDao = daoSession.getWordDao();
 
-        mTextViewNumberList = (TextView) findViewById(R.id.textViewNumberList);
+        mTextViewWordList = (TextView) findViewById(R.id.textViewWordList);
     }
 
     @Override
@@ -45,10 +46,10 @@ public class NumberListActivity extends AppCompatActivity {
         super.onStart();
 
         String numberListText = "";
-        List<Number> numbers = numberDao.loadAll();
-        for (Number number : numbers) {
-            numberListText += "id: " + number.getId() + ", serverId: " + number.getServerId() + ", value: " + number.getValue() + ", word: " + number.getWord() + "\n";
+        List<Word> words = wordDao.loadAll();
+        for (Word word : words) {
+            numberListText += "id: " + word.getId() + ", serverId: " + word.getServerId() + ", text: " + word.getText() + "\n";
         }
-        mTextViewNumberList.setText(numberListText);
+        mTextViewWordList.setText(numberListText);
     }
 }
