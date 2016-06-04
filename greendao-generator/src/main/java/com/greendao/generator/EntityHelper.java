@@ -2,7 +2,7 @@ package com.greendao.generator;
 
 import org.literacyapp.model.enums.ImageType;
 import org.literacyapp.model.enums.Language;
-import org.literacyapp.model.json.Word;
+import org.literacyapp.model.json.WordJson;
 
 import java.lang.reflect.Field;
 
@@ -17,6 +17,9 @@ public class EntityHelper {
         Entity entity = null;
 
         String className = clazz.getSimpleName();
+        if (className.endsWith("Json")) {
+            className = className.replace("Json", "");
+        }
         System.out.println("className: " + className);
         entity = schema.addEntity(className);
 
@@ -38,7 +41,7 @@ public class EntityHelper {
                 entity.addLongProperty(field.getName());
             } else if (field.getType().isAssignableFrom(Integer.class)) {
                 entity.addIntProperty(field.getName());
-            } else if (field.getType() == Word.class) {
+            } else if (field.getType() == WordJson.class) {
                 // See http://greenrobot.org/greendao/documentation/relations/#Modelling_To-One_Relations
                 Property wordIdProperty = entity.addLongProperty("wordId").getProperty();
                 Entity entityWord = schema.getEntities().get(0);

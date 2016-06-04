@@ -40,7 +40,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
-    compile 'org.literacyapp:literacyapp-model:1.0.13'
+    compile 'org.literacyapp:literacyapp-model:1.0.14' // Remember to also update greendao-generator/build.gradle
 
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
