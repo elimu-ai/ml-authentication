@@ -1,6 +1,7 @@
 package org.literacyapp;
 
 import android.animation.ArgbEvaluator;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,7 +20,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.literacyapp.util.Log;
 import org.literacyapp.util.Utils;
+
+import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
 
 public class CategoryActivity extends AppCompatActivity {
 
@@ -173,12 +177,25 @@ public class CategoryActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_category, container, false);
+
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
+            Log.d(getClass().getName(), "sectionNumber: " + sectionNumber);
+            textView.setText(getString(R.string.section_format, sectionNumber));
 
             img = (ImageView) rootView.findViewById(R.id.section_img);
             img.setBackgroundResource(bgs[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
 
+            if (sectionNumber == 1) {
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(getClass().getName(), "onClick");
+                        Intent intent = new Intent(getActivity(), PocketSphinxActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            }
 
             return rootView;
         }

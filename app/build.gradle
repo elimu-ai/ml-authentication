@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "org.literacyapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1001001
         versionName "1.1.1-SNAPSHOT"
