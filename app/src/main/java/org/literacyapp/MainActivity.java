@@ -8,7 +8,10 @@ import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
+import org.literacyapp.deviceadmin.DeviceAdmin;
+import org.literacyapp.util.DeviceIdHelper;
 import org.literacyapp.util.Log;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
@@ -32,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
         Log.d(getClass().getName(), "configurationInfo.getGlEsVersion(): " + configurationInfo.getGlEsVersion());
         Log.d(getClass().getName(), "configurationInfo.reqGlEsVersion: " + configurationInfo.reqGlEsVersion);
+
+        String deviceId = DeviceIdHelper.getDeviceId(this);
+        Log.d(getClass().getName(), "deviceId: " + deviceId);
 
         new LoadContentAsyncTask().execute();
     }
