@@ -46,6 +46,7 @@ public class NumberListActivity extends AppCompatActivity {
 
         String numberListText = "";
         List<Number> numbers = numberDao.loadAll();
+        Log.d(getClass(), "numbers.size(): " + numbers.size());
         for (Number number : numbers) {
             numberListText += "id: " + number.getId() + ", serverId: " + number.getServerId() + ", value: " + number.getValue() + ", word: " + number.getWord() + "\n";
         }

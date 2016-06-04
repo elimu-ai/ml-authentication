@@ -107,9 +107,16 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass(), "words.size(): " + words.size());
             for (WordJson wordJson : words) {
                 Word word = JsonToGreenDaoConverter.getWord(wordJson);
-                // TODO: check if already exists
-                wordDao.insert(word);
-                Log.d(getClass(), "Stored Word in database with id " + word.getId());
+                List<Word> existingWords = wordDao.queryBuilder()
+                        .where(WordDao.Properties.ServerId.eq(word.getServerId()))
+                        .list();
+                Log.d(getClass(), "existingWords.size(): " + existingWords.size());
+                if (existingWords.isEmpty()) {
+                    wordDao.insert(word);
+                    Log.d(getClass(), "Stored Word in database with id " + word.getId());
+                } else {
+                    Log.d(getClass(), "Word \"" + word.getText() + "\" already exists in database with id " + word.getId());
+                }
             }
 
             // Download Numbers
@@ -128,9 +135,16 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass(), "numbers.size(): " + numbers.size());
             for (NumberJson numberJson : numbers) {
                 Number number = JsonToGreenDaoConverter.getNumber(numberJson);
-                // TODO: check if already exists
-                numberDao.insert(number);
-                Log.d(getClass(), "Stored Number in database with id " + number.getId());
+                List<Number> existingNumbers = numberDao.queryBuilder()
+                        .where(NumberDao.Properties.ServerId.eq(number.getServerId()))
+                        .list();
+                Log.d(getClass(), "existingNumbers.size(): " + existingNumbers.size());
+                if (existingNumbers.isEmpty()) {
+                    numberDao.insert(number);
+                    Log.d(getClass(), "Stored Number in database with id " + number.getId());
+                } else {
+                    Log.d(getClass(), "Number \"" + number.getValue() + "\" already exists in database with id " + number.getId());
+                }
             }
 
             return null;
