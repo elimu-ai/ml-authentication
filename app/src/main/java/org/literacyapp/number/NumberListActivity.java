@@ -1,41 +1,42 @@
-package org.literacyapp;
+package org.literacyapp.number;
 
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.EditText;
+import android.os.Bundle;
+import android.widget.TextView;
 
+import org.literacyapp.R;
 import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
-import org.literacyapp.model.enums.Language;
 import org.literacyapp.util.Log;
 
-public class DataBaseActivity extends AppCompatActivity {
+import java.util.List;
+
+public class NumberListActivity extends AppCompatActivity {
 
     private SQLiteDatabase db;
     private DaoMaster daoMaster;
     private DaoSession daoSession;
     private NumberDao numberDao;
 
+    private TextView mTextViewNumberList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(getClass(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_database);
+        setContentView(R.layout.activity_number_list);
 
         DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp", null);
         db = openHelper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
         numberDao = daoSession.getNumberDao();
+
+        mTextViewNumberList = (TextView) findViewById(R.id.textViewNumberList);
     }
 
     @Override
@@ -43,11 +44,11 @@ public class DataBaseActivity extends AppCompatActivity {
         Log.d(getClass(), "onStart");
         super.onStart();
 
-        Number number = new Number();
-        number.setLanguage(Language.ENGLISH.toString());
-        number.setValue(1);
-        numberDao.insert(number);
-
-        Log.d(getClass(), "number.getId(): " + number.getId());
+        String numberListText = "";
+        List<Number> numbers = numberDao.loadAll();
+        for (Number number : numbers) {
+            numberListText += "id: " + number.getId() + ", serverId: " + number.getServerId() + ", value: " + number.getValue() + "\n";
+        }
+        mTextViewNumberList.setText(numberListText);
     }
 }

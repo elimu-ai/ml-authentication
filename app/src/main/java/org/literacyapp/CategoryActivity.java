@@ -5,7 +5,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.literacyapp.deviceadmin.DeviceAdmin;
+import org.literacyapp.number.NumberListActivity;
 import org.literacyapp.util.Log;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
@@ -42,7 +43,7 @@ public class CategoryActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    ImageView zero, one, two;
+    ImageView zero, one, two, three;
     ImageView[] indicators;
 
     int lastLeftValue = 0;
@@ -50,6 +51,8 @@ public class CategoryActivity extends AppCompatActivity {
     CoordinatorLayout mCoordinator;
 
     int page = 0;   //  to track page position
+
+    static View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +68,12 @@ public class CategoryActivity extends AppCompatActivity {
         zero = (ImageView) findViewById(R.id.intro_indicator_0);
         one = (ImageView) findViewById(R.id.intro_indicator_1);
         two = (ImageView) findViewById(R.id.intro_indicator_2);
+        three = (ImageView) findViewById(R.id.intro_indicator_3);
 
         mCoordinator = (CoordinatorLayout) findViewById(R.id.main_content);
 
 
-        indicators = new ImageView[]{zero, one, two};
+        indicators = new ImageView[]{zero, one, two, three};
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -81,21 +85,22 @@ public class CategoryActivity extends AppCompatActivity {
         final int color1 = ContextCompat.getColor(this, R.color.cyan);
         final int color2 = ContextCompat.getColor(this, R.color.orange);
         final int color3 = ContextCompat.getColor(this, R.color.green);
+        final int color4 = ContextCompat.getColor(this, R.color.yellow);
 
-        final int[] colorList = new int[]{color1, color2, color3};
+        final int[] colorList = new int[]{color1, color2, color3, color4};
 
         final ArgbEvaluator evaluator = new ArgbEvaluator();
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                Log.d(getClass(), "onPageScrolled");
 
                 /*
                 color update
                  */
-                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 2 ? position : position + 1]);
+                int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 3 ? position : position + 1]);
                 mViewPager.setBackgroundColor(colorUpdate);
-
             }
 
             @Override
@@ -115,12 +120,18 @@ public class CategoryActivity extends AppCompatActivity {
                     case 2:
                         mViewPager.setBackgroundColor(color3);
                         break;
+                    case 3:
+                        mViewPager.setBackgroundColor(color4);
+                        break;
                 }
+
+                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.vocal_plop);
+                mediaPlayer.start();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                Log.d(getClass(), "onPageScrollStateChanged");
             }
         });
     }
@@ -169,7 +180,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         ImageView img;
 
-        int[] bgs = new int[]{R.drawable.ic_flight_24dp, R.drawable.ic_mail_24dp, R.drawable.ic_explore_24dp};
+        int[] bgs = new int[]{R.drawable.ic_record_voice_over_black_24dp, R.drawable.ic_language_black_24dp, R.drawable.ic_grain_black_24dp, R.drawable.ic_spellcheck_black_24dp};
 
         public PlaceholderFragment() {
         }
@@ -189,12 +200,20 @@ public class CategoryActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_category, container, false);
+            rootView = inflater.inflate(R.layout.fragment_category, container, false);
 
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             Log.d(getClass(), "sectionNumber: " + sectionNumber);
-            textView.setText(getString(R.string.section_format, sectionNumber));
+            if (sectionNumber == 1) {
+                textView.setText("Microphone");
+            } else if (sectionNumber == 2) {
+                textView.setText("Earth");
+            } else if (sectionNumber == 3) {
+                textView.setText("Numbers");
+            } else if (sectionNumber == 4) {
+                textView.setText("Letters");
+            }
 
             img = (ImageView) rootView.findViewById(R.id.section_img);
             img.setBackgroundResource(bgs[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
@@ -215,6 +234,26 @@ public class CategoryActivity extends AppCompatActivity {
                         Log.d(getClass(), "onClick");
                         Intent intent = new Intent(getActivity(), EarthActivity.class);
                         startActivity(intent);
+                    }
+                });
+            } else if (sectionNumber == 3) {
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(getClass(), "onClick");
+
+                        Intent intent = new Intent(getActivity(), NumberListActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            } else if (sectionNumber == 4) {
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(getClass(), "onClick");
+
+//                        Intent intent = new Intent(getActivity(), LetterActivity.class);
+//                        startActivity(intent);
                     }
                 });
             }
@@ -244,8 +283,8 @@ public class CategoryActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 4 total pages.
+            return 4;
         }
 
         @Override
@@ -257,6 +296,8 @@ public class CategoryActivity extends AppCompatActivity {
                     return "SECTION 2";
                 case 2:
                     return "SECTION 3";
+                case 3:
+                    return "SECTION 4";
             }
             return null;
         }
