@@ -20,9 +20,9 @@ public class MainGenerator {
         System.out.println("greendao-generator main");
 
         int versionCode = 1000014; // 1.0.14 (this should match the version of the dependency org.literacyapp:literacyapp-model)
-        Schema schema = new Schema(versionCode, "org.literacyapp.dao");
-
+        // NOTE: If you increase the schema version, all tables in the database will be deleted!
         // TODO: handle database migration when upgrade to new schema version
+        Schema schema = new Schema(versionCode, "org.literacyapp.dao");
 
         Entity word = EntityHelper.createEntityFromClass(WordJson.class, schema);
         Entity number = EntityHelper.createEntityFromClass(NumberJson.class, schema);
