@@ -123,6 +123,21 @@ public class CategoryActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(getClass().getName(), "onStart");
+        super.onStart();
+
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         boolean isDeviceOwnerApp = devicePolicyManager.isDeviceOwnerApp(getPackageName());
@@ -131,22 +146,6 @@ public class CategoryActivity extends AppCompatActivity {
             ComponentName componentName = new ComponentName(this, DeviceAdmin.class);
             devicePolicyManager.setLockTaskPackages(componentName, new String[]{ getPackageName() });
             startLockTask();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        Log.d(getClass().getName(), "onStart");
-        super.onStart();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
 
