@@ -4,19 +4,35 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 
-import org.literacyapp.deviceadmin.DeviceAdmin;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.literacyapp.dao.DaoMaster;
+import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.JsonToGreenDaoConverter;
+import org.literacyapp.dao.Number;
+import org.literacyapp.dao.NumberDao;
+import org.literacyapp.model.enums.Language;
+import org.literacyapp.model.json.NumberJson;
 import org.literacyapp.util.DeviceIdHelper;
+import org.literacyapp.util.EnvironmentSettings;
+import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.Log;
 
-import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private SQLiteDatabase db;
+    private DaoMaster daoMaster;
+    private DaoSession daoSession;
+    private NumberDao numberDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +40,13 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp", null);
+        db = openHelper.getWritableDatabase();
+        daoMaster = new DaoMaster(db);
+        daoMaster.createAllTables(db, true);
+        daoSession = daoMaster.newSession();
+        numberDao = daoSession.getNumberDao();
     }
 
     @Override
@@ -49,55 +72,24 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass(), "doInBackground");
 
             // Download updated content from server
-            final String url = EnvironmentSettings.getBaseUrl() + "/rest/v2/wordevents/read/adjectives" +
-                    "?email=" + UserPrefsHelper.getUserProfileJson(this).getEmail() +
-                    "&checksum=" + RestSecurityHelper.getChecksum(UserPrefsHelper.getUserProfileJson(this).getEmail());;
-            Log.d(getClass().getName(), "url: " + url);
-            String requestBody = null;
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.GET,
-                    url,
-                    requestBody,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            Log.d(getClass().getName(), "onResponse, response: " + response);
-                            try {
-                                if ("error".equals(response.getString("result"))) {
-//                                    Log.e(getClass().getName(), "url: " + url, new Exception(response.getString("details")));
-                                    Log.w(getClass().getName(), "url: " + url + ", details: " + response.getString("details"));
-                                    Toast.makeText(getApplicationContext(), "details: " + response.getString("details"), Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-
-                                Type type = new TypeToken<List<WordEventJson>>(){}.getType();
-                                wordAdjectiveEventsPendingRevision = new Gson().fromJson(response.getString("wordEvents"), type);
-                                Log.d(getClass().getName(), "wordAdjectiveEventsPendingRevision: " + wordAdjectiveEventsPendingRevision);
-                                originalListSize = wordAdjectiveEventsPendingRevision.size();
-                            } catch (JSONException e) {
-                                Log.e(getClass().getName(), "url: " + url, e);
-                                Toast.makeText(getApplicationContext(), "exception: " + e.getClass().getName(), Toast.LENGTH_LONG).show();
-                                GoogleAnalyticsHelper.trackEvent(getApplicationContext(), "vocabulary_revision", "vocabulary_read_adjectives_exception", e.getClass().getName() + "_" + e.getMessage() + "_" + url);
-                            }
-
-                            openNextCardInList();
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.e(getClass().getName(), "onErrorResponse, url: " + url, error);
-                            Toast.makeText(getApplicationContext(), "error: " + error.getClass().getName(), Toast.LENGTH_LONG).show();
-                            GoogleAnalyticsHelper.trackEvent(getApplicationContext(), "vocabulary_revision", "vocabulary_read_adjectives_volleyerror", error.getClass().getName() + "_" + error.getMessage() + "_" + url);
-                        }
-                    }
-            );
-            jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            ApplicationController.getInstance().getRequestQueue().add(jsonObjectRequest);
-
+            final String url = EnvironmentSettings.getBaseUrl() + "/rest/number/read" +
+                    "?deviceId=" + DeviceIdHelper.getDeviceId(getApplicationContext()) +
+                    //"&checksum=" + ...
+                    "&language=" + Language.ENGLISH;
+            Log.d(getClass(), "url: " + url);
+            String jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Type type = new TypeToken<List<NumberJson>>(){}.getType();
+            List<NumberJson> numbers = new Gson().fromJson(jsonResponse, type);
+            Log.d(getClass(), "numbers.size(): " + numbers.size());
 
             // Store in database
-            // TODO
+            for (NumberJson numberJson : numbers) {
+                Number number = JsonToGreenDaoConverter.getNumber(numberJson);
+                // TODO: check if already exists
+                numberDao.insert(number);
+                Log.d(getClass(), "Stored Number in database with id " + number.getId());
+            }
 
             return null;
         }

@@ -5,7 +5,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.literacyapp.deviceadmin.DeviceAdmin;
+import org.literacyapp.number.NumberListActivity;
 import org.literacyapp.util.Log;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
@@ -50,6 +51,8 @@ public class CategoryActivity extends AppCompatActivity {
     CoordinatorLayout mCoordinator;
 
     int page = 0;   //  to track page position
+
+    static View rootView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +94,13 @@ public class CategoryActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                Log.d(getClass(), "onPageScrolled");
 
                 /*
                 color update
                  */
                 int colorUpdate = (Integer) evaluator.evaluate(positionOffset, colorList[position], colorList[position == 3 ? position : position + 1]);
                 mViewPager.setBackgroundColor(colorUpdate);
-
             }
 
             @Override
@@ -121,11 +124,14 @@ public class CategoryActivity extends AppCompatActivity {
                         mViewPager.setBackgroundColor(color4);
                         break;
                 }
+
+                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.vocal_plop);
+                mediaPlayer.start();
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                Log.d(getClass(), "onPageScrollStateChanged");
             }
         });
     }
@@ -194,7 +200,7 @@ public class CategoryActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_category, container, false);
+            rootView = inflater.inflate(R.layout.fragment_category, container, false);
 
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
@@ -235,8 +241,9 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(getClass(), "onClick");
-//                        Intent intent = new Intent(getActivity(), EarthActivity.class);
-//                        startActivity(intent);
+
+                        Intent intent = new Intent(getActivity(), NumberListActivity.class);
+                        startActivity(intent);
                     }
                 });
             } else if (sectionNumber == 4) {
@@ -244,7 +251,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(getClass(), "onClick");
-//                        Intent intent = new Intent(getActivity(), EarthActivity.class);
+
+//                        Intent intent = new Intent(getActivity(), LetterActivity.class);
 //                        startActivity(intent);
                     }
                 });
