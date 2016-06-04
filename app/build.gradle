@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "org.literacyapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1001001
         versionName "1.1.1-SNAPSHOT"
@@ -31,6 +31,10 @@ android {
 //    preBuild.dependsOn(":greendao-generator:compileJava")
 //}
 
+ant.importBuild 'assets.xml'
+preBuild.dependsOn(list, checksum)
+clean.dependsOn(clean_assets)
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -40,6 +44,7 @@ dependencies {
 
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:design:23.4.0'
 
     compile 'de.greenrobot:greendao:2.1.0'
 }
