@@ -48,6 +48,7 @@ public class SurfaceRenderer extends RajawaliRenderer {
             Log.e(getClass(), "Texture error", error);
         }
 
+        earthSphere = new Sphere(1, 24, 24);
         earthSphere.setMaterial(material);
         getCurrentScene().addChild(earthSphere);
         getCurrentCamera().setZ(4.2f);

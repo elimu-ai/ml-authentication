@@ -14,19 +14,19 @@ public class DeviceAdmin extends DeviceAdminReceiver {
 
     @Override
     public void onEnabled(Context context, Intent intent) {
-        Log.d(getClass().getName(), "onEnabled");
+        Log.d(getClass(), "onEnabled");
         super.onEnabled(context, intent);
     }
 
     @Override
     public void onLockTaskModeEntering(Context context, Intent intent, String pkg) {
-        Log.d(getClass().getName(), "onLockTaskModeEntering");
+        Log.d(getClass(), "onLockTaskModeEntering");
         super.onLockTaskModeEntering(context, intent, pkg);
     }
 
     @Override
     public void onLockTaskModeExiting(Context context, Intent intent) {
-        Log.d(getClass().getName(), "onLockTaskModeExiting");
+        Log.d(getClass(), "onLockTaskModeExiting");
         super.onLockTaskModeExiting(context, intent);
     }
 }

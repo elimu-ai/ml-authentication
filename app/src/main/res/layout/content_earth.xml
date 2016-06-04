@@ -12,4 +12,6 @@
     tools:context="org.literacyapp.EarthActivity"
     tools:showIn="@layout/activity_earth">
 
+
+
 </RelativeLayout>

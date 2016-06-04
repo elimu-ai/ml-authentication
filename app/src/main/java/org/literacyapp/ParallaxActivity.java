@@ -28,7 +28,7 @@ public class ParallaxActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parallax);
@@ -42,7 +42,7 @@ public class ParallaxActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
         super.onStart();
 
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.background_forest);
@@ -52,10 +52,10 @@ public class ParallaxActivity extends AppCompatActivity {
         mHorizontalScrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
-                Log.d(getClass().getName(), "onScrollChanged");
+                Log.d(getClass(), "onScrollChanged");
 
                 int scrollX = mHorizontalScrollView.getScrollX();
-                Log.d(getClass().getName(), "scrollX: " + scrollX);
+                Log.d(getClass(), "scrollX: " + scrollX);
 
                 mImageViewParallaxLayer1.setX(scrollX / 2);
                 mImageViewParallaxLayer1.setY(scrollX);
@@ -73,7 +73,7 @@ public class ParallaxActivity extends AppCompatActivity {
         mImageViewParallaxLayer3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(getClass().getName(), "onClick");
+                Log.d(getClass(), "onClick");
 
                 Intent roomIntent = new Intent(getApplicationContext(), RoomActivity.class);
                 startActivity(roomIntent);
@@ -83,7 +83,7 @@ public class ParallaxActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
         super.onStop();
 
         mMediaPlayer.release();

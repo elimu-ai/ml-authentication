@@ -18,7 +18,7 @@ public class RoomActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
@@ -29,7 +29,7 @@ public class RoomActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
         super.onStart();
 
         mMediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.music_blues);
@@ -39,7 +39,7 @@ public class RoomActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
         super.onStop();
 
         mMediaPlayer.release();

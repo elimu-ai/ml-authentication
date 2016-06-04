@@ -14,25 +14,21 @@ import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
+import org.literacyapp.model.enums.Language;
 import org.literacyapp.util.Log;
 
-/**
- * Created by root on 27/05/16.
- */
 public class DataBaseActivity extends AppCompatActivity {
-
 
     private SQLiteDatabase db;
     private DaoMaster daoMaster;
     private DaoSession daoSession;
     private NumberDao numberDao;
-    private Number number;
-    private int value = 0;
-    private String language;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        Log.d(getClass(), "onCreate");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_database);
 
         DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext().getApplicationContext(), "mydatabase", null);
@@ -41,34 +37,18 @@ public class DataBaseActivity extends AppCompatActivity {
         daoSession = daoMaster.newSession();
         numberDao = daoSession.getNumberDao();
         daoMaster.createAllTables(db, true);
-
-        Button saveButton = (Button) findViewById(R.id.saveButton);
-        EditText languageText = (EditText) findViewById(R.id.languageText);
-        EditText valueText = (EditText) findViewById(R.id.valueText);
-
-        try {
-            value = Integer.parseInt(valueText.getText().toString());
-            language = languageText.getText().toString();
-
-        }catch (NumberFormatException numberExc) {
-            Log.d(numberExc.toString(), "EXCEPCION");
-        }
-
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                number = new Number();
-
-                daoMaster.createAllTables(db, true);
-
-                number.setLanguage(language);
-                number.setValue(value);
-                numberDao.insertOrReplace(number);
-
-            }
-        });
-
-
     }
 
+    @Override
+    protected void onStart() {
+        Log.d(getClass(), "onStart");
+        super.onStart();
+
+        Number number = new Number();
+        number.setLanguage(Language.ENGLISH.toString());
+        number.setValue(1);
+        numberDao.insert(number);
+
+        Log.d(getClass(), "number.getId(): " + number.getId());
+    }
 }

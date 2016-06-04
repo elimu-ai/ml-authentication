@@ -1,30 +1,33 @@
 package org.literacyapp;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.view.ViewGroup;
+
+import org.literacyapp.util.Log;
+import org.rajawali3d.surface.IRajawaliSurface;
+import org.rajawali3d.surface.RajawaliSurfaceView;
 
 public class EarthActivity extends AppCompatActivity {
 
+    private SurfaceRenderer surfaceRenderer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(getClass(), "onCreate");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_earth);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final RajawaliSurfaceView surface = new RajawaliSurfaceView(this);
+        surface.setFrameRate(60.0);
+        surface.setRenderMode(IRajawaliSurface.RENDERMODE_WHEN_DIRTY);
+
+        // Add mSurface to your root view
+        addContentView(surface, new ActionBar.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT));
+
+        surfaceRenderer = new SurfaceRenderer(this);
+        surface.setSurfaceRenderer(surfaceRenderer);
     }
-
 }

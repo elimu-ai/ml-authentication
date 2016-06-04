@@ -127,7 +127,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass().getName(), "onStart");
+        Log.d(getClass(), "onStart");
         super.onStart();
 
         View decorView = getWindow().getDecorView();
@@ -141,7 +141,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         boolean isDeviceOwnerApp = devicePolicyManager.isDeviceOwnerApp(getPackageName());
-        Log.d(getClass().getName(), "isDeviceOwnerApp: " + isDeviceOwnerApp);
+        Log.d(getClass(), "isDeviceOwnerApp: " + isDeviceOwnerApp);
         if (isDeviceOwnerApp) {
             ComponentName componentName = new ComponentName(this, DeviceAdmin.class);
             devicePolicyManager.setLockTaskPackages(componentName, new String[]{ getPackageName() });
@@ -193,7 +193,7 @@ public class CategoryActivity extends AppCompatActivity {
 
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            Log.d(getClass().getName(), "sectionNumber: " + sectionNumber);
+            Log.d(getClass(), "sectionNumber: " + sectionNumber);
             textView.setText(getString(R.string.section_format, sectionNumber));
 
             img = (ImageView) rootView.findViewById(R.id.section_img);
@@ -203,8 +203,17 @@ public class CategoryActivity extends AppCompatActivity {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(getClass().getName(), "onClick");
+                        Log.d(getClass(), "onClick");
                         Intent intent = new Intent(getActivity(), PocketSphinxActivity.class);
+                        startActivity(intent);
+                    }
+                });
+            } else if (sectionNumber == 2) {
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(getClass(), "onClick");
+                        Intent intent = new Intent(getActivity(), EarthActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -212,8 +221,6 @@ public class CategoryActivity extends AppCompatActivity {
 
             return rootView;
         }
-
-
     }
 
     /**
