@@ -47,4 +47,6 @@ dependencies {
     compile 'com.android.support:design:23.4.0'
 
     compile 'de.greenrobot:greendao:2.1.0'
+
+    compile 'org.rajawali3d:rajawali:1.0.325@aar'
 }

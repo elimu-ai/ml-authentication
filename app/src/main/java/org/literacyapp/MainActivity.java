@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -28,16 +28,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass().getName(), "onCreate");
+        Log.d(getClass(), "onCreate");
         super.onStart();
 
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-        Log.d(getClass().getName(), "configurationInfo.getGlEsVersion(): " + configurationInfo.getGlEsVersion());
-        Log.d(getClass().getName(), "configurationInfo.reqGlEsVersion: " + configurationInfo.reqGlEsVersion);
+        Log.d(getClass(), "configurationInfo.getGlEsVersion(): " + configurationInfo.getGlEsVersion());
+        Log.d(getClass(), "configurationInfo.reqGlEsVersion: " + configurationInfo.reqGlEsVersion);
 
         String deviceId = DeviceIdHelper.getDeviceId(this);
-        Log.d(getClass().getName(), "deviceId: " + deviceId);
+        Log.d(getClass(), "deviceId: " + deviceId);
 
         new LoadContentAsyncTask().execute();
     }
@@ -46,14 +46,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Log.d(getClass().getName(), "doInBackground");
+            Log.d(getClass(), "doInBackground");
 
             try {
                 // TODO: download updated content from server
                 // TODO: store in database
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                Log.e(getClass().getName(), null, e);
+                Log.e(getClass(), null, e);
             }
 
             return null;
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Log.d(getClass().getName(), "onPostExecute");
+            Log.d(getClass(), "onPostExecute");
             super.onPostExecute(aVoid);
 
             Intent intent = new Intent(getApplicationContext(), CategoryActivity.class);

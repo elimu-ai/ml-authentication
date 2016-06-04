@@ -10,7 +10,7 @@ public class VersionHelper {
      * @return Application's version code from the {@code PackageManager}.
      */
     public static int getAppVersionCode(Context context) {
-        Log.d(VersionHelper.class.getName(), "getAppVersionCode");
+        Log.d(VersionHelper.class, "getAppVersionCode");
 
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
