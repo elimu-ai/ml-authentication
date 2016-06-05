@@ -37,11 +37,14 @@ public class JsonLoader {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             jsonResponse = bufferedReader.readLine();
         } catch (MalformedURLException e) {
-            Log.e(JsonLoader.class, null, e);
+            Log.e(JsonLoader.class, "MalformedURLException", e);
+            e.printStackTrace();
         } catch (ProtocolException e) {
-            Log.e(JsonLoader.class, null, e);
+            Log.e(JsonLoader.class, "ProtocolException", e);
+            e.printStackTrace();
         } catch (IOException e) {
-            Log.e(JsonLoader.class, null, e);
+            Log.e(JsonLoader.class, "IOException", e);
+            e.printStackTrace();
         }
 
         return jsonResponse;
