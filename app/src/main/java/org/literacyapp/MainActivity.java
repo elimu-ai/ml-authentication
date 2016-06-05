@@ -101,21 +101,22 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass(), "jsonResponse: " + jsonResponse);
             if (TextUtils.isEmpty(jsonResponse)) {
                 // TODO: handle error
-            }
-            Type type = new TypeToken<List<WordJson>>(){}.getType();
-            List<WordJson> words = new Gson().fromJson(jsonResponse, type);
-            Log.d(getClass(), "words.size(): " + words.size());
-            for (WordJson wordJson : words) {
-                Word word = JsonToGreenDaoConverter.getWord(wordJson);
-                List<Word> existingWords = wordDao.queryBuilder()
-                        .where(WordDao.Properties.ServerId.eq(word.getServerId()))
-                        .list();
-                Log.d(getClass(), "existingWords.size(): " + existingWords.size());
-                if (existingWords.isEmpty()) {
-                    wordDao.insert(word);
-                    Log.d(getClass(), "Stored Word in database with id " + word.getId());
-                } else {
-                    Log.d(getClass(), "Word \"" + word.getText() + "\" already exists in database with id " + word.getId());
+            } else {
+                Type type = new TypeToken<List<WordJson>>(){}.getType();
+                List<WordJson> words = new Gson().fromJson(jsonResponse, type);
+                Log.d(getClass(), "words.size(): " + words.size());
+                for (WordJson wordJson : words) {
+                    Word word = JsonToGreenDaoConverter.getWord(wordJson);
+                    List<Word> existingWords = wordDao.queryBuilder()
+                            .where(WordDao.Properties.ServerId.eq(word.getServerId()))
+                            .list();
+                    Log.d(getClass(), "existingWords.size(): " + existingWords.size());
+                    if (existingWords.isEmpty()) {
+                        wordDao.insert(word);
+                        Log.d(getClass(), "Stored Word in database with id " + word.getId());
+                    } else {
+                        Log.d(getClass(), "Word \"" + word.getText() + "\" already exists in database with id " + word.getId());
+                    }
                 }
             }
 
@@ -129,21 +130,22 @@ public class MainActivity extends AppCompatActivity {
             Log.d(getClass(), "jsonResponse: " + jsonResponse);
             if (TextUtils.isEmpty(jsonResponse)) {
                 // TODO: handle error
-            }
-            type = new TypeToken<List<NumberJson>>(){}.getType();
-            List<NumberJson> numbers = new Gson().fromJson(jsonResponse, type);
-            Log.d(getClass(), "numbers.size(): " + numbers.size());
-            for (NumberJson numberJson : numbers) {
-                Number number = JsonToGreenDaoConverter.getNumber(numberJson);
-                List<Number> existingNumbers = numberDao.queryBuilder()
-                        .where(NumberDao.Properties.ServerId.eq(number.getServerId()))
-                        .list();
-                Log.d(getClass(), "existingNumbers.size(): " + existingNumbers.size());
-                if (existingNumbers.isEmpty()) {
-                    numberDao.insert(number);
-                    Log.d(getClass(), "Stored Number in database with id " + number.getId());
-                } else {
-                    Log.d(getClass(), "Number \"" + number.getValue() + "\" already exists in database with id " + number.getId());
+            } else {
+                Type type = new TypeToken<List<NumberJson>>(){}.getType();
+                List<NumberJson> numbers = new Gson().fromJson(jsonResponse, type);
+                Log.d(getClass(), "numbers.size(): " + numbers.size());
+                for (NumberJson numberJson : numbers) {
+                    Number number = JsonToGreenDaoConverter.getNumber(numberJson);
+                    List<Number> existingNumbers = numberDao.queryBuilder()
+                            .where(NumberDao.Properties.ServerId.eq(number.getServerId()))
+                            .list();
+                    Log.d(getClass(), "existingNumbers.size(): " + existingNumbers.size());
+                    if (existingNumbers.isEmpty()) {
+                        numberDao.insert(number);
+                        Log.d(getClass(), "Stored Number in database with id " + number.getId());
+                    } else {
+                        Log.d(getClass(), "Number \"" + number.getValue() + "\" already exists in database with id " + number.getId());
+                    }
                 }
             }
 
