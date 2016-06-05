@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(this);
         Log.d(getClass(), "isWifiEnabled: " + isWifiEnabled);
+        // TODO: handle java.net.UnknownHostException despite active WiFi connection
         if (isWifiEnabled) {
             // TODO: Check if newer version of application is available for download
 

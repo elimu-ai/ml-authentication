@@ -17,19 +17,19 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-    signingConfigs {
-        release {
-            storeFile file("release.keystore")
-            storePassword "******"
-            keyAlias "******"
-            keyPassword "******"
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-        }
-    }
+//    signingConfigs {
+//        release {
+//            storeFile file("release.keystore")
+//            storePassword "******"
+//            keyAlias "******"
+//            keyPassword "******"
+//        }
+//    }
+//    buildTypes {
+//        release {
+//            signingConfig signingConfigs.release
+//        }
+//    }
 }
 
 buildscript {
