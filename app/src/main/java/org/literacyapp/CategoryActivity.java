@@ -77,7 +77,7 @@ public class CategoryActivity extends AppCompatActivity {
         indicators = new ImageView[]{zero, one, two, three};
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.categoryContainer);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         mViewPager.setCurrentItem(page);
