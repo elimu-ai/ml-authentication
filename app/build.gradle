@@ -8,8 +8,8 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1001004
-        versionName "1.1.4"
+        versionCode 1001005
+        versionName "1.1.5-SNAPSHOT"
     }
 
     compileOptions {
