@@ -19,19 +19,28 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
 
-//    signingConfigs {
-//        release {
-//            storeFile file("release.keystore")
-//            storePassword "******"
-//            keyAlias "******"
-//            keyPassword "******"
-//        }
-//    }
-//    buildTypes {
-//        release {
-//            signingConfig signingConfigs.release
-//        }
-//    }
+    signingConfigs {
+        debug {
+            storeFile file(System.getProperty("user.home") + "/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            storeFile file(System.getProperty("user.home") + "/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
 
 buildscript {
@@ -39,14 +48,14 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.triplet.gradle:play-publisher:1.1.2'
+        classpath 'com.github.triplet.gradle:play-publisher:1.1.4'
     }
 }
 apply plugin: 'com.github.triplet.play'
 play {
     track = 'alpha'
     serviceAccountEmail = '880546439683-compute@developer.gserviceaccount.com'
-    pk12File = file('Google Play Android Developer-febfbd4ba095.p12')
+    pk12File = file('Google Play Android Developer-1d42cd2a09d7.p12')
 }
 
 //project.afterEvaluate {
