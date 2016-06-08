@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- https://developer.android.com/guide/topics/graphics/opengl.html -->
     <!-- OpenGL 2.0 - supported by Android 2.2 (API level 8) and higher -->
