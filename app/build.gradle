@@ -54,6 +54,7 @@ buildscript {
 apply plugin: 'com.github.triplet.play'
 play {
     track = 'alpha'
+    uploadImages = true
     serviceAccountEmail = '880546439683-compute@developer.gserviceaccount.com'
     pk12File = file('Google Play Android Developer-1d42cd2a09d7.p12')
 }
