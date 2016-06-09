@@ -56,7 +56,7 @@ play {
     track = 'alpha'
     uploadImages = true
     serviceAccountEmail = '880546439683-compute@developer.gserviceaccount.com'
-    pk12File = file('Google Play Android Developer-1d42cd2a09d7.p12')
+    pk12File = file('src/main/play/Google Play Android Developer-1d42cd2a09d7.p12')
 }
 
 //project.afterEvaluate {
