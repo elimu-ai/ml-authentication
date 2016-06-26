@@ -29,7 +29,11 @@ public class EntityHelper {
             if (field.getType().isAssignableFrom(String.class)
                     || field.getType().isAssignableFrom(Language.class)
                     || field.getType().isAssignableFrom(ImageType.class)) {
-                entity.addStringProperty(field.getName());
+                if (field.getType().isAssignableFrom(Language.class)) {
+                    entity.addStringProperty(field.getName()).customType(Language.class.getCanonicalName(), "org.literacyapp.dao.converter.LanguageConverter");
+                } else {
+                    entity.addStringProperty(field.getName());
+                }
             } else if (field.getType().isAssignableFrom(Long.class)) {
                 if ("id".equals(field.getName())) {
                     entity.addIdProperty().primaryKey();

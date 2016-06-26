@@ -11,7 +11,7 @@ public class JsonToGreenDaoConverter {
         } else {
             Number number = new Number();
             number.setId(numberJson.getId());
-            number.setLanguage(numberJson.getLanguage().toString()); // TODO: support enum
+            number.setLanguage(numberJson.getLanguage());
             number.setValue(numberJson.getValue());
             number.setSymbol(numberJson.getSymbol());
             number.setWord(getWord(numberJson.getWord()));
@@ -26,7 +26,7 @@ public class JsonToGreenDaoConverter {
         } else {
             Word word = new Word();
             word.setId(wordJson.getId());
-            word.setLanguage(wordJson.getLanguage().toString()); // TODO: support enums
+            word.setLanguage(wordJson.getLanguage());
             word.setText(wordJson.getText());
             return word;
         }
