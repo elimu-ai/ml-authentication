@@ -16,5 +16,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'de.greenrobot:greendao-generator:2.1.0'
-    compile 'org.literacyapp:literacyapp-model:1.0.14' // Remember to also update app/build.gradle
+    compile 'org.literacyapp:literacyapp-model:1.0.15' // Remember to also update app/build.gradle
 }
