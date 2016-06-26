@@ -44,7 +44,7 @@ public class DataBaseActivity extends AppCompatActivity {
         super.onStart();
 
         Number number = new Number();
-        number.setLanguage(Language.ENGLISH.toString());
+        number.setLanguage(Language.ENGLISH);
         number.setValue(1);
         numberDao.insert(number);
 

@@ -23,22 +23,23 @@ public class EntityHelper {
         System.out.println("className: " + className);
         entity = schema.addEntity(className);
 
-        entity.addIdProperty().autoincrement().primaryKey();
-
         for (Field field : clazz.getDeclaredFields()) {
             System.out.println("class name: " + className + ", field type: " + field.getType() + ", field name: " + field.getName());
-
-            if ("id".equals(field.getName())) {
-                entity.addLongProperty("serverId");
-                continue;
-            }
 
             if (field.getType().isAssignableFrom(String.class)
                     || field.getType().isAssignableFrom(Language.class)
                     || field.getType().isAssignableFrom(ImageType.class)) {
-                entity.addStringProperty(field.getName());
+                if (field.getType().isAssignableFrom(Language.class)) {
+                    entity.addStringProperty(field.getName()).customType(Language.class.getCanonicalName(), "org.literacyapp.dao.converter.LanguageConverter");
+                } else {
+                    entity.addStringProperty(field.getName());
+                }
             } else if (field.getType().isAssignableFrom(Long.class)) {
-                entity.addLongProperty(field.getName());
+                if ("id".equals(field.getName())) {
+                    entity.addIdProperty().primaryKey();
+                } else {
+                    entity.addLongProperty(field.getName());
+                }
             } else if (field.getType().isAssignableFrom(Integer.class)) {
                 entity.addIntProperty(field.getName());
             } else if (field.getType() == WordJson.class) {

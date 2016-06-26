@@ -24,9 +24,8 @@ public class ImageDao extends AbstractDao<Image, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property ServerId = new Property(1, Long.class, "serverId", false, "SERVER_ID");
-        public final static Property Title = new Property(2, String.class, "title", false, "TITLE");
-        public final static Property ImageType = new Property(3, String.class, "imageType", false, "IMAGE_TYPE");
+        public final static Property Title = new Property(1, String.class, "title", false, "TITLE");
+        public final static Property ImageType = new Property(2, String.class, "imageType", false, "IMAGE_TYPE");
     };
 
 
@@ -42,10 +41,9 @@ public class ImageDao extends AbstractDao<Image, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"IMAGE\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"SERVER_ID\" INTEGER," + // 1: serverId
-                "\"TITLE\" TEXT," + // 2: title
-                "\"IMAGE_TYPE\" TEXT);"); // 3: imageType
+                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
+                "\"TITLE\" TEXT," + // 1: title
+                "\"IMAGE_TYPE\" TEXT);"); // 2: imageType
     }
 
     /** Drops the underlying database table. */
@@ -64,19 +62,14 @@ public class ImageDao extends AbstractDao<Image, Long> {
             stmt.bindLong(1, id);
         }
  
-        Long serverId = entity.getServerId();
-        if (serverId != null) {
-            stmt.bindLong(2, serverId);
-        }
- 
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(3, title);
+            stmt.bindString(2, title);
         }
  
         String imageType = entity.getImageType();
         if (imageType != null) {
-            stmt.bindString(4, imageType);
+            stmt.bindString(3, imageType);
         }
     }
 
@@ -91,9 +84,8 @@ public class ImageDao extends AbstractDao<Image, Long> {
     public Image readEntity(Cursor cursor, int offset) {
         Image entity = new Image( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // serverId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // imageType
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // title
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // imageType
         );
         return entity;
     }
@@ -102,9 +94,8 @@ public class ImageDao extends AbstractDao<Image, Long> {
     @Override
     public void readEntity(Cursor cursor, Image entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setServerId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
-        entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setImageType(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setTitle(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setImageType(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     /** @inheritdoc */

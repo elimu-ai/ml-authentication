@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
                 for (WordJson wordJson : words) {
                     Word word = JsonToGreenDaoConverter.getWord(wordJson);
                     List<Word> existingWords = wordDao.queryBuilder()
-                            .where(WordDao.Properties.ServerId.eq(word.getServerId()))
+                            .where(WordDao.Properties.Id.eq(word.getId()))
                             .list();
                     Log.d(getClass(), "existingWords.size(): " + existingWords.size());
                     if (existingWords.isEmpty()) {
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 for (NumberJson numberJson : numbers) {
                     Number number = JsonToGreenDaoConverter.getNumber(numberJson);
                     List<Number> existingNumbers = numberDao.queryBuilder()
-                            .where(NumberDao.Properties.ServerId.eq(number.getServerId()))
+                            .where(NumberDao.Properties.Id.eq(number.getId()))
                             .list();
                     Log.d(getClass(), "existingNumbers.size(): " + existingNumbers.size());
                     if (existingNumbers.isEmpty()) {
