@@ -1,7 +1,7 @@
 package com.greendao.generator;
 
 import org.literacyapp.model.enums.ImageType;
-import org.literacyapp.model.enums.Language;
+import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.json.WordJson;
 
 import java.lang.reflect.Field;
@@ -27,10 +27,10 @@ public class EntityHelper {
             System.out.println("class name: " + className + ", field type: " + field.getType() + ", field name: " + field.getName());
 
             if (field.getType().isAssignableFrom(String.class)
-                    || field.getType().isAssignableFrom(Language.class)
+                    || field.getType().isAssignableFrom(Locale.class)
                     || field.getType().isAssignableFrom(ImageType.class)) {
-                if (field.getType().isAssignableFrom(Language.class)) {
-                    entity.addStringProperty(field.getName()).customType(Language.class.getCanonicalName(), "org.literacyapp.dao.converter.LanguageConverter");
+                if (field.getType().isAssignableFrom(Locale.class)) {
+                    entity.addStringProperty(field.getName()).customType(Locale.class.getCanonicalName(), "org.literacyapp.dao.converter.LocaleConverter");
                 } else {
                     entity.addStringProperty(field.getName());
                 }

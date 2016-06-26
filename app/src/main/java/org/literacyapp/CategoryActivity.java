@@ -302,6 +302,5 @@ public class CategoryActivity extends AppCompatActivity {
             }
             return null;
         }
-
     }
 }
