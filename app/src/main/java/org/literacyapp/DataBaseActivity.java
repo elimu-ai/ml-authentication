@@ -14,7 +14,7 @@ import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
-import org.literacyapp.model.enums.Language;
+import org.literacyapp.model.enums.Locale;
 import org.literacyapp.util.Log;
 
 public class DataBaseActivity extends AppCompatActivity {
@@ -44,7 +44,7 @@ public class DataBaseActivity extends AppCompatActivity {
         super.onStart();
 
         Number number = new Number();
-        number.setLanguage(Language.ENGLISH);
+        number.setLocale(Locale.EN);
         number.setValue(1);
         numberDao.insert(number);
 

@@ -20,7 +20,7 @@ import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.Word;
 import org.literacyapp.dao.WordDao;
-import org.literacyapp.model.enums.Language;
+import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.json.NumberJson;
 import org.literacyapp.model.json.WordJson;
 import org.literacyapp.util.ConnectivityHelper;
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             String url = EnvironmentSettings.getBaseUrl() + "/rest/word/read" +
                     "?deviceId=" + DeviceIdHelper.getDeviceId(getApplicationContext()) +
                     //"&checksum=" + ...
-                    "&language=" + Language.ENGLISH;
+                    "&locale=" + Locale.EN;
             Log.d(getClass(), "url: " + url);
             String jsonResponse = JsonLoader.loadJson(url);
             Log.d(getClass(), "jsonResponse: " + jsonResponse);
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             url = EnvironmentSettings.getBaseUrl() + "/rest/number/read" +
                     "?deviceId=" + DeviceIdHelper.getDeviceId(getApplicationContext()) +
                     //"&checksum=" + ...
-                    "&language=" + Language.ENGLISH;
+                    "&locale=" + Locale.EN;
             Log.d(getClass(), "url: " + url);
             jsonResponse = JsonLoader.loadJson(url);
             Log.d(getClass(), "jsonResponse: " + jsonResponse);

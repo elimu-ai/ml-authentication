@@ -1,22 +1,22 @@
 package org.literacyapp.dao.converter;
 
 import org.greenrobot.greendao.converter.PropertyConverter;
-import org.literacyapp.model.enums.Language;
+import org.literacyapp.model.enums.Locale;
 import org.literacyapp.util.Log;
 
-public class LanguageConverter implements PropertyConverter<Language, String> {
+public class LocaleConverter implements PropertyConverter<Locale, String> {
 
     @Override
-    public Language convertToEntityProperty(String databaseValue) {
+    public Locale convertToEntityProperty(String databaseValue) {
         Log.d(getClass(), "convertToEntityProperty");
 
-        Language language = Language.valueOf(databaseValue);
-        Log.d(getClass(), "language: " + language);
-        return language;
+        Locale locale = Locale.valueOf(databaseValue);
+        Log.d(getClass(), "locale: " + locale);
+        return locale;
     }
 
     @Override
-    public String convertToDatabaseValue(Language entityProperty) {
+    public String convertToDatabaseValue(Locale entityProperty) {
         Log.d(getClass(), "convertToDatabaseValue");
 
         String databaseValue = entityProperty.toString();

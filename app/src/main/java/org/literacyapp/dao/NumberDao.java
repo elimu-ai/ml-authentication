@@ -11,8 +11,8 @@ import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 
-import org.literacyapp.dao.converter.LanguageConverter;
-import org.literacyapp.model.enums.Language;
+import org.literacyapp.dao.converter.LocaleConverter;
+import org.literacyapp.model.enums.Locale;
 
 import org.literacyapp.dao.Number;
 
@@ -30,7 +30,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Language = new Property(1, String.class, "language", false, "LANGUAGE");
+        public final static Property Locale = new Property(1, String.class, "locale", false, "LOCALE");
         public final static Property Value = new Property(2, Integer.class, "value", false, "VALUE");
         public final static Property Symbol = new Property(3, String.class, "symbol", false, "SYMBOL");
         public final static Property WordId = new Property(4, Long.class, "wordId", false, "WORD_ID");
@@ -38,7 +38,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
 
     private DaoSession daoSession;
 
-    private final LanguageConverter languageConverter = new LanguageConverter();
+    private final LocaleConverter localeConverter = new LocaleConverter();
 
     public NumberDao(DaoConfig config) {
         super(config);
@@ -54,7 +54,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"NUMBER\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"LANGUAGE\" TEXT," + // 1: language
+                "\"LOCALE\" TEXT," + // 1: locale
                 "\"VALUE\" INTEGER," + // 2: value
                 "\"SYMBOL\" TEXT," + // 3: symbol
                 "\"WORD_ID\" INTEGER);"); // 4: wordId
@@ -76,9 +76,9 @@ public class NumberDao extends AbstractDao<Number, Long> {
             stmt.bindLong(1, id);
         }
  
-        Language language = entity.getLanguage();
-        if (language != null) {
-            stmt.bindString(2, languageConverter.convertToDatabaseValue(language));
+        Locale locale = entity.getLocale();
+        if (locale != null) {
+            stmt.bindString(2, localeConverter.convertToDatabaseValue(locale));
         }
  
         Integer value = entity.getValue();
@@ -114,7 +114,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
     public Number readEntity(Cursor cursor, int offset) {
         Number entity = new Number( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : languageConverter.convertToEntityProperty(cursor.getString(offset + 1)), // language
+            cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)), // locale
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // value
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // symbol
             cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4) // wordId
@@ -126,7 +126,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
     @Override
     public void readEntity(Cursor cursor, Number entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setLanguage(cursor.isNull(offset + 1) ? null : languageConverter.convertToEntityProperty(cursor.getString(offset + 1)));
+        entity.setLocale(cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)));
         entity.setValue(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
         entity.setSymbol(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setWordId(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));

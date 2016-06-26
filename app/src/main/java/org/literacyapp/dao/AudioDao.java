@@ -8,8 +8,8 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
 
-import org.literacyapp.dao.converter.LanguageConverter;
-import org.literacyapp.model.enums.Language;
+import org.literacyapp.dao.converter.LocaleConverter;
+import org.literacyapp.model.enums.Locale;
 
 import org.literacyapp.dao.Audio;
 
@@ -27,11 +27,11 @@ public class AudioDao extends AbstractDao<Audio, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Language = new Property(1, String.class, "language", false, "LANGUAGE");
+        public final static Property Locale = new Property(1, String.class, "locale", false, "LOCALE");
         public final static Property Title = new Property(2, String.class, "title", false, "TITLE");
     };
 
-    private final LanguageConverter languageConverter = new LanguageConverter();
+    private final LocaleConverter localeConverter = new LocaleConverter();
 
     public AudioDao(DaoConfig config) {
         super(config);
@@ -46,7 +46,7 @@ public class AudioDao extends AbstractDao<Audio, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"AUDIO\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
-                "\"LANGUAGE\" TEXT," + // 1: language
+                "\"LOCALE\" TEXT," + // 1: locale
                 "\"TITLE\" TEXT);"); // 2: title
     }
 
@@ -66,9 +66,9 @@ public class AudioDao extends AbstractDao<Audio, Long> {
             stmt.bindLong(1, id);
         }
  
-        Language language = entity.getLanguage();
-        if (language != null) {
-            stmt.bindString(2, languageConverter.convertToDatabaseValue(language));
+        Locale locale = entity.getLocale();
+        if (locale != null) {
+            stmt.bindString(2, localeConverter.convertToDatabaseValue(locale));
         }
  
         String title = entity.getTitle();
@@ -88,7 +88,7 @@ public class AudioDao extends AbstractDao<Audio, Long> {
     public Audio readEntity(Cursor cursor, int offset) {
         Audio entity = new Audio( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : languageConverter.convertToEntityProperty(cursor.getString(offset + 1)), // language
+            cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)), // locale
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // title
         );
         return entity;
@@ -98,7 +98,7 @@ public class AudioDao extends AbstractDao<Audio, Long> {
     @Override
     public void readEntity(Cursor cursor, Audio entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setLanguage(cursor.isNull(offset + 1) ? null : languageConverter.convertToEntityProperty(cursor.getString(offset + 1)));
+        entity.setLocale(cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)));
         entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
