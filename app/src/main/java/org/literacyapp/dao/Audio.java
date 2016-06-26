@@ -7,7 +7,6 @@ package org.literacyapp.dao;
 public class Audio {
 
     private Long id;
-    private Long serverId;
     private String language;
     private String title;
 
@@ -18,9 +17,8 @@ public class Audio {
         this.id = id;
     }
 
-    public Audio(Long id, Long serverId, String language, String title) {
+    public Audio(Long id, String language, String title) {
         this.id = id;
-        this.serverId = serverId;
         this.language = language;
         this.title = title;
     }
@@ -31,14 +29,6 @@ public class Audio {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
     }
 
     public String getLanguage() {

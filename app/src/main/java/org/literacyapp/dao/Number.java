@@ -10,7 +10,6 @@ import de.greenrobot.dao.DaoException;
 public class Number {
 
     private Long id;
-    private Long serverId;
     private String language;
     private Integer value;
     private String symbol;
@@ -33,9 +32,8 @@ public class Number {
         this.id = id;
     }
 
-    public Number(Long id, Long serverId, String language, Integer value, String symbol, Long wordId) {
+    public Number(Long id, String language, Integer value, String symbol, Long wordId) {
         this.id = id;
-        this.serverId = serverId;
         this.language = language;
         this.value = value;
         this.symbol = symbol;
@@ -54,14 +52,6 @@ public class Number {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
     }
 
     public String getLanguage() {

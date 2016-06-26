@@ -7,7 +7,6 @@ package org.literacyapp.dao;
 public class Image {
 
     private Long id;
-    private Long serverId;
     private String title;
     private String imageType;
 
@@ -18,9 +17,8 @@ public class Image {
         this.id = id;
     }
 
-    public Image(Long id, Long serverId, String title, String imageType) {
+    public Image(Long id, String title, String imageType) {
         this.id = id;
-        this.serverId = serverId;
         this.title = title;
         this.imageType = imageType;
     }
@@ -31,14 +29,6 @@ public class Image {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
     }
 
     public String getTitle() {

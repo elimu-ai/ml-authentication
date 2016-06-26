@@ -7,7 +7,6 @@ package org.literacyapp.dao;
 public class Word {
 
     private Long id;
-    private Long serverId;
     private String language;
     private String text;
 
@@ -18,9 +17,8 @@ public class Word {
         this.id = id;
     }
 
-    public Word(Long id, Long serverId, String language, String text) {
+    public Word(Long id, String language, String text) {
         this.id = id;
-        this.serverId = serverId;
         this.language = language;
         this.text = text;
     }
@@ -31,14 +29,6 @@ public class Word {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
     }
 
     public String getLanguage() {

@@ -24,9 +24,8 @@ public class WordDao extends AbstractDao<Word, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property ServerId = new Property(1, Long.class, "serverId", false, "SERVER_ID");
-        public final static Property Language = new Property(2, String.class, "language", false, "LANGUAGE");
-        public final static Property Text = new Property(3, String.class, "text", false, "TEXT");
+        public final static Property Language = new Property(1, String.class, "language", false, "LANGUAGE");
+        public final static Property Text = new Property(2, String.class, "text", false, "TEXT");
     };
 
 
@@ -42,10 +41,9 @@ public class WordDao extends AbstractDao<Word, Long> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"WORD\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"SERVER_ID\" INTEGER," + // 1: serverId
-                "\"LANGUAGE\" TEXT," + // 2: language
-                "\"TEXT\" TEXT);"); // 3: text
+                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
+                "\"LANGUAGE\" TEXT," + // 1: language
+                "\"TEXT\" TEXT);"); // 2: text
     }
 
     /** Drops the underlying database table. */
@@ -64,19 +62,14 @@ public class WordDao extends AbstractDao<Word, Long> {
             stmt.bindLong(1, id);
         }
  
-        Long serverId = entity.getServerId();
-        if (serverId != null) {
-            stmt.bindLong(2, serverId);
-        }
- 
         String language = entity.getLanguage();
         if (language != null) {
-            stmt.bindString(3, language);
+            stmt.bindString(2, language);
         }
  
         String text = entity.getText();
         if (text != null) {
-            stmt.bindString(4, text);
+            stmt.bindString(3, text);
         }
     }
 
@@ -91,9 +84,8 @@ public class WordDao extends AbstractDao<Word, Long> {
     public Word readEntity(Cursor cursor, int offset) {
         Word entity = new Word( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // serverId
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // language
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // text
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // language
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // text
         );
         return entity;
     }
@@ -102,9 +94,8 @@ public class WordDao extends AbstractDao<Word, Long> {
     @Override
     public void readEntity(Cursor cursor, Word entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setServerId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
-        entity.setLanguage(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setText(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setLanguage(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setText(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     /** @inheritdoc */

@@ -48,7 +48,7 @@ public class WordListActivity extends AppCompatActivity {
         String numberListText = "";
         List<Word> words = wordDao.loadAll();
         for (Word word : words) {
-            numberListText += "id: " + word.getId() + ", serverId: " + word.getServerId() + ", text: " + word.getText() + "\n";
+            numberListText += "id: " + word.getId() + ",  text: " + word.getText() + "\n";
         }
         mTextViewWordList.setText(numberListText);
     }

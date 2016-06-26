@@ -7,7 +7,6 @@ package org.literacyapp.dao;
 public class Letter {
 
     private Long id;
-    private Long serverId;
     private String language;
     private String text;
 
@@ -18,9 +17,8 @@ public class Letter {
         this.id = id;
     }
 
-    public Letter(Long id, Long serverId, String language, String text) {
+    public Letter(Long id, String language, String text) {
         this.id = id;
-        this.serverId = serverId;
         this.language = language;
         this.text = text;
     }
@@ -31,14 +29,6 @@ public class Letter {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getServerId() {
-        return serverId;
-    }
-
-    public void setServerId(Long serverId) {
-        this.serverId = serverId;
     }
 
     public String getLanguage() {
