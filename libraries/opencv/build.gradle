@@ -20,4 +20,8 @@ android {
             aidl.srcDirs = ['src']
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
