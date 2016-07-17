@@ -65,7 +65,7 @@
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
 
-        <activity android:name=".number.NumberListActivity" />
-        <activity android:name=".word.WordListActivity" />
+        <activity android:name=".content.number.NumberListActivity" />
+        <activity android:name=".content.word.WordListActivity" />
     </application>
 </manifest>

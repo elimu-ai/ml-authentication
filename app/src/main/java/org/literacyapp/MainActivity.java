@@ -24,7 +24,7 @@ import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.json.NumberJson;
 import org.literacyapp.model.json.WordJson;
 import org.literacyapp.util.ConnectivityHelper;
-import org.literacyapp.util.DeviceIdHelper;
+import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.Log;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(getClass(), "configurationInfo.getGlEsVersion(): " + configurationInfo.getGlEsVersion());
         Log.d(getClass(), "configurationInfo.reqGlEsVersion: " + configurationInfo.reqGlEsVersion);
 
-        String deviceId = DeviceIdHelper.getDeviceId(this);
+        String deviceId = DeviceInfoHelper.getDeviceId(this);
         Log.d(getClass(), "deviceId: " + deviceId);
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(this);
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Download Words
             String url = EnvironmentSettings.getBaseUrl() + "/rest/word/read" +
-                    "?deviceId=" + DeviceIdHelper.getDeviceId(getApplicationContext()) +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(getApplicationContext()) +
                     //"&checksum=" + ...
                     "&locale=" + Locale.EN;
             Log.d(getClass(), "url: " + url);
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Download Numbers
             url = EnvironmentSettings.getBaseUrl() + "/rest/number/read" +
-                    "?deviceId=" + DeviceIdHelper.getDeviceId(getApplicationContext()) +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(getApplicationContext()) +
                     //"&checksum=" + ...
                     "&locale=" + Locale.EN;
             Log.d(getClass(), "url: " + url);
