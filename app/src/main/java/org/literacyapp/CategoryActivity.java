@@ -21,9 +21,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.literacyapp.deviceadmin.DeviceAdmin;
-import org.literacyapp.number.NumberListActivity;
+import org.literacyapp.content.number.NumberListActivity;
 import org.literacyapp.util.Log;
-import org.literacyapp.word.WordListActivity;
+import org.literacyapp.content.word.WordListActivity;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
 
