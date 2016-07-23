@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,8 +12,6 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.literacyapp.dao.DaoMaster;
-import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
@@ -34,9 +31,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SQLiteDatabase db;
-    private DaoMaster daoMaster;
-    private DaoSession daoSession;
     private WordDao wordDao;
     private NumberDao numberDao;
 
@@ -47,13 +41,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
-        db = openHelper.getWritableDatabase();
-        daoMaster = new DaoMaster(db);
-        daoMaster.createAllTables(db, true);
-        daoSession = daoMaster.newSession();
-        wordDao = daoSession.getWordDao();
-        numberDao = daoSession.getNumberDao();
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
+        wordDao = literacyApplication.getDaoSession().getWordDao();
+        numberDao = literacyApplication.getDaoSession().getNumberDao();
     }
 
     @Override
