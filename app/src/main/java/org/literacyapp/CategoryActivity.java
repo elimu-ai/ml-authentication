@@ -1,9 +1,6 @@
 package org.literacyapp;
 
 import android.animation.ArgbEvaluator;
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -20,10 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.literacyapp.deviceadmin.DeviceAdmin;
 import org.literacyapp.content.number.NumberListActivity;
-import org.literacyapp.util.Log;
 import org.literacyapp.content.word.WordListActivity;
+import org.literacyapp.util.Log;
 
 import edu.cmu.pocketsphinx.demo.PocketSphinxActivity;
 
@@ -150,15 +146,6 @@ public class CategoryActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        DevicePolicyManager devicePolicyManager = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-        boolean isDeviceOwnerApp = devicePolicyManager.isDeviceOwnerApp(getPackageName());
-        Log.d(getClass(), "isDeviceOwnerApp: " + isDeviceOwnerApp);
-        if (isDeviceOwnerApp) {
-            ComponentName componentName = new ComponentName(this, DeviceAdmin.class);
-            devicePolicyManager.setLockTaskPackages(componentName, new String[]{ getPackageName() });
-            startLockTask();
-        }
     }
 
     void updateIndicators(int position) {
@@ -233,8 +220,7 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(getClass(), "onClick");
-                        Intent intent = new Intent(getActivity(), EarthActivity.class);
-                        startActivity(intent);
+
                     }
                 });
             } else if (sectionNumber == 3) {

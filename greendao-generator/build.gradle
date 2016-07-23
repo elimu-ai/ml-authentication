@@ -1,5 +1,8 @@
 apply plugin: 'java'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 task build(type:JavaExec) {
     main = "com.greendao.generator.MainGenerator"
     classpath = sourceSets.main.runtimeClasspath
@@ -15,6 +18,6 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 
+    compile 'org.literacyapp:literacyapp-model:1.1.6' // Remember to also update app/build.gradle and MainGenerator and rebuild the entire project
     compile 'de.greenrobot:greendao-generator:2.1.0'
-    compile 'org.literacyapp:literacyapp-model:1.0.21' // Remember to also update app/build.gradle and MainGenerator and rebuild the entire project
 }

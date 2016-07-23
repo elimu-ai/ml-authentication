@@ -6,19 +6,7 @@
 
     <color name="black_overlay">#66000000</color>
 
-
-    <!--Indigo 500-->
-    <color name="primary_500">#3F51B5</color>
-    <!--Indigo 700-->
-    <color name="primary_700">#303F9F</color>
-    <!--Pink 500-->
-    <color name="accent_500">#E91E63</color>
-    <!--Pink 700-->
-    <color name="accent_700">#C2185B</color>
-    <color name="black_trans80">#14000000</color>
-
     <color name="indicator_unselected">#4D000000</color>
-
 
     <color name="blue_grey">#455A64</color>
     <color name="red">#F44336</color>

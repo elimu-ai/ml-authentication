@@ -26,6 +26,7 @@ public class ImageDao extends AbstractDao<Image, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Title = new Property(1, String.class, "title", false, "TITLE");
         public final static Property ImageType = new Property(2, String.class, "imageType", false, "IMAGE_TYPE");
+        public final static Property DominantColor = new Property(3, String.class, "dominantColor", false, "DOMINANT_COLOR");
     };
 
 
@@ -43,7 +44,8 @@ public class ImageDao extends AbstractDao<Image, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"IMAGE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"TITLE\" TEXT," + // 1: title
-                "\"IMAGE_TYPE\" TEXT);"); // 2: imageType
+                "\"IMAGE_TYPE\" TEXT," + // 2: imageType
+                "\"DOMINANT_COLOR\" TEXT);"); // 3: dominantColor
     }
 
     /** Drops the underlying database table. */
@@ -71,6 +73,11 @@ public class ImageDao extends AbstractDao<Image, Long> {
         if (imageType != null) {
             stmt.bindString(3, imageType);
         }
+ 
+        String dominantColor = entity.getDominantColor();
+        if (dominantColor != null) {
+            stmt.bindString(4, dominantColor);
+        }
     }
 
     /** @inheritdoc */
@@ -85,7 +92,8 @@ public class ImageDao extends AbstractDao<Image, Long> {
         Image entity = new Image( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // title
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // imageType
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // imageType
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // dominantColor
         );
         return entity;
     }
@@ -96,6 +104,7 @@ public class ImageDao extends AbstractDao<Image, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTitle(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setImageType(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setDominantColor(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
      }
     
     /** @inheritdoc */
