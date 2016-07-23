@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "24.0.0"
 
     defaultConfig {
         applicationId "org.literacyapp"
@@ -11,13 +11,17 @@ android {
         versionCode 1001005
         versionName "1.1.5-SNAPSHOT"
 
+        jackOptions {
+            enabled true
+        }
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
         encoding = "UTF-8"
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     signingConfigs {
