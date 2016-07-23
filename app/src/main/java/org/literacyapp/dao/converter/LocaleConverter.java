@@ -1,8 +1,8 @@
 package org.literacyapp.dao.converter;
 
-import org.greenrobot.greendao.converter.PropertyConverter;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.util.Log;
+import de.greenrobot.dao.converter.PropertyConverter;
 
 public class LocaleConverter implements PropertyConverter<Locale, String> {
 

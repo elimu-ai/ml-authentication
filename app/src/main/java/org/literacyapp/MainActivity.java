@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,16 +12,14 @@ import android.text.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.literacyapp.dao.DaoMaster;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.JsonToGreenDaoConverter;
+import org.literacyapp.dao.GsonToGreenDaoConverter;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.Word;
 import org.literacyapp.dao.WordDao;
 import org.literacyapp.model.enums.Locale;
-import org.literacyapp.model.json.NumberJson;
-import org.literacyapp.model.json.WordJson;
+import org.literacyapp.model.gson.content.NumberGson;
+import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
@@ -34,9 +31,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SQLiteDatabase db;
-    private DaoMaster daoMaster;
-    private DaoSession daoSession;
     private WordDao wordDao;
     private NumberDao numberDao;
 
@@ -47,13 +41,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp", null);
-        db = openHelper.getWritableDatabase();
-        daoMaster = new DaoMaster(db);
-        daoMaster.createAllTables(db, true);
-        daoSession = daoMaster.newSession();
-        wordDao = daoSession.getWordDao();
-        numberDao = daoSession.getNumberDao();
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
+        wordDao = literacyApplication.getDaoSession().getWordDao();
+        numberDao = literacyApplication.getDaoSession().getNumberDao();
     }
 
     @Override
@@ -103,11 +93,11 @@ public class MainActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(jsonResponse)) {
                 // TODO: handle error
             } else {
-                Type type = new TypeToken<List<WordJson>>(){}.getType();
-                List<WordJson> words = new Gson().fromJson(jsonResponse, type);
+                Type type = new TypeToken<List<WordGson>>(){}.getType();
+                List<WordGson> words = new Gson().fromJson(jsonResponse, type);
                 Log.d(getClass(), "words.size(): " + words.size());
-                for (WordJson wordJson : words) {
-                    Word word = JsonToGreenDaoConverter.getWord(wordJson);
+                for (WordGson wordGson : words) {
+                    Word word = GsonToGreenDaoConverter.getWord(wordGson);
                     List<Word> existingWords = wordDao.queryBuilder()
                             .where(WordDao.Properties.Id.eq(word.getId()))
                             .list();
@@ -132,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
             if (TextUtils.isEmpty(jsonResponse)) {
                 // TODO: handle error
             } else {
-                Type type = new TypeToken<List<NumberJson>>(){}.getType();
-                List<NumberJson> numbers = new Gson().fromJson(jsonResponse, type);
+                Type type = new TypeToken<List<NumberGson>>(){}.getType();
+                List<NumberGson> numbers = new Gson().fromJson(jsonResponse, type);
                 Log.d(getClass(), "numbers.size(): " + numbers.size());
-                for (NumberJson numberJson : numbers) {
-                    Number number = JsonToGreenDaoConverter.getNumber(numberJson);
+                for (NumberGson numberGson : numbers) {
+                    Number number = GsonToGreenDaoConverter.getNumber(numberGson);
                     List<Number> existingNumbers = numberDao.queryBuilder()
                             .where(NumberDao.Properties.Id.eq(number.getId()))
                             .list();

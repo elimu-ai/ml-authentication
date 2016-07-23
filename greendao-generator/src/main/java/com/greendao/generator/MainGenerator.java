@@ -1,10 +1,10 @@
 package com.greendao.generator;
 
-import org.literacyapp.model.json.AudioJson;
-import org.literacyapp.model.json.ImageJson;
-import org.literacyapp.model.json.LetterJson;
-import org.literacyapp.model.json.NumberJson;
-import org.literacyapp.model.json.WordJson;
+import org.literacyapp.model.gson.content.AudioGson;
+import org.literacyapp.model.gson.content.ImageGson;
+import org.literacyapp.model.gson.content.LetterGson;
+import org.literacyapp.model.gson.content.NumberGson;
+import org.literacyapp.model.gson.content.WordGson;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
@@ -19,16 +19,17 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        int versionCode = 1000021; // 1.0.21 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        int versionCode = 1001006; // 1.1.6 (this should match the version of the dependency org.literacyapp:literacyapp-model)
         // NOTE: If you increase the schema version, all tables in the database will be deleted!
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
 
-        Entity word = EntityHelper.createEntityFromClass(WordJson.class, schema);
-        Entity number = EntityHelper.createEntityFromClass(NumberJson.class, schema);
-        Entity letter = EntityHelper.createEntityFromClass(LetterJson.class, schema);
-        Entity audio = EntityHelper.createEntityFromClass(AudioJson.class, schema);
-        Entity image = EntityHelper.createEntityFromClass(ImageJson.class, schema);
+        // TODO: Allophone
+        Entity letter = EntityHelper.createEntityFromClass(LetterGson.class, schema);
+        Entity word = EntityHelper.createEntityFromClass(WordGson.class, schema);
+        Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
+        Entity audio = EntityHelper.createEntityFromClass(AudioGson.class, schema);
+        Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();

@@ -9,6 +9,7 @@ public class Image {
     private Long id;
     private String title;
     private String imageType;
+    private String dominantColor;
 
     public Image() {
     }
@@ -17,10 +18,11 @@ public class Image {
         this.id = id;
     }
 
-    public Image(Long id, String title, String imageType) {
+    public Image(Long id, String title, String imageType, String dominantColor) {
         this.id = id;
         this.title = title;
         this.imageType = imageType;
+        this.dominantColor = dominantColor;
     }
 
     public Long getId() {
@@ -45,6 +47,14 @@ public class Image {
 
     public void setImageType(String imageType) {
         this.imageType = imageType;
+    }
+
+    public String getDominantColor() {
+        return dominantColor;
+    }
+
+    public void setDominantColor(String dominantColor) {
+        this.dominantColor = dominantColor;
     }
 
 }

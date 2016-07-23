@@ -21,20 +21,18 @@
         android:required="true" />
 
     <application
+        android:name=".LiteracyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ParallaxActivity" />
-        <activity android:name=".RoomActivity" />
-        <activity android:name=".DataBaseActivity" />
         <activity android:name="edu.cmu.pocketsphinx.demo.PocketSphinxActivity" />
         <activity android:name=".CategoryActivity" />
 
@@ -49,21 +47,10 @@
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
-
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-
-        <activity
-            android:name=".EarthActivity"
-            android:label="@string/title_activity_earth"
-            android:parentActivityName=".CategoryActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.literacyapp.CategoryActivity" />
-        </activity>
 
         <activity android:name=".content.number.NumberListActivity" />
         <activity android:name=".content.word.WordListActivity" />
