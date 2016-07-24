@@ -1,10 +1,10 @@
 package com.greendao.generator;
 
-import org.literacyapp.model.gson.content.AudioGson;
-import org.literacyapp.model.gson.content.ImageGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
+import org.literacyapp.model.gson.content.multimedia.AudioGson;
+import org.literacyapp.model.gson.content.multimedia.ImageGson;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
@@ -19,7 +19,7 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        int versionCode = 1001006; // 1.1.6 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        int versionCode = 1001007; // 1.1.7 (this should match the version of the dependency org.literacyapp:literacyapp-model)
         // NOTE: If you increase the schema version, all tables in the database will be deleted!
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
