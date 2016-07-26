@@ -8,6 +8,7 @@ import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 
+import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.WordDao;
 import org.literacyapp.dao.NumberDao;
@@ -23,6 +24,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
+        AllophoneDao.createTable(db, ifNotExists);
         LetterDao.createTable(db, ifNotExists);
         WordDao.createTable(db, ifNotExists);
         NumberDao.createTable(db, ifNotExists);
@@ -32,6 +34,7 @@ public class DaoMaster extends AbstractDaoMaster {
     
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
+        AllophoneDao.dropTable(db, ifExists);
         LetterDao.dropTable(db, ifExists);
         WordDao.dropTable(db, ifExists);
         NumberDao.dropTable(db, ifExists);
@@ -68,6 +71,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(SQLiteDatabase db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(AllophoneDao.class);
         registerDaoClass(LetterDao.class);
         registerDaoClass(WordDao.class);
         registerDaoClass(NumberDao.class);

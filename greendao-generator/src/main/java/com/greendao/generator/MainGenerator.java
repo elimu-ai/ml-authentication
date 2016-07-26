@@ -1,5 +1,6 @@
 package com.greendao.generator;
 
+import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
@@ -24,7 +25,7 @@ public class MainGenerator {
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
 
-        // TODO: Allophone
+        Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
         Entity letter = EntityHelper.createEntityFromClass(LetterGson.class, schema);
         Entity word = EntityHelper.createEntityFromClass(WordGson.class, schema);
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
