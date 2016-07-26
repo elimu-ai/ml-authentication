@@ -12,7 +12,7 @@ public class EnvironmentSettings {
 
     public static String getBaseUrl() {
         if (ENVIRONMENT == Environment.DEV) {
-            return "http://192.168.1.4:8080/literacyapp-webapp"; // Replace with the IP address of your WIFI router
+            return "http://192.168.1.5:8080/literacyapp-webapp"; // Replace with the IP address of your WIFI router
         } else if (ENVIRONMENT == Environment.TEST) {
             return "http://test." + DOMAIN;
         } else {
