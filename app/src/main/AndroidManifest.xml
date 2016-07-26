@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.literacyapp"
-    android:versionCode="1001006"
-    android:versionName="1.1.6-SNAPSHOT">
-
-    <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="23" />
+    package="org.literacyapp">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,9 +8,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
-    <!-- https://developer.android.com/guide/topics/graphics/opengl.html -->
-    <!-- OpenGL ES 3.1 - supported by Android 5.0 (API level 21) and higher -->
-    <uses-feature android:glEsVersion="0x00030001" android:required="true" />
+    <!--&lt;!&ndash; https://developer.android.com/guide/topics/graphics/opengl.html &ndash;&gt;-->
+    <!--&lt;!&ndash; OpenGL ES 3.1 - supported by Android 5.0 (API level 21) and higher &ndash;&gt;-->
+    <!--<uses-feature android:glEsVersion="0x00030001" android:required="true" />-->
 
     <application
         android:name=".LiteracyApplication"
@@ -31,7 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="edu.cmu.pocketsphinx.demo.PocketSphinxActivity" />
         <activity android:name=".CategoryActivity" />
 
         <receiver android:name=".BootReceiver">
@@ -39,17 +32,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name=".deviceadmin.DeviceAdmin"
-            android:permission="android.permission.BIND_DEVICE_ADMIN">
-            <meta-data
-                android:name="android.app.device_admin"
-                android:resource="@xml/device_admin" />
-            <intent-filter>
-                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-            </intent-filter>
-        </receiver>
 
+        <activity android:name=".task.TagItemsActivity" />
         <activity android:name=".content.number.NumberListActivity" />
         <activity android:name=".content.word.WordListActivity" />
     </application>

@@ -23,5 +23,10 @@ public class MainActivity extends AppCompatActivity {
 
         String deviceId = DeviceInfoHelper.getDeviceId(this);
         Log.d(getClass(), "deviceId: " + deviceId);
+
+//        Intent categoryIntent = new Intent(this, CategoryActivity.class);
+//        startActivity(categoryIntent);
+//
+//        finish();
     }
 }

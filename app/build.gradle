@@ -69,16 +69,6 @@ play {
     pk12File = file('src/main/play/Google Play Android Developer-1d42cd2a09d7.p12')
 }
 
-//project.afterEvaluate {
-//    println 'project.afterEvaluate'
-//    println 'Compiling greendao-generator...'
-//    preBuild.dependsOn(":greendao-generator:compileJava")
-//}
-
-ant.importBuild 'assets.xml'
-preBuild.dependsOn(list, checksum)
-clean.dependsOn(clean_assets)
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
