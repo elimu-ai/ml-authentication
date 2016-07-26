@@ -6,6 +6,7 @@ import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.ImageGson;
+import org.literacyapp.model.gson.content.multimedia.VideoGson;
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
@@ -31,6 +32,7 @@ public class MainGenerator {
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
         Entity audio = EntityHelper.createEntityFromClass(AudioGson.class, schema);
         Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
+        Entity video = EntityHelper.createEntityFromClass(VideoGson.class, schema);
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();
