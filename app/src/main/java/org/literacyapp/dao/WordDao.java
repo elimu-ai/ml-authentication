@@ -8,6 +8,8 @@ import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
 
+import java.util.Calendar;
+import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.enums.Locale;
 
@@ -28,10 +30,13 @@ public class WordDao extends AbstractDao<Word, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Locale = new Property(1, String.class, "locale", false, "LOCALE");
-        public final static Property Text = new Property(2, String.class, "text", false, "TEXT");
+        public final static Property TimeLastUpdate = new Property(2, Long.class, "timeLastUpdate", false, "TIME_LAST_UPDATE");
+        public final static Property RevisionNumber = new Property(3, Integer.class, "revisionNumber", false, "REVISION_NUMBER");
+        public final static Property Text = new Property(4, String.class, "text", false, "TEXT");
     };
 
     private final LocaleConverter localeConverter = new LocaleConverter();
+    private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
 
     public WordDao(DaoConfig config) {
         super(config);
@@ -47,7 +52,9 @@ public class WordDao extends AbstractDao<Word, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"WORD\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
                 "\"LOCALE\" TEXT," + // 1: locale
-                "\"TEXT\" TEXT);"); // 2: text
+                "\"TIME_LAST_UPDATE\" INTEGER," + // 2: timeLastUpdate
+                "\"REVISION_NUMBER\" INTEGER," + // 3: revisionNumber
+                "\"TEXT\" TEXT);"); // 4: text
     }
 
     /** Drops the underlying database table. */
@@ -71,9 +78,19 @@ public class WordDao extends AbstractDao<Word, Long> {
             stmt.bindString(2, localeConverter.convertToDatabaseValue(locale));
         }
  
+        Calendar timeLastUpdate = entity.getTimeLastUpdate();
+        if (timeLastUpdate != null) {
+            stmt.bindLong(3, timeLastUpdateConverter.convertToDatabaseValue(timeLastUpdate));
+        }
+ 
+        Integer revisionNumber = entity.getRevisionNumber();
+        if (revisionNumber != null) {
+            stmt.bindLong(4, revisionNumber);
+        }
+ 
         String text = entity.getText();
         if (text != null) {
-            stmt.bindString(3, text);
+            stmt.bindString(5, text);
         }
     }
 
@@ -89,7 +106,9 @@ public class WordDao extends AbstractDao<Word, Long> {
         Word entity = new Word( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)), // locale
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // text
+            cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // timeLastUpdate
+            cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // revisionNumber
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // text
         );
         return entity;
     }
@@ -99,7 +118,9 @@ public class WordDao extends AbstractDao<Word, Long> {
     public void readEntity(Cursor cursor, Word entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setLocale(cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)));
-        entity.setText(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setTimeLastUpdate(cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)));
+        entity.setRevisionNumber(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
+        entity.setText(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     /** @inheritdoc */

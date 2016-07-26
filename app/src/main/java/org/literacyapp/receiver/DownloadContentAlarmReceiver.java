@@ -3,8 +3,10 @@ package org.literacyapp.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -19,7 +21,10 @@ import org.literacyapp.R;
 import org.literacyapp.dao.Allophone;
 import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
+import org.literacyapp.dao.Number;
+import org.literacyapp.dao.NumberDao;
 import org.literacyapp.model.gson.content.AllophoneGson;
+import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
@@ -27,6 +32,7 @@ import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.Log;
 
 import java.lang.reflect.Type;
+import java.util.Calendar;
 
 /**
  * 1. Check if Device has already been stored on the server
@@ -40,6 +46,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
     private Context context;
 
     private AllophoneDao allophoneDao;
+    private NumberDao numberDao;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -49,6 +56,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
         LiteracyApplication literacyApplication = (LiteracyApplication) context.getApplicationContext();
         allophoneDao = literacyApplication.getDaoSession().getAllophoneDao();
+        numberDao = literacyApplication.getDaoSession().getNumberDao();
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
         Log.d(getClass(), "isWifiEnabled: " + isWifiEnabled);
@@ -160,6 +168,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
         protected String doInBackground(Void... voids) {
             Log.d(getClass(), "doInBackground");
 
+
             publishProgress("Downloading Allophones");
             String url = EnvironmentSettings.getRestUrl() + "/content/allophone/list" +
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
@@ -191,7 +200,44 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                 Log.e(getClass(), null, e);
             }
 
-            String result = "Content download complete";
+
+            publishProgress("Downloading Numbers");
+            url = EnvironmentSettings.getRestUrl() + "/content/number/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArrayNumbers = jsonObject.getJSONArray("numbers");
+                    for (int i = 0; i < jsonArrayNumbers.length(); i++) {
+                        Type type = new TypeToken<NumberGson>(){}.getType();
+                        NumberGson numberGson = new Gson().fromJson(jsonArrayNumbers.getString(i), type);
+                        Number number = GsonToGreenDaoConverter.getNumber(numberGson);
+                        Number existingNumber = numberDao.queryBuilder()
+                                .where(NumberDao.Properties.Id.eq(number.getId()))
+                                .unique();
+                        if (existingNumber == null) {
+                            numberDao.insert(number);
+                            Log.d(getClass(), "Stored Number with id " + number.getId() + " and value /" + number.getValue() + "/");
+                        } else {
+                            Log.d(getClass(), "Number " + number.getValue() + " already exists in database with id " + number.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
+
+
+            // Update time of last content synchronization
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+            sharedPreferences.edit().putLong(PREF_LAST_CONTENT_SYNC, Calendar.getInstance().getTimeInMillis()).commit();
+
+            String result = "Content download complete. Please restart the application.";
             return result;
         }
 
@@ -211,7 +257,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             super.onPostExecute(result);
 
             Log.d(getClass(), "result: " + result);
-            Toast.makeText(context, result, Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
         }
     }
 }

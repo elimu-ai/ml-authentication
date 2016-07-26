@@ -1,7 +1,8 @@
 package com.greendao.generator;
 
 import org.literacyapp.model.enums.Locale;
-import org.literacyapp.model.enums.content.ImageType;
+import org.literacyapp.model.enums.content.AudioFormat;
+import org.literacyapp.model.enums.content.ImageFormat;
 import org.literacyapp.model.enums.content.allophone.ConsonantPlace;
 import org.literacyapp.model.enums.content.allophone.ConsonantType;
 import org.literacyapp.model.enums.content.allophone.ConsonantVoicing;
@@ -14,6 +15,7 @@ import org.literacyapp.model.gson.content.WordGson;
 
 import java.lang.reflect.Field;
 import java.util.Calendar;
+import java.util.Set;
 
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
@@ -32,6 +34,13 @@ public class EntityHelper {
         entity = schema.addEntity(className);
 
         if (clazz.getSuperclass() != null) {
+            if (clazz.getSuperclass().getSuperclass() != null) {
+                for (Field field : clazz.getSuperclass().getSuperclass().getDeclaredFields()) {
+                    System.out.println("class name: " + clazz.getSuperclass().getSuperclass().getSimpleName() + ", field type: " + field.getType() + ", field name: " + field.getName());
+                    addFieldToEntity(schema, entity, field);
+                }
+            }
+
             for (Field field : clazz.getSuperclass().getDeclaredFields()) {
                 System.out.println("class name: " + clazz.getSuperclass().getSimpleName() + ", field type: " + field.getType() + ", field name: " + field.getName());
                 addFieldToEntity(schema, entity, field);
@@ -49,8 +58,10 @@ public class EntityHelper {
     private static void addFieldToEntity(Schema schema, Entity entity, Field field) {
         if (field.getType().isAssignableFrom(Locale.class)) {
             entity.addStringProperty(field.getName()).customType(Locale.class.getCanonicalName(), "org.literacyapp.dao.converter.LocaleConverter");
-        } else if (field.getType().isAssignableFrom(ImageType.class)) {
-            entity.addStringProperty(field.getName()).customType(ImageType.class.getCanonicalName(), "org.literacyapp.dao.converter.ImageTypeConverter");
+        } else if (field.getType().isAssignableFrom(AudioFormat.class)) {
+            entity.addStringProperty(field.getName()).customType(AudioFormat.class.getCanonicalName(), "org.literacyapp.dao.converter.AudioFormatConverter");
+        } else if (field.getType().isAssignableFrom(ImageFormat.class)) {
+            entity.addStringProperty(field.getName()).customType(ImageFormat.class.getCanonicalName(), "org.literacyapp.dao.converter.ImageFormatConverter");
         } else if (field.getType().isAssignableFrom(SoundType.class)) {
             entity.addStringProperty(field.getName()).customType(SoundType.class.getCanonicalName(), "org.literacyapp.dao.converter.SoundTypeConverter");
         } else if (field.getType().isAssignableFrom(VowelLength.class)) {
@@ -90,6 +101,8 @@ public class EntityHelper {
                 }
                 index++;
             }
+        } else if (field.getType().isAssignableFrom(Set.class)) {
+            entity.addStringProperty(field.getName()).customType(Set.class.getCanonicalName(), "org.literacyapp.dao.converter.StringSetConverter");
         } else {
             entity = null;
             System.err.println("Missing type support must be added: " + field.getType());
