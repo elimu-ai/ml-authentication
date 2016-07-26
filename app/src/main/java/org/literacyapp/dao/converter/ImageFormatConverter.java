@@ -5,7 +5,7 @@ import org.literacyapp.util.Log;
 
 import de.greenrobot.dao.converter.PropertyConverter;
 
-public class ImageTypeConverter implements PropertyConverter<ImageType, String> {
+public class ImageFormatConverter implements PropertyConverter<ImageType, String> {
 
     @Override
     public ImageType convertToEntityProperty(String databaseValue) {
