@@ -3,6 +3,7 @@ package com.greendao.generator;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.AudioFormat;
 import org.literacyapp.model.enums.content.ImageFormat;
+import org.literacyapp.model.enums.content.VideoFormat;
 import org.literacyapp.model.enums.content.allophone.ConsonantPlace;
 import org.literacyapp.model.enums.content.allophone.ConsonantType;
 import org.literacyapp.model.enums.content.allophone.ConsonantVoicing;
@@ -62,6 +63,8 @@ public class EntityHelper {
             entity.addStringProperty(field.getName()).customType(AudioFormat.class.getCanonicalName(), "org.literacyapp.dao.converter.AudioFormatConverter");
         } else if (field.getType().isAssignableFrom(ImageFormat.class)) {
             entity.addStringProperty(field.getName()).customType(ImageFormat.class.getCanonicalName(), "org.literacyapp.dao.converter.ImageFormatConverter");
+        } else if (field.getType().isAssignableFrom(VideoFormat.class)) {
+            entity.addStringProperty(field.getName()).customType(VideoFormat.class.getCanonicalName(), "org.literacyapp.dao.converter.VideoFormatConverter");
         } else if (field.getType().isAssignableFrom(SoundType.class)) {
             entity.addStringProperty(field.getName()).customType(SoundType.class.getCanonicalName(), "org.literacyapp.dao.converter.SoundTypeConverter");
         } else if (field.getType().isAssignableFrom(VowelLength.class)) {

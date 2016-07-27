@@ -21,15 +21,22 @@ import org.literacyapp.R;
 import org.literacyapp.dao.Allophone;
 import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
+import org.literacyapp.dao.Letter;
+import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
+import org.literacyapp.dao.Word;
+import org.literacyapp.dao.WordDao;
 import org.literacyapp.model.gson.content.AllophoneGson;
+import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
+import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.Log;
+import org.literacyapp.util.VersionHelper;
 
 import java.lang.reflect.Type;
 import java.util.Calendar;
@@ -47,6 +54,8 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
     private AllophoneDao allophoneDao;
     private NumberDao numberDao;
+    private LetterDao letterDao;
+    private WordDao wordDao;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -57,6 +66,8 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
         LiteracyApplication literacyApplication = (LiteracyApplication) context.getApplicationContext();
         allophoneDao = literacyApplication.getDaoSession().getAllophoneDao();
         numberDao = literacyApplication.getDaoSession().getNumberDao();
+        letterDao = literacyApplication.getDaoSession().getLetterDao();
+        wordDao = literacyApplication.getDaoSession().getWordDao();
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
         Log.d(getClass(), "isWifiEnabled: " + isWifiEnabled);
@@ -80,7 +91,8 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             if (!isServerReachable) {
                 return null;
             } else {
-                String url = EnvironmentSettings.getRestUrl() + "/device/read/" + DeviceInfoHelper.getDeviceId(context);
+                String url = EnvironmentSettings.getRestUrl() + "/device/read/" + DeviceInfoHelper.getDeviceId(context) +
+                        "?appVersionCode=" + VersionHelper.getAppVersionCode(context);
                 String jsonResponse = JsonLoader.loadJson(url);
                 Log.d(getClass(), "jsonResponse: " + jsonResponse);
                 return jsonResponse;
@@ -92,7 +104,9 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             Log.d(getClass(), "onPostExecute");
             super.onPostExecute(jsonResponse);
 
-            if (!TextUtils.isEmpty(jsonResponse)) {
+            if (TextUtils.isEmpty(jsonResponse)) {
+                Toast.makeText(context, context.getString(R.string.server_is_not_reachable), Toast.LENGTH_SHORT).show();
+            } else {
                 try {
                     JSONObject jsonObject = new JSONObject(jsonResponse);
                     if (!"success".equals(jsonObject.getString("result"))) {
@@ -129,6 +143,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                         "&deviceManufacturer=" + DeviceInfoHelper.getDeviceManufacturer(context) +
                         "&deviceModel=" + DeviceInfoHelper.getDeviceModel(context) +
                         "&deviceSerial=" + DeviceInfoHelper.getDeviceSerialNumber(context) +
+                        "&appVersionCode=" + VersionHelper.getAppVersionCode(context) +
                         "&osVersion=" + Build.VERSION.SDK_INT +
                         "&locale=" + DeviceInfoHelper.getLocale(context);
                 String jsonResponse = JsonLoader.loadJson(url);
@@ -142,7 +157,9 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             Log.d(getClass(), "onPostExecute");
             super.onPostExecute(jsonResponse);
 
-            if (!TextUtils.isEmpty(jsonResponse)) {
+            if (TextUtils.isEmpty(jsonResponse)) {
+                Toast.makeText(context, context.getString(R.string.server_is_not_reachable), Toast.LENGTH_SHORT).show();
+            } else {
                 try {
                     JSONObject jsonObject = new JSONObject(jsonResponse);
                     if (!"success".equals(jsonObject.getString("result"))) {
@@ -201,6 +218,38 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             }
 
 
+            publishProgress("Downloading Letters");
+            url = EnvironmentSettings.getRestUrl() + "/content/letter/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("letters");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<LetterGson>(){}.getType();
+                        LetterGson letterGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Letter letter = GsonToGreenDaoConverter.getLetter(letterGson);
+                        Letter existingLetter = letterDao.queryBuilder()
+                                .where(LetterDao.Properties.Id.eq(letter.getId()))
+                                .unique();
+                        if (existingLetter == null) {
+                            letterDao.insert(letter);
+                            Log.d(getClass(), "Stored Letter with id " + letter.getId() + " and text '" + letter.getText() + "'");
+                        } else {
+                            Log.d(getClass(), "Letter " + letter.getText() + " already exists in database with id " + letter.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
+
+
             publishProgress("Downloading Numbers");
             url = EnvironmentSettings.getRestUrl() + "/content/number/list" +
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
@@ -212,10 +261,10 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                 if (!"success".equals(jsonObject.getString("result"))) {
                     Log.w(getClass(), "Download failed");
                 } else {
-                    JSONArray jsonArrayNumbers = jsonObject.getJSONArray("numbers");
-                    for (int i = 0; i < jsonArrayNumbers.length(); i++) {
+                    JSONArray jsonArray = jsonObject.getJSONArray("numbers");
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         Type type = new TypeToken<NumberGson>(){}.getType();
-                        NumberGson numberGson = new Gson().fromJson(jsonArrayNumbers.getString(i), type);
+                        NumberGson numberGson = new Gson().fromJson(jsonArray.getString(i), type);
                         Number number = GsonToGreenDaoConverter.getNumber(numberGson);
                         Number existingNumber = numberDao.queryBuilder()
                                 .where(NumberDao.Properties.Id.eq(number.getId()))
@@ -231,6 +280,47 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             } catch (JSONException e) {
                 Log.e(getClass(), null, e);
             }
+
+
+            publishProgress("Downloading Words");
+            url = EnvironmentSettings.getRestUrl() + "/content/word/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("words");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<WordGson>(){}.getType();
+                        WordGson wordGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Word word = GsonToGreenDaoConverter.getWord(wordGson);
+                        Word existingWord = wordDao.queryBuilder()
+                                .where(WordDao.Properties.Id.eq(word.getId()))
+                                .unique();
+                        if (existingWord == null) {
+                            wordDao.insert(word);
+                            Log.d(getClass(), "Stored Word with id " + word.getId() + " and text '" + word.getText() + "'");
+                        } else {
+                            Log.d(getClass(), "Word " + word.getText() + " already exists in database with id " + word.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
+
+
+            // TODO: Audios
+
+
+            // TODO: Images
+
+
+            // TODO: Videos
 
 
             // Update time of last content synchronization

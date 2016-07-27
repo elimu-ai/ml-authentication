@@ -1,6 +1,7 @@
 package org.literacyapp.dao;
 
 import org.literacyapp.model.gson.content.AllophoneGson;
+import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
 
@@ -26,7 +27,24 @@ public class GsonToGreenDaoConverter {
             allophone.setConsonantType(allophoneGson.getConsonantType());
             allophone.setConsonantPlace(allophoneGson.getConsonantPlace());
             allophone.setConsonantVoicing(allophoneGson.getConsonantVoicing());
+
             return allophone;
+        }
+    }
+
+    public static Letter getLetter(LetterGson letterGson) {
+        if (letterGson == null) {
+            return null;
+        } else {
+            Letter letter = new Letter();
+            letter.setId(letterGson.getId());
+            letter.setLocale(letterGson.getLocale());
+            letter.setTimeLastUpdate(letterGson.getTimeLastUpdate());
+            letter.setRevisionNumber(letterGson.getRevisionNumber());
+
+            letter.setText(letterGson.getText());
+
+            return letter;
         }
     }
 
@@ -37,9 +55,13 @@ public class GsonToGreenDaoConverter {
             Number number = new Number();
             number.setId(numberGson.getId());
             number.setLocale(numberGson.getLocale());
+            number.setTimeLastUpdate(numberGson.getTimeLastUpdate());
+            number.setRevisionNumber(numberGson.getRevisionNumber());
+
             number.setValue(numberGson.getValue());
             number.setSymbol(numberGson.getSymbol());
             number.setWord(getWord(numberGson.getWord()));
+
             return number;
         }
     }
@@ -51,7 +73,11 @@ public class GsonToGreenDaoConverter {
             Word word = new Word();
             word.setId(wordGson.getId());
             word.setLocale(wordGson.getLocale());
+            word.setTimeLastUpdate(wordGson.getTimeLastUpdate());
+            word.setRevisionNumber(wordGson.getRevisionNumber());
+
             word.setText(wordGson.getText());
+
             return word;
         }
     }
