@@ -28,9 +28,9 @@ public class MainGenerator {
 
         Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
         Entity letter = EntityHelper.createEntityFromClass(LetterGson.class, schema);
+        Entity audio = EntityHelper.createEntityFromClass(AudioGson.class, schema);
         Entity word = EntityHelper.createEntityFromClass(WordGson.class, schema);
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
-        Entity audio = EntityHelper.createEntityFromClass(AudioGson.class, schema);
         Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
         Entity video = EntityHelper.createEntityFromClass(VideoGson.class, schema);
 

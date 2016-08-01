@@ -1,7 +1,8 @@
 package org.literacyapp;
 
+import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
-import android.content.Intent;
+import android.animation.ObjectAnimator;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import org.literacyapp.task.TagItemsActivity;
 import org.literacyapp.util.Log;
 
 public class CategoryActivity extends AppCompatActivity {
@@ -36,14 +36,16 @@ public class CategoryActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
 
-    ImageView zero, one;
+    ImageView indicator0;
+    ImageView indicator1;
+    ImageView indicator2;
     ImageView[] indicators;
 
     int lastLeftValue = 0;
 
     CoordinatorLayout mCoordinator;
 
-    int page = 0;   //  to track page position
+    int pagePosition = 0;
 
     static View rootView;
 
@@ -58,25 +60,31 @@ public class CategoryActivity extends AppCompatActivity {
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        zero = (ImageView) findViewById(R.id.intro_indicator_0);
-        one = (ImageView) findViewById(R.id.intro_indicator_1);
+        indicator0 = (ImageView) findViewById(R.id.intro_indicator_0);
+        indicator1 = (ImageView) findViewById(R.id.intro_indicator_1);
+        indicator2 = (ImageView) findViewById(R.id.intro_indicator_2);
 
         mCoordinator = (CoordinatorLayout) findViewById(R.id.main_content);
 
 
-        indicators = new ImageView[]{zero, one};
+        indicators = new ImageView[]{
+                indicator0,
+                indicator1,
+                indicator2
+        };
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.categoryContainer);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mViewPager.setCurrentItem(page);
-        updateIndicators(page);
+        mViewPager.setCurrentItem(pagePosition);
+        updateIndicators(pagePosition);
 
         final int color1 = ContextCompat.getColor(this, R.color.green);
-        final int color2 = ContextCompat.getColor(this, R.color.cyan);
+        final int color2 = ContextCompat.getColor(this, R.color.blue);
+        final int color3 = ContextCompat.getColor(this, R.color.purple);
 
-        final int[] colorList = new int[]{color1, color2};
+        final int[] colorList = new int[]{color1, color2, color3};
 
         final ArgbEvaluator evaluator = new ArgbEvaluator();
 
@@ -95,9 +103,9 @@ public class CategoryActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
-                page = position;
+                pagePosition = position;
 
-                updateIndicators(page);
+                updateIndicators(pagePosition);
 
                 switch (position) {
                     case 0:
@@ -106,9 +114,12 @@ public class CategoryActivity extends AppCompatActivity {
                     case 1:
                         mViewPager.setBackgroundColor(color2);
                         break;
+                    case 2:
+                        mViewPager.setBackgroundColor(color3);
+                        break;
                 }
 
-                // TODO: animate
+                animateImage((ImageView) findViewById(R.id.section_img));
 
                 MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.vocal_plop);
                 mediaPlayer.start();
@@ -119,6 +130,31 @@ public class CategoryActivity extends AppCompatActivity {
                 Log.d(getClass(), "onPageScrollStateChanged");
             }
         });
+    }
+
+    private void animateImage(final ImageView imageView) {
+        imageView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Play a subtle animation
+                final long duration = 300;
+
+                final ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(imageView, View.SCALE_X, 1f, 1.2f, 1f);
+                scaleXAnimator.setDuration(duration);
+                scaleXAnimator.setRepeatCount(1);
+
+                final ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(imageView, View.SCALE_Y, 1f, 1.2f, 1f);
+                scaleYAnimator.setDuration(duration);
+                scaleYAnimator.setRepeatCount(1);
+
+                scaleXAnimator.start();
+                scaleYAnimator.start();
+
+                final AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.play(scaleXAnimator).with(scaleYAnimator);
+                animatorSet.start();
+            }
+        }, 400);
     }
 
     @Override
@@ -156,7 +192,11 @@ public class CategoryActivity extends AppCompatActivity {
 
         ImageView img;
 
-        int[] bgs = new int[]{R.drawable.ic_grain_black_24dp, R.drawable.ic_spellcheck_black_24dp};
+        int[] bgs = new int[]{
+                R.drawable.ic_grain_black_24dp,
+                R.drawable.ic_spellcheck_black_24dp,
+                R.drawable.ic_chevron_right_24dp
+        };
 
         public PlaceholderFragment() {
         }
@@ -189,11 +229,18 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                     Log.d(getClass(), "onClick");
-                    Intent intent = new Intent(getActivity(), TagItemsActivity.class);
-                    startActivity(intent);
+                    // TODO
                     }
                 });
             } else if (sectionNumber == 2) {
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    Log.d(getClass(), "onClick");
+                    // TODO
+                    }
+                });
+            } else if (sectionNumber == 3) {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -209,7 +256,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
+     * indicator1 of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -220,7 +267,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
+            // getItem is called to instantiate the fragment for the given pagePosition.
             // Return a PlaceholderFragment (defined as a static inner class below).
             return PlaceholderFragment.newInstance(position + 1);
 
@@ -239,6 +286,8 @@ public class CategoryActivity extends AppCompatActivity {
                     return "SECTION 1";
                 case 1:
                     return "SECTION 2";
+                case 2:
+                    return "SECTION 3";
             }
             return null;
         }

@@ -108,8 +108,8 @@ public class EntityHelper {
             entity.addStringProperty(field.getName()).customType(Set.class.getCanonicalName(), "org.literacyapp.dao.converter.StringSetConverter");
         } else {
             entity = null;
-            System.err.println("Missing type support must be added: " + field.getType());
-            throw new RuntimeException("Missing type support must be added: " + field.getType());
+            System.err.println("Missing type support: " + field.getType());
+            throw new RuntimeException("Missing type support: " + field.getType());
         }
     }
 }
