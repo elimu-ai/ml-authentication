@@ -10,9 +10,9 @@ import de.greenrobot.dao.identityscope.IdentityScopeType;
 
 import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.LetterDao;
+import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.WordDao;
 import org.literacyapp.dao.NumberDao;
-import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.ImageDao;
 import org.literacyapp.dao.VideoDao;
 
@@ -27,9 +27,9 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
         AllophoneDao.createTable(db, ifNotExists);
         LetterDao.createTable(db, ifNotExists);
+        AudioDao.createTable(db, ifNotExists);
         WordDao.createTable(db, ifNotExists);
         NumberDao.createTable(db, ifNotExists);
-        AudioDao.createTable(db, ifNotExists);
         ImageDao.createTable(db, ifNotExists);
         VideoDao.createTable(db, ifNotExists);
     }
@@ -38,9 +38,9 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void dropAllTables(SQLiteDatabase db, boolean ifExists) {
         AllophoneDao.dropTable(db, ifExists);
         LetterDao.dropTable(db, ifExists);
+        AudioDao.dropTable(db, ifExists);
         WordDao.dropTable(db, ifExists);
         NumberDao.dropTable(db, ifExists);
-        AudioDao.dropTable(db, ifExists);
         ImageDao.dropTable(db, ifExists);
         VideoDao.dropTable(db, ifExists);
     }
@@ -76,9 +76,9 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(AllophoneDao.class);
         registerDaoClass(LetterDao.class);
+        registerDaoClass(AudioDao.class);
         registerDaoClass(WordDao.class);
         registerDaoClass(NumberDao.class);
-        registerDaoClass(AudioDao.class);
         registerDaoClass(ImageDao.class);
         registerDaoClass(VideoDao.class);
     }

@@ -105,7 +105,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             super.onPostExecute(jsonResponse);
 
             if (TextUtils.isEmpty(jsonResponse)) {
-                Toast.makeText(context, context.getString(R.string.server_is_not_reachable), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.server_is_not_reachable), Toast.LENGTH_LONG).show();
             } else {
                 try {
                     JSONObject jsonObject = new JSONObject(jsonResponse);
