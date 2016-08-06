@@ -6,9 +6,9 @@ public class EnvironmentSettings {
 
     public static final String DOMAIN = "literacyapp.org";
 
-      public static final Environment ENVIRONMENT = Environment.DEV;
+//      public static final Environment ENVIRONMENT = Environment.DEV;
 //      public static final Environment ENVIRONMENT = Environment.TEST;
-//    public static final Environment ENVIRONMENT = Environment.PROD;
+    public static final Environment ENVIRONMENT = Environment.PROD;
 
     public static String getBaseUrl() {
         if (ENVIRONMENT == Environment.DEV) {

@@ -71,8 +71,12 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
         Log.d(getClass(), "isWifiEnabled: " + isWifiEnabled);
+        boolean isWifiConnected = ConnectivityHelper.isWifiConnected(context);
+        Log.d(getClass(), "isWifiConnected: " + isWifiConnected);
         if (!isWifiEnabled) {
             Toast.makeText(context, context.getString(R.string.wifi_needs_to_be_enabled), Toast.LENGTH_SHORT).show();
+        } else if (!isWifiConnected) {
+            Toast.makeText(context, context.getString(R.string.wifi_needs_to_be_connected), Toast.LENGTH_SHORT).show();
         } else {
             // TODO: check if newer version of application exists
             new ReadDeviceAsyncTask().execute();

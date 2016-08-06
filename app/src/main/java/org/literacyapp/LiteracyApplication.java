@@ -18,6 +18,7 @@ public class LiteracyApplication extends Application {
         Log.d(getClass(), "onCreate");
         super.onCreate();
 
+        // Initialize greenDAO database
         DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
         db = openHelper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
