@@ -35,7 +35,13 @@ public class JsonLoader {
                 inputStream = httpURLConnection.getErrorStream();
             }
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            jsonResponse = bufferedReader.readLine();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                if (jsonResponse == null) {
+                    jsonResponse = "";
+                }
+                jsonResponse += line;
+            }
         } catch (MalformedURLException e) {
             Log.e(JsonLoader.class, "MalformedURLException", e);
             e.printStackTrace();

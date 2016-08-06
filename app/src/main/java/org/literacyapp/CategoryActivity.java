@@ -198,7 +198,7 @@ public class CategoryActivity extends AppCompatActivity {
         int[] bgs = new int[]{
                 R.drawable.ic_grain_black_24dp,
                 R.drawable.ic_spellcheck_black_24dp,
-                R.drawable.ic_chevron_right_24dp
+                R.drawable.ic_play_circle_outline_black_24dp
         };
 
         public PlaceholderFragment() {

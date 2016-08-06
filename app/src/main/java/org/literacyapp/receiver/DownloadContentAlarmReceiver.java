@@ -147,6 +147,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                         "&deviceManufacturer=" + DeviceInfoHelper.getDeviceManufacturer(context) +
                         "&deviceModel=" + DeviceInfoHelper.getDeviceModel(context) +
                         "&deviceSerial=" + DeviceInfoHelper.getDeviceSerialNumber(context) +
+                        "&applicationId=" + context.getPackageName() +
                         "&appVersionCode=" + VersionHelper.getAppVersionCode(context) +
                         "&osVersion=" + Build.VERSION.SDK_INT +
                         "&locale=" + DeviceInfoHelper.getLocale(context);
