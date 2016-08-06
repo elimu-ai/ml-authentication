@@ -19,6 +19,9 @@ import android.widget.ImageView;
 
 import org.literacyapp.util.Log;
 
+/**
+ * Activity for selecting between literacy, numeracy, and videos.
+ */
 public class CategoryActivity extends AppCompatActivity {
 
     /**
