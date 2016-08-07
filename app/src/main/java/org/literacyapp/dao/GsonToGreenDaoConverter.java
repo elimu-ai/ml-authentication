@@ -4,6 +4,8 @@ import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
+import org.literacyapp.model.gson.content.multimedia.AudioGson;
+import org.literacyapp.model.gson.content.multimedia.ImageGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
 
 public class GsonToGreenDaoConverter {
@@ -80,6 +82,53 @@ public class GsonToGreenDaoConverter {
             word.setText(wordGson.getText());
 
             return word;
+        }
+    }
+
+    public static Audio getAudio(AudioGson audioGson) {
+        if (audioGson == null) {
+            return null;
+        } else {
+            Audio audio = new Audio();
+            audio.setId(audioGson.getId());
+            audio.setLocale(audioGson.getLocale());
+            audio.setTimeLastUpdate(audioGson.getTimeLastUpdate());
+            audio.setRevisionNumber(audioGson.getRevisionNumber());
+
+            audio.setFileUrl(audioGson.getFileUrl());
+            audio.setFileSize(audioGson.getFileSize());
+            audio.setContentType(audioGson.getContentType());
+            audio.setLiteracySkills(audioGson.getLiteracySkills());
+            audio.setNumeracySkills(audioGson.getNumeracySkills());
+
+            audio.setTranscription(audioGson.getTranscription());
+            audio.setAudioFormat(audioGson.getAudioFormat());
+
+            return audio;
+        }
+    }
+
+    public static Image getImage(ImageGson imageGson) {
+        if (imageGson == null) {
+            return null;
+        } else {
+            Image image = new Image();
+            image.setId(imageGson.getId());
+            image.setLocale(imageGson.getLocale());
+            image.setTimeLastUpdate(imageGson.getTimeLastUpdate());
+            image.setRevisionNumber(imageGson.getRevisionNumber());
+
+            image.setFileUrl(imageGson.getFileUrl());
+            image.setFileSize(imageGson.getFileSize());
+            image.setContentType(imageGson.getContentType());
+            image.setLiteracySkills(imageGson.getLiteracySkills());
+            image.setNumeracySkills(imageGson.getNumeracySkills());
+
+            image.setTitle(imageGson.getTitle());
+            image.setImageFormat(imageGson.getImageFormat());
+            image.setDominantColor(imageGson.getDominantColor());
+
+            return image;
         }
     }
 

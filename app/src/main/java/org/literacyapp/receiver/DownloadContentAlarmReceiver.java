@@ -20,7 +20,11 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.Allophone;
 import org.literacyapp.dao.AllophoneDao;
+import org.literacyapp.dao.Audio;
+import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
+import org.literacyapp.dao.Image;
+import org.literacyapp.dao.ImageDao;
 import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.Number;
@@ -33,6 +37,8 @@ import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
+import org.literacyapp.model.gson.content.multimedia.AudioGson;
+import org.literacyapp.model.gson.content.multimedia.ImageGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
@@ -60,6 +66,8 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
     private NumberDao numberDao;
     private LetterDao letterDao;
     private WordDao wordDao;
+    private AudioDao audioDao;
+    private ImageDao imageDao;
     private VideoDao videoDao;
 
     @Override
@@ -73,6 +81,8 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
         numberDao = literacyApplication.getDaoSession().getNumberDao();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         wordDao = literacyApplication.getDaoSession().getWordDao();
+        audioDao = literacyApplication.getDaoSession().getAudioDao();
+        imageDao = literacyApplication.getDaoSession().getImageDao();
         videoDao = literacyApplication.getDaoSession().getVideoDao();
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
@@ -325,10 +335,76 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             }
 
 
-            // TODO: Audios
+            publishProgress("Downloading Audios");
+            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/audio/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("audios");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<AudioGson>(){}.getType();
+                        AudioGson audioGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Audio audio = GsonToGreenDaoConverter.getAudio(audioGson);
+                        Audio existingAudio = audioDao.queryBuilder()
+                                .where(AudioDao.Properties.Id.eq(audio.getId()))
+                                .unique();
+                        if (existingAudio == null) {
+                            // Download bytes
+                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audio.getFileUrl());
+                            Log.d(getClass(), "bytes.length: " + bytes.length);
+                            audio.setBytes(bytes);
+                            audioDao.insert(audio);
+                            Log.d(getClass(), "Stored Audio with id " + audio.getId() + " and transcription \"" + audio.getTranscription() + "\"");
+                        } else {
+                            Log.d(getClass(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
 
 
-            // TODO: Images
+            publishProgress("Downloading Images");
+            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/image/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("images");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<ImageGson>(){}.getType();
+                        ImageGson imageGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Image image = GsonToGreenDaoConverter.getImage(imageGson);
+                        Image existingImage = imageDao.queryBuilder()
+                                .where(ImageDao.Properties.Id.eq(image.getId()))
+                                .unique();
+                        if (existingImage == null) {
+                            // Download bytes
+                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + image.getFileUrl());
+                            Log.d(getClass(), "bytes.length: " + bytes.length);
+                            image.setBytes(bytes);
+                            imageDao.insert(image);
+                            Log.d(getClass(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                        } else {
+                            Log.d(getClass(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
 
 
             publishProgress("Downloading Videos");
