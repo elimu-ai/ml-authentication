@@ -5,6 +5,7 @@ import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
+import org.literacyapp.model.gson.content.multimedia.ImageGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
 
 public class GsonToGreenDaoConverter {
@@ -104,6 +105,30 @@ public class GsonToGreenDaoConverter {
             audio.setAudioFormat(audioGson.getAudioFormat());
 
             return audio;
+        }
+    }
+
+    public static Image getImage(ImageGson imageGson) {
+        if (imageGson == null) {
+            return null;
+        } else {
+            Image image = new Image();
+            image.setId(imageGson.getId());
+            image.setLocale(imageGson.getLocale());
+            image.setTimeLastUpdate(imageGson.getTimeLastUpdate());
+            image.setRevisionNumber(imageGson.getRevisionNumber());
+
+            image.setFileUrl(imageGson.getFileUrl());
+            image.setFileSize(imageGson.getFileSize());
+            image.setContentType(imageGson.getContentType());
+            image.setLiteracySkills(imageGson.getLiteracySkills());
+            image.setNumeracySkills(imageGson.getNumeracySkills());
+
+            image.setTitle(imageGson.getTitle());
+            image.setImageFormat(imageGson.getImageFormat());
+            image.setDominantColor(imageGson.getDominantColor());
+
+            return image;
         }
     }
 

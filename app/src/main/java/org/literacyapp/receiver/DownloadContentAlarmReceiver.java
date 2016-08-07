@@ -23,6 +23,8 @@ import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.Audio;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
+import org.literacyapp.dao.Image;
+import org.literacyapp.dao.ImageDao;
 import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.Number;
@@ -36,6 +38,7 @@ import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
+import org.literacyapp.model.gson.content.multimedia.ImageGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
@@ -64,6 +67,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
     private LetterDao letterDao;
     private WordDao wordDao;
     private AudioDao audioDao;
+    private ImageDao imageDao;
     private VideoDao videoDao;
 
     @Override
@@ -78,6 +82,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         wordDao = literacyApplication.getDaoSession().getWordDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
+        imageDao = literacyApplication.getDaoSession().getImageDao();
         videoDao = literacyApplication.getDaoSession().getVideoDao();
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
@@ -366,7 +371,40 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             }
 
 
-            // TODO: Images
+            publishProgress("Downloading Images");
+            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/image/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("images");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<ImageGson>(){}.getType();
+                        ImageGson imageGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Image image = GsonToGreenDaoConverter.getImage(imageGson);
+                        Image existingImage = imageDao.queryBuilder()
+                                .where(ImageDao.Properties.Id.eq(image.getId()))
+                                .unique();
+                        if (existingImage == null) {
+                            // Download bytes
+                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + image.getFileUrl());
+                            Log.d(getClass(), "bytes.length: " + bytes.length);
+                            image.setBytes(bytes);
+                            imageDao.insert(image);
+                            Log.d(getClass(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                        } else {
+                            Log.d(getClass(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
 
 
             publishProgress("Downloading Videos");
