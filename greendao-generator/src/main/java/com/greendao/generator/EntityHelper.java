@@ -35,7 +35,9 @@ public class EntityHelper {
         entity = schema.addEntity(className);
 
         if (clazz.getSuperclass() != null) {
+            System.out.println("Superclass: " + clazz.getSuperclass().getSimpleName());
             if (clazz.getSuperclass().getSuperclass() != null) {
+                System.out.println("Supersuperclass: " + clazz.getSuperclass().getSuperclass().getSimpleName());
                 for (Field field : clazz.getSuperclass().getSuperclass().getDeclaredFields()) {
                     System.out.println("class name: " + clazz.getSuperclass().getSuperclass().getSimpleName() + ", field type: " + field.getType() + ", field name: " + field.getName());
                     addFieldToEntity(schema, entity, field);
@@ -45,6 +47,10 @@ public class EntityHelper {
             for (Field field : clazz.getSuperclass().getDeclaredFields()) {
                 System.out.println("class name: " + clazz.getSuperclass().getSimpleName() + ", field type: " + field.getType() + ", field name: " + field.getName());
                 addFieldToEntity(schema, entity, field);
+            }
+
+            if ("MultimediaGson".equals(clazz.getSuperclass().getSimpleName())) {
+                entity.addByteArrayProperty("bytes");
             }
         }
 

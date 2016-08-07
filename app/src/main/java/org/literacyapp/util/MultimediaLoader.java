@@ -1,5 +1,7 @@
 package org.literacyapp.util;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,12 +13,12 @@ import java.net.URL;
 
 public class MultimediaLoader {
 
-    public static String loadJson(String urlValue) {
-        Log.d(MultimediaLoader.class, "loadJson");
+    public static byte[] loadMultimedia(String urlValue) {
+        Log.d(MultimediaLoader.class, "loadMultimedia");
 
         Log.d(MultimediaLoader.class, "Downloading from " + urlValue + "...");
 
-        String jsonResponse = null;
+        byte[] bytes = null;
 
         try {
             URL url = new URL(urlValue);
@@ -31,16 +33,16 @@ public class MultimediaLoader {
             InputStream inputStream = null;
             if (responseCode == 200) {
                 inputStream = httpURLConnection.getInputStream();
+                bytes = IOUtils.toByteArray(inputStream);
             } else {
                 inputStream = httpURLConnection.getErrorStream();
-            }
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                if (jsonResponse == null) {
-                    jsonResponse = "";
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String response = "";
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    response += line;
                 }
-                jsonResponse += line;
+                Log.w(MultimediaLoader.class, "responseCode: " + responseCode + ", response: " + response);
             }
         } catch (MalformedURLException e) {
             Log.e(MultimediaLoader.class, "MalformedURLException", e);
@@ -53,6 +55,6 @@ public class MultimediaLoader {
             e.printStackTrace();
         }
 
-        return jsonResponse;
+        return bytes;
     }
 }

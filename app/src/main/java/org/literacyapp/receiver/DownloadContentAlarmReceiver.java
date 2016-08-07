@@ -25,17 +25,21 @@ import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
+import org.literacyapp.dao.Video;
+import org.literacyapp.dao.VideoDao;
 import org.literacyapp.dao.Word;
 import org.literacyapp.dao.WordDao;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
+import org.literacyapp.model.gson.content.multimedia.VideoGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.Log;
+import org.literacyapp.util.MultimediaLoader;
 import org.literacyapp.util.VersionHelper;
 
 import java.lang.reflect.Type;
@@ -56,6 +60,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
     private NumberDao numberDao;
     private LetterDao letterDao;
     private WordDao wordDao;
+    private VideoDao videoDao;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -68,6 +73,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
         numberDao = literacyApplication.getDaoSession().getNumberDao();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         wordDao = literacyApplication.getDaoSession().getWordDao();
+        videoDao = literacyApplication.getDaoSession().getVideoDao();
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
         Log.d(getClass(), "isWifiEnabled: " + isWifiEnabled);
@@ -325,7 +331,39 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             // TODO: Images
 
 
-            // TODO: Videos
+            publishProgress("Downloading Videos");
+            url = EnvironmentSettings.getRestUrl() + "/content/video/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("videos");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<VideoGson>(){}.getType();
+                        VideoGson videoGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Video video = GsonToGreenDaoConverter.getVideo(videoGson);
+                        Video existingVideo = videoDao.queryBuilder()
+                                .where(VideoDao.Properties.Id.eq(video.getId()))
+                                .unique();
+                        if (existingVideo == null) {
+                            // Download bytes
+                            byte[] bytes = MultimediaLoader.loadMultimedia(video.getFileUrl());
+                            video.setBytes(bytes);
+                            videoDao.insert(video);
+                            Log.d(getClass(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
+                        } else {
+                            Log.d(getClass(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass(), null, e);
+            }
 
 
             // Update time of last content synchronization

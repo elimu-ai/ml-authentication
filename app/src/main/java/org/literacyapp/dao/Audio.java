@@ -21,6 +21,7 @@ public class Audio {
     private String attributionUrl;
     private Set literacySkills;
     private Set numeracySkills;
+    private byte[] bytes;
     private String transcription;
     private AudioFormat audioFormat;
 
@@ -31,7 +32,7 @@ public class Audio {
         this.id = id;
     }
 
-    public Audio(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String fileUrl, Integer fileSize, String contentType, String attributionUrl, Set literacySkills, Set numeracySkills, String transcription, AudioFormat audioFormat) {
+    public Audio(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String fileUrl, Integer fileSize, String contentType, String attributionUrl, Set literacySkills, Set numeracySkills, byte[] bytes, String transcription, AudioFormat audioFormat) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -42,6 +43,7 @@ public class Audio {
         this.attributionUrl = attributionUrl;
         this.literacySkills = literacySkills;
         this.numeracySkills = numeracySkills;
+        this.bytes = bytes;
         this.transcription = transcription;
         this.audioFormat = audioFormat;
     }
@@ -124,6 +126,14 @@ public class Audio {
 
     public void setNumeracySkills(Set numeracySkills) {
         this.numeracySkills = numeracySkills;
+    }
+
+    public byte[] getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
     }
 
     public String getTranscription() {

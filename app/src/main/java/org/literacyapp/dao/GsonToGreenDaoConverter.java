@@ -4,6 +4,7 @@ import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
+import org.literacyapp.model.gson.content.multimedia.VideoGson;
 
 public class GsonToGreenDaoConverter {
 
@@ -79,6 +80,29 @@ public class GsonToGreenDaoConverter {
             word.setText(wordGson.getText());
 
             return word;
+        }
+    }
+
+    public static Video getVideo(VideoGson videoGson) {
+        if (videoGson == null) {
+            return null;
+        } else {
+            Video video = new Video();
+            video.setId(videoGson.getId());
+            video.setLocale(videoGson.getLocale());
+            video.setTimeLastUpdate(videoGson.getTimeLastUpdate());
+            video.setRevisionNumber(videoGson.getRevisionNumber());
+
+            video.setFileUrl(videoGson.getFileUrl());
+            video.setFileSize(videoGson.getFileSize());
+            video.setContentType(videoGson.getContentType());
+            video.setLiteracySkills(videoGson.getLiteracySkills());
+            video.setNumeracySkills(videoGson.getNumeracySkills());
+
+            video.setTitle(videoGson.getTitle());
+            video.setVideoFormat(videoGson.getVideoFormat());
+
+            return video;
         }
     }
 }
