@@ -22,6 +22,6 @@ public class TagItemsActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-
+        // TODO
     }
 }

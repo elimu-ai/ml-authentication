@@ -42,9 +42,10 @@ public class ImageDao extends AbstractDao<Image, Long> {
         public final static Property AttributionUrl = new Property(7, String.class, "attributionUrl", false, "ATTRIBUTION_URL");
         public final static Property LiteracySkills = new Property(8, String.class, "literacySkills", false, "LITERACY_SKILLS");
         public final static Property NumeracySkills = new Property(9, String.class, "numeracySkills", false, "NUMERACY_SKILLS");
-        public final static Property Title = new Property(10, String.class, "title", false, "TITLE");
-        public final static Property ImageFormat = new Property(11, String.class, "imageFormat", false, "IMAGE_FORMAT");
-        public final static Property DominantColor = new Property(12, String.class, "dominantColor", false, "DOMINANT_COLOR");
+        public final static Property Bytes = new Property(10, byte[].class, "bytes", false, "BYTES");
+        public final static Property Title = new Property(11, String.class, "title", false, "TITLE");
+        public final static Property ImageFormat = new Property(12, String.class, "imageFormat", false, "IMAGE_FORMAT");
+        public final static Property DominantColor = new Property(13, String.class, "dominantColor", false, "DOMINANT_COLOR");
     };
 
     private final LocaleConverter localeConverter = new LocaleConverter();
@@ -75,9 +76,10 @@ public class ImageDao extends AbstractDao<Image, Long> {
                 "\"ATTRIBUTION_URL\" TEXT," + // 7: attributionUrl
                 "\"LITERACY_SKILLS\" TEXT," + // 8: literacySkills
                 "\"NUMERACY_SKILLS\" TEXT," + // 9: numeracySkills
-                "\"TITLE\" TEXT," + // 10: title
-                "\"IMAGE_FORMAT\" TEXT," + // 11: imageFormat
-                "\"DOMINANT_COLOR\" TEXT);"); // 12: dominantColor
+                "\"BYTES\" BLOB," + // 10: bytes
+                "\"TITLE\" TEXT," + // 11: title
+                "\"IMAGE_FORMAT\" TEXT," + // 12: imageFormat
+                "\"DOMINANT_COLOR\" TEXT);"); // 13: dominantColor
     }
 
     /** Drops the underlying database table. */
@@ -141,19 +143,24 @@ public class ImageDao extends AbstractDao<Image, Long> {
             stmt.bindString(10, numeracySkillsConverter.convertToDatabaseValue(numeracySkills));
         }
  
+        byte[] bytes = entity.getBytes();
+        if (bytes != null) {
+            stmt.bindBlob(11, bytes);
+        }
+ 
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(11, title);
+            stmt.bindString(12, title);
         }
  
         ImageFormat imageFormat = entity.getImageFormat();
         if (imageFormat != null) {
-            stmt.bindString(12, imageFormatConverter.convertToDatabaseValue(imageFormat));
+            stmt.bindString(13, imageFormatConverter.convertToDatabaseValue(imageFormat));
         }
  
         String dominantColor = entity.getDominantColor();
         if (dominantColor != null) {
-            stmt.bindString(13, dominantColor);
+            stmt.bindString(14, dominantColor);
         }
     }
 
@@ -177,9 +184,10 @@ public class ImageDao extends AbstractDao<Image, Long> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // attributionUrl
             cursor.isNull(offset + 8) ? null : literacySkillsConverter.convertToEntityProperty(cursor.getString(offset + 8)), // literacySkills
             cursor.isNull(offset + 9) ? null : numeracySkillsConverter.convertToEntityProperty(cursor.getString(offset + 9)), // numeracySkills
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // title
-            cursor.isNull(offset + 11) ? null : imageFormatConverter.convertToEntityProperty(cursor.getString(offset + 11)), // imageFormat
-            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // dominantColor
+            cursor.isNull(offset + 10) ? null : cursor.getBlob(offset + 10), // bytes
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // title
+            cursor.isNull(offset + 12) ? null : imageFormatConverter.convertToEntityProperty(cursor.getString(offset + 12)), // imageFormat
+            cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13) // dominantColor
         );
         return entity;
     }
@@ -197,9 +205,10 @@ public class ImageDao extends AbstractDao<Image, Long> {
         entity.setAttributionUrl(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setLiteracySkills(cursor.isNull(offset + 8) ? null : literacySkillsConverter.convertToEntityProperty(cursor.getString(offset + 8)));
         entity.setNumeracySkills(cursor.isNull(offset + 9) ? null : numeracySkillsConverter.convertToEntityProperty(cursor.getString(offset + 9)));
-        entity.setTitle(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setImageFormat(cursor.isNull(offset + 11) ? null : imageFormatConverter.convertToEntityProperty(cursor.getString(offset + 11)));
-        entity.setDominantColor(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
+        entity.setBytes(cursor.isNull(offset + 10) ? null : cursor.getBlob(offset + 10));
+        entity.setTitle(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setImageFormat(cursor.isNull(offset + 12) ? null : imageFormatConverter.convertToEntityProperty(cursor.getString(offset + 12)));
+        entity.setDominantColor(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
      }
     
     /** @inheritdoc */

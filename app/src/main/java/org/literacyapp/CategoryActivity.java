@@ -3,6 +3,7 @@ package org.literacyapp;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.literacyapp.task.VideoActivity;
 import org.literacyapp.util.Log;
 
 /**
@@ -231,24 +233,25 @@ public class CategoryActivity extends AppCompatActivity {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    Log.d(getClass(), "onClick");
-                    // TODO
+                        Log.d(getClass(), "onClick");
+                        // TODO
                     }
                 });
             } else if (sectionNumber == 2) {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    Log.d(getClass(), "onClick");
-                    // TODO
+                        Log.d(getClass(), "onClick");
+                        // TODO
                     }
                 });
             } else if (sectionNumber == 3) {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    Log.d(getClass(), "onClick");
-                    // TODO
+                        Log.d(getClass(), "onClick");
+                        Intent videoIntent = new Intent(getActivity(), VideoActivity.class);
+                        startActivity(videoIntent);
                     }
                 });
             }

@@ -42,8 +42,9 @@ public class VideoDao extends AbstractDao<Video, Long> {
         public final static Property AttributionUrl = new Property(7, String.class, "attributionUrl", false, "ATTRIBUTION_URL");
         public final static Property LiteracySkills = new Property(8, String.class, "literacySkills", false, "LITERACY_SKILLS");
         public final static Property NumeracySkills = new Property(9, String.class, "numeracySkills", false, "NUMERACY_SKILLS");
-        public final static Property Title = new Property(10, String.class, "title", false, "TITLE");
-        public final static Property VideoFormat = new Property(11, String.class, "videoFormat", false, "VIDEO_FORMAT");
+        public final static Property Bytes = new Property(10, byte[].class, "bytes", false, "BYTES");
+        public final static Property Title = new Property(11, String.class, "title", false, "TITLE");
+        public final static Property VideoFormat = new Property(12, String.class, "videoFormat", false, "VIDEO_FORMAT");
     };
 
     private final LocaleConverter localeConverter = new LocaleConverter();
@@ -74,8 +75,9 @@ public class VideoDao extends AbstractDao<Video, Long> {
                 "\"ATTRIBUTION_URL\" TEXT," + // 7: attributionUrl
                 "\"LITERACY_SKILLS\" TEXT," + // 8: literacySkills
                 "\"NUMERACY_SKILLS\" TEXT," + // 9: numeracySkills
-                "\"TITLE\" TEXT," + // 10: title
-                "\"VIDEO_FORMAT\" TEXT);"); // 11: videoFormat
+                "\"BYTES\" BLOB," + // 10: bytes
+                "\"TITLE\" TEXT," + // 11: title
+                "\"VIDEO_FORMAT\" TEXT);"); // 12: videoFormat
     }
 
     /** Drops the underlying database table. */
@@ -139,14 +141,19 @@ public class VideoDao extends AbstractDao<Video, Long> {
             stmt.bindString(10, numeracySkillsConverter.convertToDatabaseValue(numeracySkills));
         }
  
+        byte[] bytes = entity.getBytes();
+        if (bytes != null) {
+            stmt.bindBlob(11, bytes);
+        }
+ 
         String title = entity.getTitle();
         if (title != null) {
-            stmt.bindString(11, title);
+            stmt.bindString(12, title);
         }
  
         VideoFormat videoFormat = entity.getVideoFormat();
         if (videoFormat != null) {
-            stmt.bindString(12, videoFormatConverter.convertToDatabaseValue(videoFormat));
+            stmt.bindString(13, videoFormatConverter.convertToDatabaseValue(videoFormat));
         }
     }
 
@@ -170,8 +177,9 @@ public class VideoDao extends AbstractDao<Video, Long> {
             cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // attributionUrl
             cursor.isNull(offset + 8) ? null : literacySkillsConverter.convertToEntityProperty(cursor.getString(offset + 8)), // literacySkills
             cursor.isNull(offset + 9) ? null : numeracySkillsConverter.convertToEntityProperty(cursor.getString(offset + 9)), // numeracySkills
-            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // title
-            cursor.isNull(offset + 11) ? null : videoFormatConverter.convertToEntityProperty(cursor.getString(offset + 11)) // videoFormat
+            cursor.isNull(offset + 10) ? null : cursor.getBlob(offset + 10), // bytes
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // title
+            cursor.isNull(offset + 12) ? null : videoFormatConverter.convertToEntityProperty(cursor.getString(offset + 12)) // videoFormat
         );
         return entity;
     }
@@ -189,8 +197,9 @@ public class VideoDao extends AbstractDao<Video, Long> {
         entity.setAttributionUrl(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
         entity.setLiteracySkills(cursor.isNull(offset + 8) ? null : literacySkillsConverter.convertToEntityProperty(cursor.getString(offset + 8)));
         entity.setNumeracySkills(cursor.isNull(offset + 9) ? null : numeracySkillsConverter.convertToEntityProperty(cursor.getString(offset + 9)));
-        entity.setTitle(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
-        entity.setVideoFormat(cursor.isNull(offset + 11) ? null : videoFormatConverter.convertToEntityProperty(cursor.getString(offset + 11)));
+        entity.setBytes(cursor.isNull(offset + 10) ? null : cursor.getBlob(offset + 10));
+        entity.setTitle(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setVideoFormat(cursor.isNull(offset + 12) ? null : videoFormatConverter.convertToEntityProperty(cursor.getString(offset + 12)));
      }
     
     /** @inheritdoc */
