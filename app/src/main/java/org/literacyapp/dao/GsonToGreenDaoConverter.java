@@ -4,6 +4,7 @@ import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
+import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
 
 public class GsonToGreenDaoConverter {
@@ -80,6 +81,29 @@ public class GsonToGreenDaoConverter {
             word.setText(wordGson.getText());
 
             return word;
+        }
+    }
+
+    public static Audio getAudio(AudioGson audioGson) {
+        if (audioGson == null) {
+            return null;
+        } else {
+            Audio audio = new Audio();
+            audio.setId(audioGson.getId());
+            audio.setLocale(audioGson.getLocale());
+            audio.setTimeLastUpdate(audioGson.getTimeLastUpdate());
+            audio.setRevisionNumber(audioGson.getRevisionNumber());
+
+            audio.setFileUrl(audioGson.getFileUrl());
+            audio.setFileSize(audioGson.getFileSize());
+            audio.setContentType(audioGson.getContentType());
+            audio.setLiteracySkills(audioGson.getLiteracySkills());
+            audio.setNumeracySkills(audioGson.getNumeracySkills());
+
+            audio.setTranscription(audioGson.getTranscription());
+            audio.setAudioFormat(audioGson.getAudioFormat());
+
+            return audio;
         }
     }
 
