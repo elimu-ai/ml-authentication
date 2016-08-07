@@ -29,12 +29,6 @@ public class CategoryTest {
                 .perform(swipeLeft());
 
         onView(withId(R.id.categoryContainer))
-                .perform(swipeLeft());
-
-        onView(withId(R.id.categoryContainer))
-                .perform(swipeRight());
-
-        onView(withId(R.id.categoryContainer))
                 .perform(swipeRight());
 
         onView(withId(R.id.categoryContainer))

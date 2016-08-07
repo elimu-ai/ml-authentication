@@ -332,7 +332,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
 
             publishProgress("Downloading Videos");
-            url = EnvironmentSettings.getRestUrl() + "/content/video/list" +
+            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/video/list" +
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
@@ -352,7 +352,8 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingVideo == null) {
                             // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(video.getFileUrl());
+                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + video.getFileUrl());
+                            Log.d(getClass(), "bytes.length: " + bytes.length);
                             video.setBytes(bytes);
                             videoDao.insert(video);
                             Log.d(getClass(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");

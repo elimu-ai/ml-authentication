@@ -12,7 +12,6 @@
     <!-- &lt;!&ndash; https://developer.android.com/guide/topics/graphics/opengl.html &ndash;&gt; -->
     <!-- &lt;!&ndash; OpenGL ES 3.1 - supported by Android 5.0 (API level 21) and higher &ndash;&gt; -->
     <!-- <uses-feature android:glEsVersion="0x00030001" android:required="true" /> -->
-
     <application
         android:name=".LiteracyApplication"
         android:allowBackup="true"
@@ -26,7 +25,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CategoryActivity" />
+        <activity android:name=".CategoryActivity" android:screenOrientation="fullSensor" />
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -39,9 +38,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".task.TagItemsActivity" />
-        <activity android:name=".content.number.NumberListActivity" />
-        <activity android:name=".content.word.WordListActivity" />
+        <activity android:name=".task.TagItemsActivity" android:screenOrientation="fullSensor" />
+        <activity android:name=".task.VideoActivity" android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

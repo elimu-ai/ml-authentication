@@ -23,7 +23,6 @@ public class JsonLoader {
 
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("GET");
-            httpURLConnection.setDoOutput(true);
             httpURLConnection.connect();
 
             int responseCode = httpURLConnection.getResponseCode();
