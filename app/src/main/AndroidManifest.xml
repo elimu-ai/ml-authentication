@@ -25,7 +25,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CategoryActivity" android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".CategoryActivity"
+            android:screenOrientation="fullSensor" />
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
@@ -38,8 +40,13 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".task.TagItemsActivity" android:screenOrientation="fullSensor" />
-        <activity android:name=".task.VideoActivity" android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".task.TagItemsActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".task.VideoActivity"
+            android:screenOrientation="fullSensor" />
+        <activity android:name=".task.GraphemeActivity"></activity>
     </application>
 
 </manifest>

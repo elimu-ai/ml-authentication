@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.literacyapp.task.GraphemeActivity;
 import org.literacyapp.task.VideoActivity;
 import org.literacyapp.util.Log;
 
@@ -199,7 +200,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         int[] bgs = new int[]{
                 R.drawable.ic_grain_black_24dp,
-                R.drawable.ic_spellcheck_black_24dp,
+                R.drawable.letter_a,
                 R.drawable.ic_play_circle_outline_black_24dp
         };
 
@@ -242,7 +243,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(getClass(), "onClick");
-                        // TODO
+                        Intent graphemeIntent = new Intent(getActivity(), GraphemeActivity.class);
+                        startActivity(graphemeIntent);
                     }
                 });
             } else if (sectionNumber == 3) {
