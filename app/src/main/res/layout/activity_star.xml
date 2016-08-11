@@ -7,21 +7,12 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.literacyapp.task.GraphemeActivity">
+    tools:context="org.literacyapp.task.StarActivity">
 
-    <ImageView android:id="@+id/graphemeImageView"
+    <ImageView
+        android:id="@+id/starImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/letter_a" />
-
-    <ImageButton android:id="@+id/graphemeImageButton"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:scaleType="fitXY"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_arrow_forward_black_24dp"
-        style="?android:attr/buttonBarButtonStyle"
-        android:tint="@color/blue" />
+        android:src="@drawable/animated_star" />
 </RelativeLayout>

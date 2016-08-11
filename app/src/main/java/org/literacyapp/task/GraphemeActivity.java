@@ -1,9 +1,12 @@
 package org.literacyapp.task;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
@@ -11,15 +14,13 @@ import org.literacyapp.R;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.util.Log;
 
-import java.util.Locale;
-
 public class GraphemeActivity extends AppCompatActivity {
 
     private ImageView mGraphemeImageView;
 
-    private AudioDao audioDao;
+    private ImageButton mGraphemeImageButton;
 
-    private TextToSpeech tts;
+    private AudioDao audioDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +31,10 @@ public class GraphemeActivity extends AppCompatActivity {
 
         mGraphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 
+        mGraphemeImageButton = (ImageButton) findViewById(R.id.graphemeImageButton);
+
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
-
-        tts = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                Log.d(getClass(), "tts onInit");
-
-                tts.setLanguage(Locale.US);
-            }
-        });
     }
 
     @Override
@@ -48,11 +42,14 @@ public class GraphemeActivity extends AppCompatActivity {
         Log.d(getClass(), "onStart");
         super.onStart();
 
-//        mGraphemeImageView.animate()
-//                .setStartDelay(500)
-//                .scaleX(2f)
-//                .scaleY(2f)
-//                .start();
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
         mGraphemeImageView.setOnClickListener(new View.OnClickListener() {
 
@@ -75,20 +72,40 @@ public class GraphemeActivity extends AppCompatActivity {
 
 //                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.phoneme_a);
 //                mediaPlayer.start();
-
-                tts.speak("a", TextToSpeech.QUEUE_FLUSH, null);
             }
         });
-    }
 
-    @Override
-    protected void onDestroy() {
-        Log.d(getClass(), "onDestroy");
-        super.onDestroy();
+        mGraphemeImageButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Play a subtle animation
+                final long duration = 300;
 
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
+                final ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(mGraphemeImageButton, View.SCALE_X, 1f, 1.2f, 1f);
+                scaleXAnimator.setDuration(duration);
+                scaleXAnimator.setRepeatCount(1);
+
+                final ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(mGraphemeImageButton, View.SCALE_Y, 1f, 1.2f, 1f);
+                scaleYAnimator.setDuration(duration);
+                scaleYAnimator.setRepeatCount(1);
+
+                scaleXAnimator.start();
+                scaleYAnimator.start();
+
+                final AnimatorSet animatorSet = new AnimatorSet();
+                animatorSet.play(scaleXAnimator).with(scaleYAnimator);
+                animatorSet.start();
+            }
+        }, 2000);
+
+        mGraphemeImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(getClass(), "onClick");
+
+                Intent starIntent = new Intent(getApplicationContext(), StarActivity.class);
+                startActivity(starIntent);
+            }
+        });
     }
 }

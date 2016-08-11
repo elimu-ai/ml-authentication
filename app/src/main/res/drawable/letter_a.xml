@@ -4,7 +4,9 @@
     android:viewportWidth="431.0"
     android:viewportHeight="393.0">
     <path
-        android:fillColor="#333"
+        android:fillColor="#332196F3"
+        android:strokeColor="#CC2196F3"
+        android:strokeWidth="1"
         android:pathData="M 259.31,224.00
            C 246.76,251.33 223.95,287.02 194.00,296.91
              188.91,298.59 183.33,299.15 178.00,299.49
