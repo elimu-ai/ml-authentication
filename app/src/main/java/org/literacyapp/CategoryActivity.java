@@ -108,6 +108,7 @@ public class CategoryActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                Log.d(getClass(), "onPageSelected: " + position);
 
                 pagePosition = position;
 
@@ -200,7 +201,7 @@ public class CategoryActivity extends AppCompatActivity {
 
         int[] bgs = new int[]{
                 R.drawable.ic_grain_black_24dp,
-                R.drawable.letter_a,
+                R.drawable.gesture,
                 R.drawable.ic_play_circle_outline_black_24dp
         };
 

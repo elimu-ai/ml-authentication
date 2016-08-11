@@ -46,7 +46,10 @@
         <activity
             android:name=".task.VideoActivity"
             android:screenOrientation="fullSensor" />
-        <activity android:name=".task.GraphemeActivity"></activity>
+        <activity
+            android:name=".task.GraphemeActivity"
+            android:screenOrientation="fullSensor" />
+        <activity android:name=".task.StarActivity"></activity>
     </application>
 
 </manifest>
