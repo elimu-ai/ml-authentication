@@ -43,5 +43,17 @@ public class TagItemsActivity extends AppCompatActivity {
                 .scaleY(2)
                 .setDuration(1000)
                 .start();
+
+        mTagItemsImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(getClass().getName(), "onStart");
+
+                mTagItemsImageView.animate()
+                        .rotation(mTagItemsImageView.getRotation() + 90)
+                        .setDuration(1000)
+                        .start();
+            }
+        });
     }
 }
