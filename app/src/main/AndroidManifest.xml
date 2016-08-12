@@ -49,7 +49,9 @@
         <activity
             android:name=".task.GraphemeActivity"
             android:screenOrientation="fullSensor" />
-        <activity android:name=".task.StarActivity"></activity>
+        <activity
+            android:name=".task.StarActivity"
+            android:screenOrientation="fullSensor" />
     </application>
 
 </manifest>

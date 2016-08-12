@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import org.literacyapp.task.GraphemeActivity;
+import org.literacyapp.task.TagItemsActivity;
 import org.literacyapp.task.VideoActivity;
 import org.literacyapp.util.Log;
 
@@ -236,7 +237,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.d(getClass(), "onClick");
-                        // TODO
+                        Intent tagItemsIntent = new Intent(getActivity(), TagItemsActivity.class);
+                        startActivity(tagItemsIntent);
                     }
                 });
             } else if (sectionNumber == 2) {
