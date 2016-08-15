@@ -3,6 +3,8 @@ package org.literacyapp.task;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -97,6 +99,9 @@ public class GraphemeActivity extends AppCompatActivity {
                 animatorSet.start();
             }
         }, 2000);
+
+        Drawable drawable = mGraphemeImageView.getDrawable();
+        ((Animatable) drawable).start();
 
         mGraphemeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
