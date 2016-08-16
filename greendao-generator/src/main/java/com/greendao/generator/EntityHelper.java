@@ -49,9 +49,9 @@ public class EntityHelper {
                 addFieldToEntity(schema, entity, field);
             }
 
-            if ("MultimediaGson".equals(clazz.getSuperclass().getSimpleName())) {
-                entity.addByteArrayProperty("bytes");
-            }
+//            if ("MultimediaGson".equals(clazz.getSuperclass().getSimpleName())) {
+//                entity.addByteArrayProperty("bytes");
+//            }
         }
 
         for (Field field : clazz.getDeclaredFields()) {
