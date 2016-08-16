@@ -21,7 +21,6 @@ public class Image {
     private String attributionUrl;
     private Set literacySkills;
     private Set numeracySkills;
-    private byte[] bytes;
     private String title;
     private ImageFormat imageFormat;
     private String dominantColor;
@@ -33,7 +32,7 @@ public class Image {
         this.id = id;
     }
 
-    public Image(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String fileUrl, Integer fileSize, String contentType, String attributionUrl, Set literacySkills, Set numeracySkills, byte[] bytes, String title, ImageFormat imageFormat, String dominantColor) {
+    public Image(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String fileUrl, Integer fileSize, String contentType, String attributionUrl, Set literacySkills, Set numeracySkills, String title, ImageFormat imageFormat, String dominantColor) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -44,7 +43,6 @@ public class Image {
         this.attributionUrl = attributionUrl;
         this.literacySkills = literacySkills;
         this.numeracySkills = numeracySkills;
-        this.bytes = bytes;
         this.title = title;
         this.imageFormat = imageFormat;
         this.dominantColor = dominantColor;
@@ -128,14 +126,6 @@ public class Image {
 
     public void setNumeracySkills(Set numeracySkills) {
         this.numeracySkills = numeracySkills;
-    }
-
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
     }
 
     public String getTitle() {

@@ -21,7 +21,6 @@ public class Video {
     private String attributionUrl;
     private Set literacySkills;
     private Set numeracySkills;
-    private byte[] bytes;
     private String title;
     private VideoFormat videoFormat;
 
@@ -32,7 +31,7 @@ public class Video {
         this.id = id;
     }
 
-    public Video(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String fileUrl, Integer fileSize, String contentType, String attributionUrl, Set literacySkills, Set numeracySkills, byte[] bytes, String title, VideoFormat videoFormat) {
+    public Video(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String fileUrl, Integer fileSize, String contentType, String attributionUrl, Set literacySkills, Set numeracySkills, String title, VideoFormat videoFormat) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -43,7 +42,6 @@ public class Video {
         this.attributionUrl = attributionUrl;
         this.literacySkills = literacySkills;
         this.numeracySkills = numeracySkills;
-        this.bytes = bytes;
         this.title = title;
         this.videoFormat = videoFormat;
     }
@@ -126,14 +124,6 @@ public class Video {
 
     public void setNumeracySkills(Set numeracySkills) {
         this.numeracySkills = numeracySkills;
-    }
-
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
     }
 
     public String getTitle() {
