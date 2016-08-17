@@ -54,7 +54,7 @@ public class MultimediaHelper {
     public static File getFile(Image image) {
         File file = null;
 
-        File imageDirectory = getAudioDirectory();
+        File imageDirectory = getImageDirectory();
         file = new File(imageDirectory, image.getId() + "_r" + image.getRevisionNumber() + "." + image.getImageFormat().toString().toLowerCase());
 
         return file;
@@ -63,7 +63,7 @@ public class MultimediaHelper {
     public static File getFile(Video video) {
         File file = null;
 
-        File videoDirectory = getAudioDirectory();
+        File videoDirectory = getVideoDirectory();
         file = new File(videoDirectory, video.getId() + "_r" + video.getRevisionNumber() + "." + video.getVideoFormat().toString().toLowerCase());
 
         return file;
