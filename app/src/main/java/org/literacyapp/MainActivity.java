@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         if (timeOfLastSynchronizationInMillis == 0) {
             // Download content
             Intent intent = new Intent("org.literacyapp.receiver.DownloadContentAlarmReceiver");
+            intent.setPackage("org.literacyapp");
             sendBroadcast(intent);
         } else {
             // Assume content has already been downloaded
