@@ -75,15 +75,18 @@ public class GraphemeActivity extends AppCompatActivity {
                         .unique();
                 Log.d(getClass(), "letter: " + letter);
 
+                // Look up corresponding audio
                 Audio audio = audioDao.queryBuilder()
                         .where(AudioDao.Properties.Transcription.eq(letter.getText()))
                         .unique();
                 Log.d(getClass(), "audio: " + audio);
-
-                File audioFile = MultimediaHelper.getFile(audio);
-                Uri uri = Uri.parse(audioFile.getAbsolutePath());
-                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                mediaPlayer.start();
+                if (audio == null) {
+                    // Play audio
+                    File audioFile = MultimediaHelper.getFile(audio);
+                    Uri uri = Uri.parse(audioFile.getAbsolutePath());
+                    MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    mediaPlayer.start();
+                }
             }
         });
 

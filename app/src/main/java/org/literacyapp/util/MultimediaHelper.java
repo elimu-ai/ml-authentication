@@ -45,6 +45,10 @@ public class MultimediaHelper {
     public static File getFile(Audio audio) {
         File file = null;
 
+        if (audio == null) {
+            return null;
+        }
+
         File audioDirectory = getAudioDirectory();
         file = new File(audioDirectory, audio.getId() + "_r" + audio.getRevisionNumber() + "." + audio.getAudioFormat().toString().toLowerCase());
 
@@ -54,6 +58,10 @@ public class MultimediaHelper {
     public static File getFile(Image image) {
         File file = null;
 
+        if (image == null) {
+            return null;
+        }
+
         File imageDirectory = getImageDirectory();
         file = new File(imageDirectory, image.getId() + "_r" + image.getRevisionNumber() + "." + image.getImageFormat().toString().toLowerCase());
 
@@ -62,6 +70,10 @@ public class MultimediaHelper {
 
     public static File getFile(Video video) {
         File file = null;
+
+        if (video == null) {
+            return null;
+        }
 
         File videoDirectory = getVideoDirectory();
         file = new File(videoDirectory, video.getId() + "_r" + video.getRevisionNumber() + "." + video.getVideoFormat().toString().toLowerCase());
