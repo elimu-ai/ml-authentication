@@ -63,6 +63,25 @@ public class GraphemeActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
+        Letter letter = letterDao.queryBuilder()
+                .where(LetterDao.Properties.Text.eq("a")) // TODO: fetch value dynamically
+                .unique();
+        Log.d(getClass(), "letter: " + letter);
+
+        // Look up corresponding audio
+        final Audio audio = audioDao.queryBuilder()
+                .where(AudioDao.Properties.Transcription.eq(letter.getText()))
+                .unique();
+        Log.d(getClass(), "audio: " + audio);
+
+        if (audio != null) {
+            // Play audio
+            File audioFile = MultimediaHelper.getFile(audio);
+            Uri uri = Uri.parse(audioFile.getAbsolutePath());
+            MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            mediaPlayer.start();
+        }
+
         mGraphemeImageView.setOnClickListener(new View.OnClickListener() {
 
 //            @TargetApi(Build.VERSION_CODES.M)
@@ -70,17 +89,7 @@ public class GraphemeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(getClass(), "onClick");
 
-                Letter letter = letterDao.queryBuilder()
-                        .where(LetterDao.Properties.Text.eq("a")) // TODO: fetch value dynamically
-                        .unique();
-                Log.d(getClass(), "letter: " + letter);
-
-                // Look up corresponding audio
-                Audio audio = audioDao.queryBuilder()
-                        .where(AudioDao.Properties.Transcription.eq(letter.getText()))
-                        .unique();
-                Log.d(getClass(), "audio: " + audio);
-                if (audio == null) {
+                if (audio != null) {
                     // Play audio
                     File audioFile = MultimediaHelper.getFile(audio);
                     Uri uri = Uri.parse(audioFile.getAbsolutePath());

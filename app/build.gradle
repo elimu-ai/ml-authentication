@@ -85,4 +85,5 @@ dependencies {
     compile 'commons-io:commons-io:2.5'
     compile 'com.squareup.okhttp:okhttp:2.0.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.0.0'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.0'
 }
