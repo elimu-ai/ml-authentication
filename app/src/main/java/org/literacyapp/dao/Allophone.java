@@ -2,6 +2,7 @@ package org.literacyapp.dao;
 
 import java.util.Calendar;
 import org.literacyapp.model.enums.Locale;
+import org.literacyapp.model.enums.content.ContentStatus;
 import org.literacyapp.model.enums.content.allophone.ConsonantPlace;
 import org.literacyapp.model.enums.content.allophone.ConsonantType;
 import org.literacyapp.model.enums.content.allophone.ConsonantVoicing;
@@ -21,6 +22,7 @@ public class Allophone {
     private Locale locale;
     private Calendar timeLastUpdate;
     private Integer revisionNumber;
+    private ContentStatus contentStatus;
     private String valueIpa;
     private String valueSampa;
     private SoundType soundType;
@@ -39,11 +41,12 @@ public class Allophone {
         this.id = id;
     }
 
-    public Allophone(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, String valueIpa, String valueSampa, SoundType soundType, VowelLength vowelLength, VowelHeight vowelHeight, VowelFrontness vowelFrontness, LipRounding lipRounding, ConsonantType consonantType, ConsonantPlace consonantPlace, ConsonantVoicing consonantVoicing) {
+    public Allophone(Long id, Locale locale, Calendar timeLastUpdate, Integer revisionNumber, ContentStatus contentStatus, String valueIpa, String valueSampa, SoundType soundType, VowelLength vowelLength, VowelHeight vowelHeight, VowelFrontness vowelFrontness, LipRounding lipRounding, ConsonantType consonantType, ConsonantPlace consonantPlace, ConsonantVoicing consonantVoicing) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
         this.revisionNumber = revisionNumber;
+        this.contentStatus = contentStatus;
         this.valueIpa = valueIpa;
         this.valueSampa = valueSampa;
         this.soundType = soundType;
@@ -86,6 +89,14 @@ public class Allophone {
 
     public void setRevisionNumber(Integer revisionNumber) {
         this.revisionNumber = revisionNumber;
+    }
+
+    public ContentStatus getContentStatus() {
+        return contentStatus;
+    }
+
+    public void setContentStatus(ContentStatus contentStatus) {
+        this.contentStatus = contentStatus;
     }
 
     public String getValueIpa() {

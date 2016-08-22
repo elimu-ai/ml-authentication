@@ -2,6 +2,7 @@ package com.greendao.generator;
 
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.AudioFormat;
+import org.literacyapp.model.enums.content.ContentStatus;
 import org.literacyapp.model.enums.content.ImageFormat;
 import org.literacyapp.model.enums.content.VideoFormat;
 import org.literacyapp.model.enums.content.allophone.ConsonantPlace;
@@ -87,6 +88,8 @@ public class EntityHelper {
             entity.addStringProperty(field.getName()).customType(ConsonantPlace.class.getCanonicalName(), "org.literacyapp.dao.converter.ConsonantPlaceConverter");
         } else if (field.getType().isAssignableFrom(ConsonantVoicing.class)) {
             entity.addStringProperty(field.getName()).customType(ConsonantVoicing.class.getCanonicalName(), "org.literacyapp.dao.converter.ConsonantVoicingConverter");
+        } else if (field.getType().isAssignableFrom(ContentStatus.class)) {
+            entity.addStringProperty(field.getName()).customType(ContentStatus.class.getCanonicalName(), "org.literacyapp.dao.converter.ContentStatusConverter");
         } else if (field.getType().isAssignableFrom(String.class)) {
             entity.addStringProperty(field.getName());
         } else if (field.getType().isAssignableFrom(Calendar.class)) {
