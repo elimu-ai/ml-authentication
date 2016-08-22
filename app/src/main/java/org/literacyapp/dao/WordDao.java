@@ -10,8 +10,10 @@ import de.greenrobot.dao.internal.DaoConfig;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
+import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.enums.Locale;
+import org.literacyapp.model.enums.content.ContentStatus;
 
 import org.literacyapp.dao.Word;
 
@@ -32,11 +34,14 @@ public class WordDao extends AbstractDao<Word, Long> {
         public final static Property Locale = new Property(1, String.class, "locale", false, "LOCALE");
         public final static Property TimeLastUpdate = new Property(2, Long.class, "timeLastUpdate", false, "TIME_LAST_UPDATE");
         public final static Property RevisionNumber = new Property(3, Integer.class, "revisionNumber", false, "REVISION_NUMBER");
-        public final static Property Text = new Property(4, String.class, "text", false, "TEXT");
+        public final static Property ContentStatus = new Property(4, String.class, "contentStatus", false, "CONTENT_STATUS");
+        public final static Property Text = new Property(5, String.class, "text", false, "TEXT");
+        public final static Property Phonetics = new Property(6, String.class, "phonetics", false, "PHONETICS");
     };
 
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
+    private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
 
     public WordDao(DaoConfig config) {
         super(config);
@@ -54,7 +59,9 @@ public class WordDao extends AbstractDao<Word, Long> {
                 "\"LOCALE\" TEXT," + // 1: locale
                 "\"TIME_LAST_UPDATE\" INTEGER," + // 2: timeLastUpdate
                 "\"REVISION_NUMBER\" INTEGER," + // 3: revisionNumber
-                "\"TEXT\" TEXT);"); // 4: text
+                "\"CONTENT_STATUS\" TEXT," + // 4: contentStatus
+                "\"TEXT\" TEXT," + // 5: text
+                "\"PHONETICS\" TEXT);"); // 6: phonetics
     }
 
     /** Drops the underlying database table. */
@@ -88,9 +95,19 @@ public class WordDao extends AbstractDao<Word, Long> {
             stmt.bindLong(4, revisionNumber);
         }
  
+        ContentStatus contentStatus = entity.getContentStatus();
+        if (contentStatus != null) {
+            stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(contentStatus));
+        }
+ 
         String text = entity.getText();
         if (text != null) {
-            stmt.bindString(5, text);
+            stmt.bindString(6, text);
+        }
+ 
+        String phonetics = entity.getPhonetics();
+        if (phonetics != null) {
+            stmt.bindString(7, phonetics);
         }
     }
 
@@ -108,7 +125,9 @@ public class WordDao extends AbstractDao<Word, Long> {
             cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)), // locale
             cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // timeLastUpdate
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // revisionNumber
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // text
+            cursor.isNull(offset + 4) ? null : contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)), // contentStatus
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // text
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6) // phonetics
         );
         return entity;
     }
@@ -120,7 +139,9 @@ public class WordDao extends AbstractDao<Word, Long> {
         entity.setLocale(cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)));
         entity.setTimeLastUpdate(cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)));
         entity.setRevisionNumber(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
-        entity.setText(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setContentStatus(cursor.isNull(offset + 4) ? null : contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)));
+        entity.setText(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setPhonetics(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
      }
     
     /** @inheritdoc */
