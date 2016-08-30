@@ -82,7 +82,7 @@ public class GraphemeActivity extends AppCompatActivity {
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    Log.d(getClass(), "audio: " + audio);
+                    Log.d(getClass(), "onCompletion");
                     mediaPlayer.release();
                 }
             });
@@ -104,7 +104,7 @@ public class GraphemeActivity extends AppCompatActivity {
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mediaPlayer) {
-                            Log.d(getClass(), "audio: " + audio);
+                            Log.d(getClass(), "onCompletion");
                             mediaPlayer.release();
                         }
                     });
