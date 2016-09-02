@@ -79,6 +79,13 @@ public class GraphemeActivity extends AppCompatActivity {
             File audioFile = MultimediaHelper.getFile(audio);
             Uri uri = Uri.parse(audioFile.getAbsolutePath());
             MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    Log.d(getClass(), "onCompletion");
+                    mediaPlayer.release();
+                }
+            });
             mediaPlayer.start();
         }
 
@@ -94,6 +101,13 @@ public class GraphemeActivity extends AppCompatActivity {
                     File audioFile = MultimediaHelper.getFile(audio);
                     Uri uri = Uri.parse(audioFile.getAbsolutePath());
                     MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mediaPlayer) {
+                            Log.d(getClass(), "onCompletion");
+                            mediaPlayer.release();
+                        }
+                    });
                     mediaPlayer.start();
                 }
             }
