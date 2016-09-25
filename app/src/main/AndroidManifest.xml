@@ -52,6 +52,7 @@
         <activity
             android:name=".task.StarActivity"
             android:screenOrientation="fullSensor" />
+        <activity android:name=".task.LessonCompleteActivity"></activity>
     </application>
 
 </manifest>

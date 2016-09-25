@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,9 +46,14 @@ import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.Log;
+import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.MultimediaLoader;
 import org.literacyapp.util.VersionHelper;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Calendar;
 
@@ -335,6 +341,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             }
 
 
+
             publishProgress("Downloading Audios");
             url = EnvironmentSettings.getRestUrl() + "/content/multimedia/audio/list" +
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
@@ -355,12 +362,28 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .where(AudioDao.Properties.Id.eq(audio.getId()))
                                 .unique();
                         if (existingAudio == null) {
-                            // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audio.getFileUrl());
-                            Log.d(getClass(), "bytes.length: " + bytes.length);
-                            audio.setBytes(bytes);
-                            audioDao.insert(audio);
-                            Log.d(getClass(), "Stored Audio with id " + audio.getId() + " and transcription \"" + audio.getTranscription() + "\"");
+                            File audioFile = MultimediaHelper.getFile(audio);
+                            Log.d(getClass(), "audioFile: " + audioFile);
+                            if (!audioFile.exists()) {
+                                // Download bytes
+                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audio.getFileUrl());
+                                Log.d(getClass(), "bytes.length: " + bytes.length);
+
+                                // Store file
+                                try {
+                                    FileOutputStream fileOutputStream = new FileOutputStream(audioFile);
+                                    IOUtils.write(bytes, fileOutputStream);
+                                    fileOutputStream.close();
+                                } catch (FileNotFoundException e) {
+                                    Log.e(getClass(), null, e);
+                                } catch (IOException e) {
+                                    Log.e(getClass(), null, e);
+                                }
+                            }
+                            if (audioFile.exists()) {
+                                audioDao.insert(audio);
+                                Log.d(getClass(), "Stored Audio with id " + audio.getId() + " and transcription \"" + audio.getTranscription() + "\"");
+                            }
                         } else {
                             Log.d(getClass(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId());
                         }
@@ -391,12 +414,28 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .where(ImageDao.Properties.Id.eq(image.getId()))
                                 .unique();
                         if (existingImage == null) {
-                            // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + image.getFileUrl());
-                            Log.d(getClass(), "bytes.length: " + bytes.length);
-                            image.setBytes(bytes);
-                            imageDao.insert(image);
-                            Log.d(getClass(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                            File imageFile = MultimediaHelper.getFile(image);
+                            Log.d(getClass(), "imageFile: " + imageFile);
+                            if (!imageFile.exists()) {
+                                // Download bytes
+                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + image.getFileUrl());
+                                Log.d(getClass(), "bytes.length: " + bytes.length);
+
+                                // Store file
+                                try {
+                                    FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+                                    IOUtils.write(bytes, fileOutputStream);
+                                    fileOutputStream.close();
+                                } catch (FileNotFoundException e) {
+                                    Log.e(getClass(), null, e);
+                                } catch (IOException e) {
+                                    Log.e(getClass(), null, e);
+                                }
+                            }
+                            if (imageFile.exists()) {
+                                imageDao.insert(image);
+                                Log.d(getClass(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                            }
                         } else {
                             Log.d(getClass(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
                         }
@@ -427,12 +466,28 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .where(VideoDao.Properties.Id.eq(video.getId()))
                                 .unique();
                         if (existingVideo == null) {
-                            // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + video.getFileUrl());
-                            Log.d(getClass(), "bytes.length: " + bytes.length);
-                            video.setBytes(bytes);
-                            videoDao.insert(video);
-                            Log.d(getClass(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
+                            File videoFile = MultimediaHelper.getFile(video);
+                            Log.d(getClass(), "videoFile: " + videoFile);
+                            if (!videoFile.exists()) {
+                                // Download bytes
+                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + video.getFileUrl());
+                                Log.d(getClass(), "bytes.length: " + bytes.length);
+
+                                // Store file
+                                try {
+                                    FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
+                                    IOUtils.write(bytes, fileOutputStream);
+                                    fileOutputStream.close();
+                                } catch (FileNotFoundException e) {
+                                    Log.e(getClass(), null, e);
+                                } catch (IOException e) {
+                                    Log.e(getClass(), null, e);
+                                }
+                            }
+                            if (videoFile.exists()) {
+                                videoDao.insert(video);
+                                Log.d(getClass(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
+                            }
                         } else {
                             Log.d(getClass(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
                         }

@@ -3,11 +3,13 @@
     android:height="393dp"
     android:viewportWidth="431.0"
     android:viewportHeight="393.0">
-    <path
-        android:fillColor="#332196F3"
-        android:strokeColor="#CC2196F3"
-        android:strokeWidth="1"
-        android:pathData="M 259.31,224.00
+    <group>
+        <path
+            android:name="grapheme"
+            android:fillColor="#332196F3"
+            android:strokeColor="#CC2196F3"
+            android:strokeWidth="1"
+            android:pathData="M 259.31,224.00
            C 246.76,251.33 223.95,287.02 194.00,296.91
              188.91,298.59 183.33,299.15 178.00,299.49
              173.56,299.77 165.36,298.55 161.00,297.36
@@ -36,5 +38,6 @@
              225.48,232.29 241.93,199.99 250.80,178.00
              255.79,165.64 263.84,143.03 264.00,130.00
              264.00,130.00 264.00,114.00 264.00,114.00
-             234.13,108.56 197.54,104.32 175.30,130.00 Z"/>
+             234.13,108.56 197.54,104.32 175.30,130.00 Z" />
+    </group>
 </vector>
