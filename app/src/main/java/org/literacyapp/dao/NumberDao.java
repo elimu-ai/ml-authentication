@@ -13,8 +13,10 @@ import de.greenrobot.dao.internal.DaoConfig;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
+import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.enums.Locale;
+import org.literacyapp.model.enums.content.ContentStatus;
 
 import org.literacyapp.dao.Number;
 
@@ -35,15 +37,17 @@ public class NumberDao extends AbstractDao<Number, Long> {
         public final static Property Locale = new Property(1, String.class, "locale", false, "LOCALE");
         public final static Property TimeLastUpdate = new Property(2, Long.class, "timeLastUpdate", false, "TIME_LAST_UPDATE");
         public final static Property RevisionNumber = new Property(3, Integer.class, "revisionNumber", false, "REVISION_NUMBER");
-        public final static Property Value = new Property(4, Integer.class, "value", false, "VALUE");
-        public final static Property Symbol = new Property(5, String.class, "symbol", false, "SYMBOL");
-        public final static Property WordId = new Property(6, Long.class, "wordId", false, "WORD_ID");
+        public final static Property ContentStatus = new Property(4, String.class, "contentStatus", false, "CONTENT_STATUS");
+        public final static Property Value = new Property(5, Integer.class, "value", false, "VALUE");
+        public final static Property Symbol = new Property(6, String.class, "symbol", false, "SYMBOL");
+        public final static Property WordId = new Property(7, Long.class, "wordId", false, "WORD_ID");
     };
 
     private DaoSession daoSession;
 
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
+    private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
 
     public NumberDao(DaoConfig config) {
         super(config);
@@ -62,9 +66,10 @@ public class NumberDao extends AbstractDao<Number, Long> {
                 "\"LOCALE\" TEXT," + // 1: locale
                 "\"TIME_LAST_UPDATE\" INTEGER," + // 2: timeLastUpdate
                 "\"REVISION_NUMBER\" INTEGER," + // 3: revisionNumber
-                "\"VALUE\" INTEGER," + // 4: value
-                "\"SYMBOL\" TEXT," + // 5: symbol
-                "\"WORD_ID\" INTEGER);"); // 6: wordId
+                "\"CONTENT_STATUS\" TEXT," + // 4: contentStatus
+                "\"VALUE\" INTEGER," + // 5: value
+                "\"SYMBOL\" TEXT," + // 6: symbol
+                "\"WORD_ID\" INTEGER);"); // 7: wordId
     }
 
     /** Drops the underlying database table. */
@@ -98,19 +103,24 @@ public class NumberDao extends AbstractDao<Number, Long> {
             stmt.bindLong(4, revisionNumber);
         }
  
+        ContentStatus contentStatus = entity.getContentStatus();
+        if (contentStatus != null) {
+            stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(contentStatus));
+        }
+ 
         Integer value = entity.getValue();
         if (value != null) {
-            stmt.bindLong(5, value);
+            stmt.bindLong(6, value);
         }
  
         String symbol = entity.getSymbol();
         if (symbol != null) {
-            stmt.bindString(6, symbol);
+            stmt.bindString(7, symbol);
         }
  
         Long wordId = entity.getWordId();
         if (wordId != null) {
-            stmt.bindLong(7, wordId);
+            stmt.bindLong(8, wordId);
         }
     }
 
@@ -134,9 +144,10 @@ public class NumberDao extends AbstractDao<Number, Long> {
             cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)), // locale
             cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // timeLastUpdate
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // revisionNumber
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // value
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // symbol
-            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6) // wordId
+            cursor.isNull(offset + 4) ? null : contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)), // contentStatus
+            cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // value
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // symbol
+            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7) // wordId
         );
         return entity;
     }
@@ -148,9 +159,10 @@ public class NumberDao extends AbstractDao<Number, Long> {
         entity.setLocale(cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)));
         entity.setTimeLastUpdate(cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)));
         entity.setRevisionNumber(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
-        entity.setValue(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
-        entity.setSymbol(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setWordId(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
+        entity.setContentStatus(cursor.isNull(offset + 4) ? null : contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)));
+        entity.setValue(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
+        entity.setSymbol(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setWordId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
      }
     
     /** @inheritdoc */

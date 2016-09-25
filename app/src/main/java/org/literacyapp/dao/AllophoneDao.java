@@ -13,6 +13,7 @@ import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ConsonantPlaceConverter;
 import org.literacyapp.dao.converter.ConsonantTypeConverter;
 import org.literacyapp.dao.converter.ConsonantVoicingConverter;
+import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LipRoundingConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.dao.converter.SoundTypeConverter;
@@ -20,6 +21,7 @@ import org.literacyapp.dao.converter.VowelFrontnessConverter;
 import org.literacyapp.dao.converter.VowelHeightConverter;
 import org.literacyapp.dao.converter.VowelLengthConverter;
 import org.literacyapp.model.enums.Locale;
+import org.literacyapp.model.enums.content.ContentStatus;
 import org.literacyapp.model.enums.content.allophone.ConsonantPlace;
 import org.literacyapp.model.enums.content.allophone.ConsonantType;
 import org.literacyapp.model.enums.content.allophone.ConsonantVoicing;
@@ -48,20 +50,22 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
         public final static Property Locale = new Property(1, String.class, "locale", false, "LOCALE");
         public final static Property TimeLastUpdate = new Property(2, Long.class, "timeLastUpdate", false, "TIME_LAST_UPDATE");
         public final static Property RevisionNumber = new Property(3, Integer.class, "revisionNumber", false, "REVISION_NUMBER");
-        public final static Property ValueIpa = new Property(4, String.class, "valueIpa", false, "VALUE_IPA");
-        public final static Property ValueSampa = new Property(5, String.class, "valueSampa", false, "VALUE_SAMPA");
-        public final static Property SoundType = new Property(6, String.class, "soundType", false, "SOUND_TYPE");
-        public final static Property VowelLength = new Property(7, String.class, "vowelLength", false, "VOWEL_LENGTH");
-        public final static Property VowelHeight = new Property(8, String.class, "vowelHeight", false, "VOWEL_HEIGHT");
-        public final static Property VowelFrontness = new Property(9, String.class, "vowelFrontness", false, "VOWEL_FRONTNESS");
-        public final static Property LipRounding = new Property(10, String.class, "lipRounding", false, "LIP_ROUNDING");
-        public final static Property ConsonantType = new Property(11, String.class, "consonantType", false, "CONSONANT_TYPE");
-        public final static Property ConsonantPlace = new Property(12, String.class, "consonantPlace", false, "CONSONANT_PLACE");
-        public final static Property ConsonantVoicing = new Property(13, String.class, "consonantVoicing", false, "CONSONANT_VOICING");
+        public final static Property ContentStatus = new Property(4, String.class, "contentStatus", false, "CONTENT_STATUS");
+        public final static Property ValueIpa = new Property(5, String.class, "valueIpa", false, "VALUE_IPA");
+        public final static Property ValueSampa = new Property(6, String.class, "valueSampa", false, "VALUE_SAMPA");
+        public final static Property SoundType = new Property(7, String.class, "soundType", false, "SOUND_TYPE");
+        public final static Property VowelLength = new Property(8, String.class, "vowelLength", false, "VOWEL_LENGTH");
+        public final static Property VowelHeight = new Property(9, String.class, "vowelHeight", false, "VOWEL_HEIGHT");
+        public final static Property VowelFrontness = new Property(10, String.class, "vowelFrontness", false, "VOWEL_FRONTNESS");
+        public final static Property LipRounding = new Property(11, String.class, "lipRounding", false, "LIP_ROUNDING");
+        public final static Property ConsonantType = new Property(12, String.class, "consonantType", false, "CONSONANT_TYPE");
+        public final static Property ConsonantPlace = new Property(13, String.class, "consonantPlace", false, "CONSONANT_PLACE");
+        public final static Property ConsonantVoicing = new Property(14, String.class, "consonantVoicing", false, "CONSONANT_VOICING");
     };
 
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
+    private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
     private final SoundTypeConverter soundTypeConverter = new SoundTypeConverter();
     private final VowelLengthConverter vowelLengthConverter = new VowelLengthConverter();
     private final VowelHeightConverter vowelHeightConverter = new VowelHeightConverter();
@@ -87,16 +91,17 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
                 "\"LOCALE\" TEXT," + // 1: locale
                 "\"TIME_LAST_UPDATE\" INTEGER," + // 2: timeLastUpdate
                 "\"REVISION_NUMBER\" INTEGER," + // 3: revisionNumber
-                "\"VALUE_IPA\" TEXT," + // 4: valueIpa
-                "\"VALUE_SAMPA\" TEXT," + // 5: valueSampa
-                "\"SOUND_TYPE\" TEXT," + // 6: soundType
-                "\"VOWEL_LENGTH\" TEXT," + // 7: vowelLength
-                "\"VOWEL_HEIGHT\" TEXT," + // 8: vowelHeight
-                "\"VOWEL_FRONTNESS\" TEXT," + // 9: vowelFrontness
-                "\"LIP_ROUNDING\" TEXT," + // 10: lipRounding
-                "\"CONSONANT_TYPE\" TEXT," + // 11: consonantType
-                "\"CONSONANT_PLACE\" TEXT," + // 12: consonantPlace
-                "\"CONSONANT_VOICING\" TEXT);"); // 13: consonantVoicing
+                "\"CONTENT_STATUS\" TEXT," + // 4: contentStatus
+                "\"VALUE_IPA\" TEXT," + // 5: valueIpa
+                "\"VALUE_SAMPA\" TEXT," + // 6: valueSampa
+                "\"SOUND_TYPE\" TEXT," + // 7: soundType
+                "\"VOWEL_LENGTH\" TEXT," + // 8: vowelLength
+                "\"VOWEL_HEIGHT\" TEXT," + // 9: vowelHeight
+                "\"VOWEL_FRONTNESS\" TEXT," + // 10: vowelFrontness
+                "\"LIP_ROUNDING\" TEXT," + // 11: lipRounding
+                "\"CONSONANT_TYPE\" TEXT," + // 12: consonantType
+                "\"CONSONANT_PLACE\" TEXT," + // 13: consonantPlace
+                "\"CONSONANT_VOICING\" TEXT);"); // 14: consonantVoicing
     }
 
     /** Drops the underlying database table. */
@@ -130,54 +135,59 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
             stmt.bindLong(4, revisionNumber);
         }
  
+        ContentStatus contentStatus = entity.getContentStatus();
+        if (contentStatus != null) {
+            stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(contentStatus));
+        }
+ 
         String valueIpa = entity.getValueIpa();
         if (valueIpa != null) {
-            stmt.bindString(5, valueIpa);
+            stmt.bindString(6, valueIpa);
         }
  
         String valueSampa = entity.getValueSampa();
         if (valueSampa != null) {
-            stmt.bindString(6, valueSampa);
+            stmt.bindString(7, valueSampa);
         }
  
         SoundType soundType = entity.getSoundType();
         if (soundType != null) {
-            stmt.bindString(7, soundTypeConverter.convertToDatabaseValue(soundType));
+            stmt.bindString(8, soundTypeConverter.convertToDatabaseValue(soundType));
         }
  
         VowelLength vowelLength = entity.getVowelLength();
         if (vowelLength != null) {
-            stmt.bindString(8, vowelLengthConverter.convertToDatabaseValue(vowelLength));
+            stmt.bindString(9, vowelLengthConverter.convertToDatabaseValue(vowelLength));
         }
  
         VowelHeight vowelHeight = entity.getVowelHeight();
         if (vowelHeight != null) {
-            stmt.bindString(9, vowelHeightConverter.convertToDatabaseValue(vowelHeight));
+            stmt.bindString(10, vowelHeightConverter.convertToDatabaseValue(vowelHeight));
         }
  
         VowelFrontness vowelFrontness = entity.getVowelFrontness();
         if (vowelFrontness != null) {
-            stmt.bindString(10, vowelFrontnessConverter.convertToDatabaseValue(vowelFrontness));
+            stmt.bindString(11, vowelFrontnessConverter.convertToDatabaseValue(vowelFrontness));
         }
  
         LipRounding lipRounding = entity.getLipRounding();
         if (lipRounding != null) {
-            stmt.bindString(11, lipRoundingConverter.convertToDatabaseValue(lipRounding));
+            stmt.bindString(12, lipRoundingConverter.convertToDatabaseValue(lipRounding));
         }
  
         ConsonantType consonantType = entity.getConsonantType();
         if (consonantType != null) {
-            stmt.bindString(12, consonantTypeConverter.convertToDatabaseValue(consonantType));
+            stmt.bindString(13, consonantTypeConverter.convertToDatabaseValue(consonantType));
         }
  
         ConsonantPlace consonantPlace = entity.getConsonantPlace();
         if (consonantPlace != null) {
-            stmt.bindString(13, consonantPlaceConverter.convertToDatabaseValue(consonantPlace));
+            stmt.bindString(14, consonantPlaceConverter.convertToDatabaseValue(consonantPlace));
         }
  
         ConsonantVoicing consonantVoicing = entity.getConsonantVoicing();
         if (consonantVoicing != null) {
-            stmt.bindString(14, consonantVoicingConverter.convertToDatabaseValue(consonantVoicing));
+            stmt.bindString(15, consonantVoicingConverter.convertToDatabaseValue(consonantVoicing));
         }
     }
 
@@ -195,16 +205,17 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
             cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)), // locale
             cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // timeLastUpdate
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // revisionNumber
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // valueIpa
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // valueSampa
-            cursor.isNull(offset + 6) ? null : soundTypeConverter.convertToEntityProperty(cursor.getString(offset + 6)), // soundType
-            cursor.isNull(offset + 7) ? null : vowelLengthConverter.convertToEntityProperty(cursor.getString(offset + 7)), // vowelLength
-            cursor.isNull(offset + 8) ? null : vowelHeightConverter.convertToEntityProperty(cursor.getString(offset + 8)), // vowelHeight
-            cursor.isNull(offset + 9) ? null : vowelFrontnessConverter.convertToEntityProperty(cursor.getString(offset + 9)), // vowelFrontness
-            cursor.isNull(offset + 10) ? null : lipRoundingConverter.convertToEntityProperty(cursor.getString(offset + 10)), // lipRounding
-            cursor.isNull(offset + 11) ? null : consonantTypeConverter.convertToEntityProperty(cursor.getString(offset + 11)), // consonantType
-            cursor.isNull(offset + 12) ? null : consonantPlaceConverter.convertToEntityProperty(cursor.getString(offset + 12)), // consonantPlace
-            cursor.isNull(offset + 13) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 13)) // consonantVoicing
+            cursor.isNull(offset + 4) ? null : contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)), // contentStatus
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // valueIpa
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // valueSampa
+            cursor.isNull(offset + 7) ? null : soundTypeConverter.convertToEntityProperty(cursor.getString(offset + 7)), // soundType
+            cursor.isNull(offset + 8) ? null : vowelLengthConverter.convertToEntityProperty(cursor.getString(offset + 8)), // vowelLength
+            cursor.isNull(offset + 9) ? null : vowelHeightConverter.convertToEntityProperty(cursor.getString(offset + 9)), // vowelHeight
+            cursor.isNull(offset + 10) ? null : vowelFrontnessConverter.convertToEntityProperty(cursor.getString(offset + 10)), // vowelFrontness
+            cursor.isNull(offset + 11) ? null : lipRoundingConverter.convertToEntityProperty(cursor.getString(offset + 11)), // lipRounding
+            cursor.isNull(offset + 12) ? null : consonantTypeConverter.convertToEntityProperty(cursor.getString(offset + 12)), // consonantType
+            cursor.isNull(offset + 13) ? null : consonantPlaceConverter.convertToEntityProperty(cursor.getString(offset + 13)), // consonantPlace
+            cursor.isNull(offset + 14) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 14)) // consonantVoicing
         );
         return entity;
     }
@@ -216,16 +227,17 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
         entity.setLocale(cursor.isNull(offset + 1) ? null : localeConverter.convertToEntityProperty(cursor.getString(offset + 1)));
         entity.setTimeLastUpdate(cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)));
         entity.setRevisionNumber(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
-        entity.setValueIpa(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setValueSampa(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setSoundType(cursor.isNull(offset + 6) ? null : soundTypeConverter.convertToEntityProperty(cursor.getString(offset + 6)));
-        entity.setVowelLength(cursor.isNull(offset + 7) ? null : vowelLengthConverter.convertToEntityProperty(cursor.getString(offset + 7)));
-        entity.setVowelHeight(cursor.isNull(offset + 8) ? null : vowelHeightConverter.convertToEntityProperty(cursor.getString(offset + 8)));
-        entity.setVowelFrontness(cursor.isNull(offset + 9) ? null : vowelFrontnessConverter.convertToEntityProperty(cursor.getString(offset + 9)));
-        entity.setLipRounding(cursor.isNull(offset + 10) ? null : lipRoundingConverter.convertToEntityProperty(cursor.getString(offset + 10)));
-        entity.setConsonantType(cursor.isNull(offset + 11) ? null : consonantTypeConverter.convertToEntityProperty(cursor.getString(offset + 11)));
-        entity.setConsonantPlace(cursor.isNull(offset + 12) ? null : consonantPlaceConverter.convertToEntityProperty(cursor.getString(offset + 12)));
-        entity.setConsonantVoicing(cursor.isNull(offset + 13) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 13)));
+        entity.setContentStatus(cursor.isNull(offset + 4) ? null : contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)));
+        entity.setValueIpa(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setValueSampa(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setSoundType(cursor.isNull(offset + 7) ? null : soundTypeConverter.convertToEntityProperty(cursor.getString(offset + 7)));
+        entity.setVowelLength(cursor.isNull(offset + 8) ? null : vowelLengthConverter.convertToEntityProperty(cursor.getString(offset + 8)));
+        entity.setVowelHeight(cursor.isNull(offset + 9) ? null : vowelHeightConverter.convertToEntityProperty(cursor.getString(offset + 9)));
+        entity.setVowelFrontness(cursor.isNull(offset + 10) ? null : vowelFrontnessConverter.convertToEntityProperty(cursor.getString(offset + 10)));
+        entity.setLipRounding(cursor.isNull(offset + 11) ? null : lipRoundingConverter.convertToEntityProperty(cursor.getString(offset + 11)));
+        entity.setConsonantType(cursor.isNull(offset + 12) ? null : consonantTypeConverter.convertToEntityProperty(cursor.getString(offset + 12)));
+        entity.setConsonantPlace(cursor.isNull(offset + 13) ? null : consonantPlaceConverter.convertToEntityProperty(cursor.getString(offset + 13)));
+        entity.setConsonantVoicing(cursor.isNull(offset + 14) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 14)));
      }
     
     /** @inheritdoc */
