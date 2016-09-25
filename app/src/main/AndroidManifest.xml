@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- &lt;!&ndash; https://developer.android.com/guide/topics/graphics/opengl.html &ndash;&gt; -->
     <!-- &lt;!&ndash; OpenGL ES 3.1 - supported by Android 5.0 (API level 21) and higher &ndash;&gt; -->
@@ -52,7 +53,8 @@
         <activity
             android:name=".task.StarActivity"
             android:screenOrientation="fullSensor" />
-        <activity android:name=".task.LessonCompleteActivity"></activity>
+        <activity android:name=".task.LessonCompleteActivity" />
+        <activity android:name=".authentication.CameraViewActivity"></activity>
     </application>
 
 </manifest>
