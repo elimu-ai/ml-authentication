@@ -48,10 +48,10 @@ public class MainActivity extends AppCompatActivity {
             sendBroadcast(intent);
         } else {
             // Assume content has already been downloaded
- //           Intent categoryIntent = new Intent(this, CategoryActivity.class);
-//            startActivity(categoryIntent);
-            startActivity(new Intent(getApplicationContext(), CameraViewActivity.class));
-            finish();
+    //        Intent categoryIntent = new Intent(this, CategoryActivity.class);
+      //      startActivity(categoryIntent);
+           startActivity(new Intent(getApplicationContext(), CameraViewActivity.class));
+           finish();
         }
     }
 
