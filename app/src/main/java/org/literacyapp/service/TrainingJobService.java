@@ -1,4 +1,4 @@
-package org.literacyapp.authentication;
+package org.literacyapp.service;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
