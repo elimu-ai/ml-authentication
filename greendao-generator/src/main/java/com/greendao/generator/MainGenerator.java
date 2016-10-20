@@ -1,5 +1,6 @@
 package com.greendao.generator;
 
+import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -21,10 +22,13 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        int versionCode = 1001014; // 1.1.14 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        int versionCode = 1001016; // 1.1.16 (this should match the version of the dependency org.literacyapp:literacyapp-model)
         // NOTE: If you increase the schema version, all tables in the database will be deleted!
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
+
+        // Model
+        Entity device = EntityHelper.createEntityFromClass(DeviceGson.class, schema);
 
         // Content
         Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
@@ -34,9 +38,6 @@ public class MainGenerator {
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
         Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
         Entity video = EntityHelper.createEntityFromClass(VideoGson.class, schema);
-
-        // Events
-        // TODO
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();

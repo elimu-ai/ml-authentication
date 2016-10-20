@@ -9,6 +9,7 @@ import de.greenrobot.dao.AbstractDaoSession;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
 import de.greenrobot.dao.internal.DaoConfig;
 
+import org.literacyapp.dao.Device;
 import org.literacyapp.dao.Allophone;
 import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.Audio;
@@ -17,6 +18,7 @@ import org.literacyapp.dao.Number;
 import org.literacyapp.dao.Image;
 import org.literacyapp.dao.Video;
 
+import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.AudioDao;
@@ -34,6 +36,7 @@ import org.literacyapp.dao.VideoDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig deviceDaoConfig;
     private final DaoConfig allophoneDaoConfig;
     private final DaoConfig letterDaoConfig;
     private final DaoConfig audioDaoConfig;
@@ -42,6 +45,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig imageDaoConfig;
     private final DaoConfig videoDaoConfig;
 
+    private final DeviceDao deviceDao;
     private final AllophoneDao allophoneDao;
     private final LetterDao letterDao;
     private final AudioDao audioDao;
@@ -53,6 +57,9 @@ public class DaoSession extends AbstractDaoSession {
     public DaoSession(SQLiteDatabase db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
+
+        deviceDaoConfig = daoConfigMap.get(DeviceDao.class).clone();
+        deviceDaoConfig.initIdentityScope(type);
 
         allophoneDaoConfig = daoConfigMap.get(AllophoneDao.class).clone();
         allophoneDaoConfig.initIdentityScope(type);
@@ -75,6 +82,7 @@ public class DaoSession extends AbstractDaoSession {
         videoDaoConfig = daoConfigMap.get(VideoDao.class).clone();
         videoDaoConfig.initIdentityScope(type);
 
+        deviceDao = new DeviceDao(deviceDaoConfig, this);
         allophoneDao = new AllophoneDao(allophoneDaoConfig, this);
         letterDao = new LetterDao(letterDaoConfig, this);
         audioDao = new AudioDao(audioDaoConfig, this);
@@ -83,6 +91,7 @@ public class DaoSession extends AbstractDaoSession {
         imageDao = new ImageDao(imageDaoConfig, this);
         videoDao = new VideoDao(videoDaoConfig, this);
 
+        registerDao(Device.class, deviceDao);
         registerDao(Allophone.class, allophoneDao);
         registerDao(Letter.class, letterDao);
         registerDao(Audio.class, audioDao);
@@ -93,6 +102,7 @@ public class DaoSession extends AbstractDaoSession {
     }
     
     public void clear() {
+        deviceDaoConfig.getIdentityScope().clear();
         allophoneDaoConfig.getIdentityScope().clear();
         letterDaoConfig.getIdentityScope().clear();
         audioDaoConfig.getIdentityScope().clear();
@@ -100,6 +110,10 @@ public class DaoSession extends AbstractDaoSession {
         numberDaoConfig.getIdentityScope().clear();
         imageDaoConfig.getIdentityScope().clear();
         videoDaoConfig.getIdentityScope().clear();
+    }
+
+    public DeviceDao getDeviceDao() {
+        return deviceDao;
     }
 
     public AllophoneDao getAllophoneDao() {
