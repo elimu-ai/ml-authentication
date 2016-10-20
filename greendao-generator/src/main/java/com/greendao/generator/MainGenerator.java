@@ -21,11 +21,12 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        int versionCode = 1001012; // 1.1.12 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        int versionCode = 1001013; // 1.1.13 (this should match the version of the dependency org.literacyapp:literacyapp-model)
         // NOTE: If you increase the schema version, all tables in the database will be deleted!
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
 
+        // Content
         Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
         Entity letter = EntityHelper.createEntityFromClass(LetterGson.class, schema);
         Entity audio = EntityHelper.createEntityFromClass(AudioGson.class, schema);
@@ -33,6 +34,9 @@ public class MainGenerator {
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
         Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
         Entity video = EntityHelper.createEntityFromClass(VideoGson.class, schema);
+
+        // Events
+        // TODO
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();
