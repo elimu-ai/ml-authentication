@@ -1,6 +1,7 @@
 package com.greendao.generator;
 
 import org.literacyapp.model.gson.DeviceGson;
+import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -29,6 +30,7 @@ public class MainGenerator {
 
         // Model
         Entity device = EntityHelper.createEntityFromClass(DeviceGson.class, schema);
+        Entity student = EntityHelper.createEntityFromClass(StudentGson.class, schema);
 
         // Content
         Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
