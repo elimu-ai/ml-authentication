@@ -16,6 +16,7 @@ import org.literacyapp.model.enums.content.allophone.VowelLength;
 import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.StudentImageFeatureGson;
+import org.literacyapp.model.gson.admin.ApplicationGson;
 import org.literacyapp.model.gson.content.WordGson;
 
 import java.lang.reflect.Field;
@@ -105,6 +106,18 @@ public class EntityHelper {
             }
         } else if (field.getType().isAssignableFrom(Integer.class)) {
             entity.addIntProperty(field.getName());
+        } else if (field.getType() == ApplicationGson.class) {
+            // Add ID pointing to target entity
+            // See http://greenrobot.org/greendao/documentation/relations/#Modelling_To-One_Relations
+            Property applicationIdProperty = entity.addLongProperty("applicationId").getProperty();
+            int index = 0;
+            for (Entity schemaEntity : schema.getEntities()) {
+                if (schemaEntity.getClassName().equals("Application")) {
+                    Entity applicationEntity = schema.getEntities().get(index);
+                    entity.addToOne(applicationEntity, applicationIdProperty);
+                }
+                index++;
+            }
         } else if (field.getType() == StudentImageFeatureGson.class) {
             // Add ID pointing to target entity
             // See http://greenrobot.org/greendao/documentation/relations/#Modelling_To-One_Relations

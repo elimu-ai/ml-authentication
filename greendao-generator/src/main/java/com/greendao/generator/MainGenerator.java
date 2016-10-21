@@ -4,6 +4,7 @@ import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.StudentImageFeatureGson;
 import org.literacyapp.model.gson.StudentImageGson;
+import org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -46,6 +47,9 @@ public class MainGenerator {
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
         Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
         Entity video = EntityHelper.createEntityFromClass(VideoGson.class, schema);
+
+        // Device event entities
+        Entity studentImageCollectionEvent = EntityHelper.createEntityFromClass(StudentImageCollectionEventGson.class, schema);
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();
