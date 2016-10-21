@@ -6,13 +6,27 @@ package org.literacyapp.dao;
  */
 public class Device {
 
+    private Long id;
     private String deviceId;
 
     public Device() {
     }
 
-    public Device(String deviceId) {
+    public Device(Long id) {
+        this.id = id;
+    }
+
+    public Device(Long id, String deviceId) {
+        this.id = id;
         this.deviceId = deviceId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDeviceId() {
