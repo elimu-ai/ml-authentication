@@ -3,6 +3,8 @@ package com.greendao.generator;
 import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.StudentImageFeatureGson;
+import org.literacyapp.model.gson.StudentImageGson;
+import org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -24,7 +26,7 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        int versionCode = 1001017; // 1.1.17 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        int versionCode = 1001018; // 1.1.18 (this should match the version of the dependency org.literacyapp:literacyapp-model)
         // NOTE: If you increase the schema version, all tables in the database will be deleted!
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
@@ -35,6 +37,7 @@ public class MainGenerator {
 
         // Face recognition entities
         Entity studentImageFeature = EntityHelper.createEntityFromClass(StudentImageFeatureGson.class, schema);
+        Entity studentImage = EntityHelper.createEntityFromClass(StudentImageGson.class, schema);
 
         // Content entities
         Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
@@ -44,6 +47,9 @@ public class MainGenerator {
         Entity number = EntityHelper.createEntityFromClass(NumberGson.class, schema);
         Entity image = EntityHelper.createEntityFromClass(ImageGson.class, schema);
         Entity video = EntityHelper.createEntityFromClass(VideoGson.class, schema);
+
+        // Device event entities
+        Entity studentImageCollectionEvent = EntityHelper.createEntityFromClass(StudentImageCollectionEventGson.class, schema);
 
         try {
             DaoGenerator daoGenerator = new DaoGenerator();
