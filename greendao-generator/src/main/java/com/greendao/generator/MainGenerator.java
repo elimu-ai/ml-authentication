@@ -2,6 +2,7 @@ package com.greendao.generator;
 
 import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.StudentGson;
+import org.literacyapp.model.gson.StudentImageFeatureGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -28,11 +29,14 @@ public class MainGenerator {
         // TODO: handle database migration when upgrade to new schema version
         Schema schema = new Schema(versionCode, "org.literacyapp.dao");
 
-        // Model
+        // Model entities
         Entity device = EntityHelper.createEntityFromClass(DeviceGson.class, schema);
         Entity student = EntityHelper.createEntityFromClass(StudentGson.class, schema);
 
-        // Content
+        // Face recognition entities
+        Entity studentImageFeature = EntityHelper.createEntityFromClass(StudentImageFeatureGson.class, schema);
+
+        // Content entities
         Entity allophone = EntityHelper.createEntityFromClass(AllophoneGson.class, schema);
         Entity letter = EntityHelper.createEntityFromClass(LetterGson.class, schema);
         Entity audio = EntityHelper.createEntityFromClass(AudioGson.class, schema);
