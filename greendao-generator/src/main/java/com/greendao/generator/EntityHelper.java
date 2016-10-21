@@ -13,6 +13,7 @@ import org.literacyapp.model.enums.content.allophone.SoundType;
 import org.literacyapp.model.enums.content.allophone.VowelFrontness;
 import org.literacyapp.model.enums.content.allophone.VowelHeight;
 import org.literacyapp.model.enums.content.allophone.VowelLength;
+import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.content.WordGson;
 
 import java.lang.reflect.Field;
@@ -102,14 +103,27 @@ public class EntityHelper {
             }
         } else if (field.getType().isAssignableFrom(Integer.class)) {
             entity.addIntProperty(field.getName());
+        } else if (field.getType() == StudentGson.class) {
+            // Add ID pointing to target entity
+            // See http://greenrobot.org/greendao/documentation/relations/#Modelling_To-One_Relations
+            Property studentIdProperty = entity.addLongProperty("studentId").getProperty();
+            int index = 0;
+            for (Entity schemaEntity : schema.getEntities()) {
+                if (schemaEntity.getClassName().equals("Student")) {
+                    Entity studentEntity = schema.getEntities().get(index);
+                    entity.addToOne(studentEntity, studentIdProperty);
+                }
+                index++;
+            }
         } else if (field.getType() == WordGson.class) {
+            // Add ID pointing to target entity
             // See http://greenrobot.org/greendao/documentation/relations/#Modelling_To-One_Relations
             Property wordIdProperty = entity.addLongProperty("wordId").getProperty();
             int index = 0;
             for (Entity schemaEntity : schema.getEntities()) {
                 if (schemaEntity.getClassName().equals("Word")) {
-                    Entity entityWord = schema.getEntities().get(index);
-                    entity.addToOne(entityWord, wordIdProperty);
+                    Entity wordEntity = schema.getEntities().get(index);
+                    entity.addToOne(wordEntity, wordIdProperty);
                 }
                 index++;
             }
