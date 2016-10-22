@@ -1,1 +1,3 @@
-include ':app', ':greendao-generator', ':libraries:opencv'
+include ':app', ':greendao-generator', ':facerecognitionlibrary', ':openCVLibrary310'
+project(':facerecognitionlibrary').projectDir = new File('libraries/facerecognitionlibrary')
+project(':openCVLibrary310').projectDir = new File('libraries/facerecognitionlibrary/openCVLibrary310')

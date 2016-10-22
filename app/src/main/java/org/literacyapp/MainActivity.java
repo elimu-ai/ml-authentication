@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
+import org.literacyapp.authentication.CameraViewActivity;
 import org.literacyapp.receiver.DownloadContentAlarmReceiver;
 import org.literacyapp.util.Log;
 
@@ -47,9 +48,10 @@ public class MainActivity extends AppCompatActivity {
             sendBroadcast(intent);
         } else {
             // Assume content has already been downloaded
-            Intent categoryIntent = new Intent(this, CategoryActivity.class);
-            startActivity(categoryIntent);
-            finish();
+    //        Intent categoryIntent = new Intent(this, CategoryActivity.class);
+      //      startActivity(categoryIntent);
+           startActivity(new Intent(getApplicationContext(), CameraViewActivity.class));
+           finish();
         }
     }
 
