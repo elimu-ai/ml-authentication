@@ -1,1 +1,1 @@
-include ':app', ':greendao-generator', ':libraries:opencv'
+include ':app', ':greendao-generator'
