@@ -1,1 +1,2 @@
 include ':app', ':greendao-generator'
+include ':openCVLibrary310'
