@@ -54,7 +54,7 @@
             android:screenOrientation="fullSensor" />
         <activity android:name=".task.LessonCompleteActivity"></activity>
         <activity android:name=".authentication.CameraViewActivity">
-        </activity>
+    </activity>
     </application>
 
 </manifest>

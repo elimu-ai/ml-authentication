@@ -25,6 +25,10 @@ import ch.zhaw.facerecognitionlibrary.Helpers.MatName;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
 
+/**
+ * Activity to collect images via the front camera view, adding an overlay and storing images of detected faces
+ */
+
 public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     private JavaCameraView preview;
     private PreProcessorFactory ppF;
@@ -32,12 +36,12 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private String deviceId;
     private String collectionEventId;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
-    private int count = 1;
+    private int imagesProcessed;
 
     // Image collection parameters
-    private static final Boolean diagnoseMode = true;
+    private static final boolean diagnoseMode = true;
     private static final long timerDiff = 100;
-    private static final int numberOfPictures = 20;
+    private static final int numberOfImages = 20;
 
 
     static {
@@ -86,7 +90,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
         Mat imgCopy = new Mat();
-        count = 1;
+        imagesProcessed = 1;
 
         // Store original image for face recognition
         imgRgba.copyTo(imgCopy);
@@ -111,12 +115,12 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                         MatOperation.drawRectangleAndLabelOnPreview(imgRgba, faces[0], "Face detected", true);
                     }
 
-                    // Stop after numberOfPictures (settings option)
-                    if(count > numberOfPictures){
+                    // Stop after numberOfImages (settings option)
+                    if(imagesProcessed > numberOfImages){
                         finish();
                     }
 
-                    count++;
+                    imagesProcessed++;
                 }
             }
         }
@@ -135,7 +139,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     private void storeStudentImage(Mat img){
 
-        String sId = collectionEventId + count;
+        String sId = collectionEventId + imagesProcessed;
 
         MatName matName = new MatName(sId, img);
         FileHelper fh = new FileHelper();
@@ -147,4 +151,5 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, null, null);
 
     }
+
 }
