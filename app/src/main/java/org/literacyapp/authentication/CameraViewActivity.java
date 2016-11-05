@@ -16,6 +16,8 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.Date;
@@ -37,12 +39,17 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private String collectionEventId;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private int imagesProcessed;
+    private Mat imgOverlay;
+
 
     // Image collection parameters
     private static final boolean diagnoseMode = true;
     private static final long timerDiff = 100;
     private static final int numberOfImages = 20;
 
+    // Mat objects for overlay
+    private Mat imgMask  = new Mat();
+    private Mat imgInvMask  = new Mat();
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -125,6 +132,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             }
         }
 
+        // Add overlay
+        addOverlay(imgRgba);
+
         return imgRgba;
     }
 
@@ -149,6 +159,36 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
         StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, null, null);
+
+    }
+
+    private void addOverlay(Mat imgRgba){
+        Mat imgForeGround = new Mat();
+        Mat imgBackGround = new Mat();
+
+        if (imgOverlay == null){
+
+            // Load overlay mask (to be completed...)
+            imgOverlay = Imgcodecs.imread(MultimediaHelper.getImageDirectory() + "/deer.jpg", Imgcodecs.IMREAD_UNCHANGED);
+            Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
+
+            // Create a mask of overlay and create its inverse mask also
+            Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
+            Imgproc.threshold(imgMask, imgMask, 224, 255, Imgproc.THRESH_BINARY_INV);
+            Core.bitwise_not(imgMask,imgMask);
+            Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
+
+            Core.bitwise_not(imgMask,imgInvMask);
+        }
+
+        //Black-out the area of overlay in img
+        Core.bitwise_and(imgMask,imgRgba,imgBackGround);
+
+        // Take only region of overlay from overlay image.
+        Core.bitwise_and(imgOverlay,imgInvMask,imgForeGround);
+
+        // Add overlay to frame
+        Core.add(imgForeGround,imgBackGround,imgRgba);
 
     }
 
