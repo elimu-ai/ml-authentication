@@ -53,6 +53,8 @@
             android:name=".task.StarActivity"
             android:screenOrientation="fullSensor" />
         <activity android:name=".task.LessonCompleteActivity"></activity>
+        <activity android:name=".authentication.CameraViewActivity">
+        </activity>
     </application>
 
 </manifest>
