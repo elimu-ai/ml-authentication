@@ -144,6 +144,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         super.onResume();
 
         ppF = new PreProcessorFactory(getApplicationContext());
+        createOverlay();
         preview.enableView();
     }
 
@@ -162,24 +163,23 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     }
 
+    private void createOverlay() {
+        // Load overlay mask (to be completed...)
+        imgOverlay = Imgcodecs.imread(MultimediaHelper.getImageDirectory() + "/deer.jpg", Imgcodecs.IMREAD_UNCHANGED);
+        Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
+
+        // Create a mask of overlay and create its inverse mask also
+        Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
+        Imgproc.threshold(imgMask, imgMask, 224, 255, Imgproc.THRESH_BINARY_INV);
+        Core.bitwise_not(imgMask,imgMask);
+        Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
+
+        Core.bitwise_not(imgMask,imgInvMask);
+    }
+
     private void addOverlay(Mat imgRgba){
         Mat imgForeGround = new Mat();
         Mat imgBackGround = new Mat();
-
-        if (imgOverlay == null){
-
-            // Load overlay mask (to be completed...)
-            imgOverlay = Imgcodecs.imread(MultimediaHelper.getImageDirectory() + "/deer.jpg", Imgcodecs.IMREAD_UNCHANGED);
-            Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
-
-            // Create a mask of overlay and create its inverse mask also
-            Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
-            Imgproc.threshold(imgMask, imgMask, 224, 255, Imgproc.THRESH_BINARY_INV);
-            Core.bitwise_not(imgMask,imgMask);
-            Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
-
-            Core.bitwise_not(imgMask,imgInvMask);
-        }
 
         //Black-out the area of overlay in img
         Core.bitwise_and(imgMask,imgRgba,imgBackGround);
