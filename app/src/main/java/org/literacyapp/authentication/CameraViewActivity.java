@@ -1,6 +1,5 @@
 package org.literacyapp.authentication;
 
-import android.app.IntentService;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
