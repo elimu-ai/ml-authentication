@@ -6,8 +6,10 @@ import android.view.SurfaceView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImage;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
+import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.CameraBridgeViewBase;
@@ -37,8 +39,8 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private long lastTime;
     private String deviceId;
     private String collectionEventId;
+    private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
-    private int imagesProcessed;
     private Mat imgOverlay;
 
 
@@ -46,6 +48,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private static final boolean diagnoseMode = true;
     private static final long timerDiff = 100;
     private static final int numberOfImages = 20;
+    private int imagesProcessed = 0;
 
     // Mat objects for overlay
     private Mat imgMask  = new Mat();
@@ -76,11 +79,15 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         // Calculate random CollectionEventId until the DB is not setup
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
-        studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
+        DaoSession daoSession = literacyApplication.getDaoSession();
+
+        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+        studentImageDao = daoSession.getStudentImageDao();
 
         collectionEventId = deviceId + String.format("%016d",studentImageCollectionEventDao.count() + 1);
 
-      //studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
+       // ToDo studenImageCollectionEvent creation local or external
+      // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
     }
 
     @Override
@@ -97,7 +104,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
         Mat imgCopy = new Mat();
-        imagesProcessed = 1;
 
         // Store original image for face recognition
         imgRgba.copyTo(imgCopy);
@@ -154,12 +160,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         MatName matName = new MatName(sId, img);
         FileHelper fh = new FileHelper();
-        String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + collectionEventId;
+        String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + sId;
         new File(wholeFolderPath).mkdirs();
         fh.saveMatToImage(matName, wholeFolderPath + "/");
 
         Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
         StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, null, null);
+        studentImageDao.insert(studentImage);
 
     }
 
