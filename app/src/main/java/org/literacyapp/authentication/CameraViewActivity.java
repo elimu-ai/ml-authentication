@@ -22,6 +22,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.Date;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.FileHelper;
@@ -48,7 +49,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private static final boolean diagnoseMode = true;
     private static final long timerDiff = 100;
     private static final int numberOfImages = 20;
-    private int imagesProcessed = 0;
+    private int imagesProcessed;
 
     // Mat objects for overlay
     private Mat imgMask  = new Mat();
@@ -76,11 +77,15 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         lastTime = new Date().getTime();
 
         deviceId = DeviceInfoHelper.getDeviceId(getApplicationContext());
-        // Calculate random CollectionEventId until the DB is not setup
 
+        // Reset imageProcessed counter
+        imagesProcessed = 0;
+
+        // Initialize DB Session
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         DaoSession daoSession = literacyApplication.getDaoSession();
 
+        // Create required DB Objects
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
 
@@ -148,7 +153,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     public void onResume()
     {
         super.onResume();
-
         ppF = new PreProcessorFactory(getApplicationContext());
         createOverlay();
         preview.enableView();
@@ -156,16 +160,16 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     private void storeStudentImage(Mat img){
 
-        String sId = collectionEventId + imagesProcessed;
+        String studentImageId = collectionEventId + imagesProcessed;
 
-        MatName matName = new MatName(sId, img);
+        MatName matName = new MatName(studentImageId, img);
         FileHelper fh = new FileHelper();
-        String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + sId;
+        String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + studentImageId;
         new File(wholeFolderPath).mkdirs();
         fh.saveMatToImage(matName, wholeFolderPath + "/");
 
         Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
-        StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, null, null);
+        StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
         studentImageDao.insert(studentImage);
 
     }
