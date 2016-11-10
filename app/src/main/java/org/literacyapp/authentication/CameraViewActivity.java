@@ -22,8 +22,10 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.FileHelper;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatName;
@@ -43,6 +45,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Mat imgOverlay;
+    private LiteracyApplication literacyApplication;
+    private List<Mat> studentImages;
+    private List<Mat> testImages;
 
 
     // Image collection parameters
@@ -82,8 +87,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         imagesProcessed = 0;
 
         // Initialize DB Session
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
+        literacyApplication = (LiteracyApplication) getApplicationContext();
         DaoSession daoSession = literacyApplication.getDaoSession();
+        studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
 
         // Create required DB Objects
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
@@ -91,8 +97,14 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         collectionEventId = deviceId + String.format("%016d",studentImageCollectionEventDao.count() + 1);
 
-       // ToDo studenImageCollectionEvent creation local or external
-      // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
+        // ToDo studenImageCollectionEvent creation local or external
+        // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
+        studentImages = new ArrayList<>();
+        if (literacyApplication.TEST_MODE){
+            testImages = new ArrayList<>();
+        }
+
+      //studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
     }
 
     @Override
@@ -102,7 +114,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     @Override
     public void onCameraViewStopped() {
-
     }
 
     @Override
@@ -120,6 +131,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         long time = new Date().getTime();
 
         if(lastTime + timerDiff < time){
+            if (literacyApplication.TEST_MODE){
+                testImages.add(imgCopy);
+            }
             Mat img = ppF.getCroppedImage(imgCopy);
             if(img != null) {
                 Rect[] faces = ppF.getFacesForRecognition();
@@ -127,7 +141,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                     faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
 
                     // Name = DeviceId_CollectionEventId_ImageNumber
-                    storeStudentImage(img);
+                    studentImages.add(img);
 
                     if(diagnoseMode) {
                         MatOperation.drawRectangleAndLabelOnPreview(imgRgba, faces[0], "Face detected", true);
@@ -135,6 +149,10 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
                     // Stop after numberOfImages (settings option)
                     if(imagesProcessed > numberOfImages){
+                        storeStudentImages();
+                        if (literacyApplication.TEST_MODE){
+                            storeTestImages();
+                        }
                         finish();
                     }
 
@@ -158,20 +176,30 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         preview.enableView();
     }
 
-    private void storeStudentImage(Mat img){
+    private void storeStudentImages(){
+        for(int i=0; i<studentImages.size(); i++){
+            String sId = collectionEventId + i;
+            MatName matName = new MatName(sId, studentImages.get(i));
+            FileHelper fh = new FileHelper();
+            String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + collectionEventId;
+            new File(wholeFolderPath).mkdirs();
+            fh.saveMatToImage(matName, wholeFolderPath + "/");
 
-        String studentImageId = collectionEventId + imagesProcessed;
+            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
+            StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
+            studentImageDao.insert(studentImage);
+        }
+    }
 
-        MatName matName = new MatName(studentImageId, img);
-        FileHelper fh = new FileHelper();
-        String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + studentImageId;
-        new File(wholeFolderPath).mkdirs();
-        fh.saveMatToImage(matName, wholeFolderPath + "/");
-
-        Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
-        StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
-        studentImageDao.insert(studentImage);
-
+    private void storeTestImages(){
+        for(int i=0; i<testImages.size(); i++){
+            String sId = collectionEventId + i;
+            MatName matName = new MatName(sId, testImages.get(i));
+            FileHelper fh = new FileHelper();
+            String wholeFolderPath = MultimediaHelper.getTestImageDirectory() + "/" + deviceId + "/" + collectionEventId;
+            new File(wholeFolderPath).mkdirs();
+            fh.saveMatToImage(matName, wholeFolderPath + "/");
+        }
     }
 
     private void createOverlay() {

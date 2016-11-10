@@ -50,6 +50,14 @@ public class MultimediaHelper {
         return studentImageDirectory;
     }
 
+    public static File getTestImageDirectory() {
+        File testImageDirectory = new File(getMultimediaDirectory(), "testImage");
+        if (!testImageDirectory.exists()) {
+            testImageDirectory.mkdir();
+        }
+        return testImageDirectory;
+    }
+
     public static File getFile(Audio audio) {
         File file = null;
 
