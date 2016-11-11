@@ -1,5 +1,6 @@
 package org.literacyapp.authentication;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceView;
@@ -71,6 +72,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_view);
+
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
+        mediaPlayer.start();
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
 
