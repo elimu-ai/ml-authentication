@@ -4,11 +4,11 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 import org.literacyapp.R;
-import org.literacyapp.util.Log;
 
 public class StarActivity extends AppCompatActivity {
 
@@ -16,7 +16,7 @@ public class StarActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass(), "onCreate");
+        Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_star);
@@ -26,7 +26,7 @@ public class StarActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass(), "onStart");
+        Log.i(getClass().getName(), "onStart");
         super.onStart();
 
 //        View decorView = getWindow().getDecorView();
@@ -44,7 +44,7 @@ public class StarActivity extends AppCompatActivity {
         mStarImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(getClass(), "onClick");
+                Log.i(getClass().getName(), "onClick");
 
                 Drawable drawable = mStarImageView.getDrawable();
                 ((Animatable) drawable).start();

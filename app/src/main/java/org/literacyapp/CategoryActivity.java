@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ import android.widget.ImageView;
 import org.literacyapp.task.GraphemeActivity;
 import org.literacyapp.task.TagItemsActivity;
 import org.literacyapp.task.VideoActivity;
-import org.literacyapp.util.Log;
 
 /**
  * Activity for selecting between literacy, numeracy, and videos.
@@ -109,7 +109,7 @@ public class CategoryActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                Log.d(getClass(), "onPageSelected: " + position);
+                Log.i(getClass().getName(), "onPageSelected: " + position);
 
                 pagePosition = position;
 
@@ -135,7 +135,7 @@ public class CategoryActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Log.d(getClass(), "onPageScrollStateChanged");
+                Log.i(getClass().getName(), "onPageScrollStateChanged");
             }
         });
     }
@@ -167,7 +167,7 @@ public class CategoryActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass(), "onStart");
+        Log.i(getClass().getName(), "onStart");
         super.onStart();
 
 //        View decorView = getWindow().getDecorView();
@@ -227,7 +227,7 @@ public class CategoryActivity extends AppCompatActivity {
             rootView = inflater.inflate(R.layout.fragment_category, container, false);
 
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            Log.d(getClass(), "sectionNumber: " + sectionNumber);
+            Log.i(getClass().getName(), "sectionNumber: " + sectionNumber);
 
             img = (ImageView) rootView.findViewById(R.id.section_img);
             img.setBackgroundResource(bgs[getArguments().getInt(ARG_SECTION_NUMBER) - 1]);
@@ -236,7 +236,7 @@ public class CategoryActivity extends AppCompatActivity {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(getClass(), "onClick");
+                        Log.i(getClass().getName(), "onClick");
                         Intent tagItemsIntent = new Intent(getActivity(), TagItemsActivity.class);
                         startActivity(tagItemsIntent);
                     }
@@ -245,7 +245,7 @@ public class CategoryActivity extends AppCompatActivity {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(getClass(), "onClick");
+                        Log.i(getClass().getName(), "onClick");
                         Intent graphemeIntent = new Intent(getActivity(), GraphemeActivity.class);
                         startActivity(graphemeIntent);
                     }
@@ -254,7 +254,7 @@ public class CategoryActivity extends AppCompatActivity {
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(getClass(), "onClick");
+                        Log.i(getClass().getName(), "onClick");
                         Intent videoIntent = new Intent(getActivity(), VideoActivity.class);
                         startActivity(videoIntent);
                     }

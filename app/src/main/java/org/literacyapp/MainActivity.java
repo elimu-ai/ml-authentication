@@ -10,9 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import org.literacyapp.receiver.DownloadContentAlarmReceiver;
-import org.literacyapp.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass(), "onCreate");
+        Log.i(getClass().getName(), "onCreate");
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass(), "onCreate");
+        Log.i(getClass().getName(), "onCreate");
         super.onStart();
 
         // Ask for permissions

@@ -1,26 +1,28 @@
 package org.literacyapp.dao.converter;
 
+import android.util.Log;
+
 import org.literacyapp.model.enums.Locale;
-import org.literacyapp.util.Log;
+
 import de.greenrobot.dao.converter.PropertyConverter;
 
 public class LocaleConverter implements PropertyConverter<Locale, String> {
 
     @Override
     public Locale convertToEntityProperty(String databaseValue) {
-        Log.d(getClass(), "convertToEntityProperty");
+        Log.i(getClass().getName(), "convertToEntityProperty");
 
         Locale locale = Locale.valueOf(databaseValue);
-        Log.d(getClass(), "locale: " + locale);
+        Log.i(getClass().getName(), "locale: " + locale);
         return locale;
     }
 
     @Override
     public String convertToDatabaseValue(Locale entityProperty) {
-        Log.d(getClass(), "convertToDatabaseValue");
+        Log.i(getClass().getName(), "convertToDatabaseValue");
 
         String databaseValue = entityProperty.toString();
-        Log.d(getClass(), "databaseValue: " + databaseValue);
+        Log.i(getClass().getName(), "databaseValue: " + databaseValue);
         return databaseValue;
     }
 }

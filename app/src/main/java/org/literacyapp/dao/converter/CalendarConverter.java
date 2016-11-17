@@ -1,6 +1,6 @@
 package org.literacyapp.dao.converter;
 
-import org.literacyapp.util.Log;
+import android.util.Log;
 
 import java.util.Calendar;
 
@@ -10,20 +10,20 @@ public class CalendarConverter implements PropertyConverter<Calendar, Long> {
 
     @Override
     public Calendar convertToEntityProperty(Long databaseValue) {
-        Log.d(getClass(), "convertToEntityProperty");
+        Log.i(getClass().getName(), "convertToEntityProperty");
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(databaseValue);
-        Log.d(getClass(), "calendar.getTime(): " + calendar.getTime());
+        Log.i(getClass().getName(), "calendar.getTime(): " + calendar.getTime());
         return calendar;
     }
 
     @Override
     public Long convertToDatabaseValue(Calendar entityProperty) {
-        Log.d(getClass(), "convertToDatabaseValue");
+        Log.i(getClass().getName(), "convertToDatabaseValue");
 
         Long databaseValue = entityProperty.getTimeInMillis();
-        Log.d(getClass(), "databaseValue: " + databaseValue);
+        Log.i(getClass().getName(), "databaseValue: " + databaseValue);
         return databaseValue;
     }
 }
