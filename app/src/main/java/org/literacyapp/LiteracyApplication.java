@@ -1,7 +1,6 @@
 package org.literacyapp;
 
 import android.app.Application;
-import android.content.IntentFilter;
 import android.database.sqlite.SQLiteDatabase;
 
 import org.literacyapp.dao.DaoMaster;
@@ -26,8 +25,8 @@ public class LiteracyApplication extends Application {
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
 
-        ScreenOnReceiver screenOnReceiver = new ScreenOnReceiver();
-        registerReceiver(screenOnReceiver, new IntentFilter("android.intent.action.SCREEN_ON"));
+//        ScreenOnReceiver screenOnReceiver = new ScreenOnReceiver();
+//        registerReceiver(screenOnReceiver, new IntentFilter("android.intent.action.SCREEN_ON"));
     }
 
     public DaoSession getDaoSession() {
