@@ -3,7 +3,6 @@ package org.literacyapp;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import org.literacyapp.util.MediaPlayerHelper;
 
 /**
  * Activity for selecting between literacy, numeracy, and videos.
@@ -124,8 +125,7 @@ public class CategoryActivity extends AppCompatActivity {
 
                 animateImage((ImageView) findViewById(R.id.section_img));
 
-                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.vocal_plop);
-                mediaPlayer.start();
+                MediaPlayerHelper.play(getApplicationContext(), R.raw.vocal_plop);
             }
 
             @Override
