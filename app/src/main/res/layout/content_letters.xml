@@ -13,8 +13,19 @@
     tools:context="org.literacyapp.content.letter.LettersActivity"
     tools:showIn="@layout/activity_letters">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="content_numbers" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <GridLayout
+            android:id="@+id/letterGridLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:columnCount="3"
+            android:useDefaultMargins="true">
+
+            <!-- Programmatically add content_letter_letter_view.xml -->
+        </GridLayout>
+    </ScrollView>
 </RelativeLayout>
