@@ -3,6 +3,7 @@ package org.literacyapp.util;
 import android.content.Context;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Log;
 
 import org.literacyapp.model.enums.Locale;
 
@@ -20,7 +21,7 @@ public class DeviceInfoHelper {
         try {
             deviceManufacturer = URLEncoder.encode(Build.MANUFACTURER, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            Log.e(DeviceInfoHelper.class, "Build.MANUFACTURER: " + Build.MANUFACTURER, e);
+            Log.e(DeviceInfoHelper.class.getName(), "Build.MANUFACTURER: " + Build.MANUFACTURER, e);
         }
         return deviceManufacturer;
     }
@@ -30,7 +31,7 @@ public class DeviceInfoHelper {
         try {
             deviceModel = URLEncoder.encode(Build.MODEL, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            Log.e(DeviceInfoHelper.class, "Build.MODEL: " + Build.MODEL, e);
+            Log.e(DeviceInfoHelper.class.getName(), "Build.MODEL: " + Build.MODEL, e);
         }
         return deviceModel;
     }
@@ -40,7 +41,7 @@ public class DeviceInfoHelper {
         try {
             deviceSerial = URLEncoder.encode(Build.SERIAL, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            Log.e(DeviceInfoHelper.class, "Build.SERIAL: " + Build.SERIAL, e);
+            Log.e(DeviceInfoHelper.class.getName(), "Build.SERIAL: " + Build.SERIAL, e);
         }
         return deviceSerial;
     }

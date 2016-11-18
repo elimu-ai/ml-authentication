@@ -1,7 +1,8 @@
 package org.literacyapp.dao.converter;
 
+import android.util.Log;
+
 import org.literacyapp.model.enums.content.allophone.VowelHeight;
-import org.literacyapp.util.Log;
 
 import de.greenrobot.dao.converter.PropertyConverter;
 
@@ -9,19 +10,19 @@ public class VowelHeightConverter implements PropertyConverter<VowelHeight, Stri
 
     @Override
     public VowelHeight convertToEntityProperty(String databaseValue) {
-        Log.d(getClass(), "convertToEntityProperty");
+        Log.i(getClass().getName(), "convertToEntityProperty");
 
         VowelHeight entityProperty = VowelHeight.valueOf(databaseValue);
-        Log.d(getClass(), "entityProperty: " + entityProperty);
+        Log.i(getClass().getName(), "entityProperty: " + entityProperty);
         return entityProperty;
     }
 
     @Override
     public String convertToDatabaseValue(VowelHeight entityProperty) {
-        Log.d(getClass(), "convertToDatabaseValue");
+        Log.i(getClass().getName(), "convertToDatabaseValue");
 
         String databaseValue = entityProperty.toString();
-        Log.d(getClass(), "databaseValue: " + databaseValue);
+        Log.i(getClass().getName(), "databaseValue: " + databaseValue);
         return databaseValue;
     }
 }

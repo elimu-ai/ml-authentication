@@ -1,5 +1,7 @@
 package org.literacyapp.util;
 
+import android.util.Log;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
@@ -14,9 +16,9 @@ import java.net.URL;
 public class MultimediaLoader {
 
     public static byte[] loadMultimedia(String urlValue) {
-        Log.d(MultimediaLoader.class, "loadMultimedia");
+        Log.i(MultimediaLoader.class.getName(), "loadMultimedia");
 
-        Log.d(MultimediaLoader.class, "Downloading from " + urlValue + "...");
+        Log.i(MultimediaLoader.class.getName(), "Downloading from " + urlValue + "...");
 
         byte[] bytes = null;
 
@@ -28,7 +30,7 @@ public class MultimediaLoader {
             httpURLConnection.connect();
 
             int responseCode = httpURLConnection.getResponseCode();
-            Log.d(MultimediaLoader.class, "responseCode: " + responseCode);
+            Log.i(MultimediaLoader.class.getName(), "responseCode: " + responseCode);
             InputStream inputStream = null;
             if (responseCode == 200) {
                 inputStream = httpURLConnection.getInputStream();
@@ -41,16 +43,16 @@ public class MultimediaLoader {
                 while ((line = bufferedReader.readLine()) != null) {
                     response += line;
                 }
-                Log.w(MultimediaLoader.class, "responseCode: " + responseCode + ", response: " + response);
+                Log.w(MultimediaLoader.class.getName(), "responseCode: " + responseCode + ", response: " + response);
             }
         } catch (MalformedURLException e) {
-            Log.e(MultimediaLoader.class, "MalformedURLException", e);
+            Log.e(MultimediaLoader.class.getName(), "MalformedURLException", e);
             e.printStackTrace();
         } catch (ProtocolException e) {
-            Log.e(MultimediaLoader.class, "ProtocolException", e);
+            Log.e(MultimediaLoader.class.getName(), "ProtocolException", e);
             e.printStackTrace();
         } catch (IOException e) {
-            Log.e(MultimediaLoader.class, "IOException", e);
+            Log.e(MultimediaLoader.class.getName(), "IOException", e);
             e.printStackTrace();
         }
 

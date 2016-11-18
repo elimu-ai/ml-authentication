@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,7 +20,6 @@ import org.literacyapp.dao.Audio;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
-import org.literacyapp.util.Log;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class GraphemeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(getClass(), "onCreate");
+        Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_grapheme);
@@ -51,7 +51,7 @@ public class GraphemeActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.d(getClass(), "onStart");
+        Log.i(getClass().getName(), "onStart");
         super.onStart();
 
 //        View decorView = getWindow().getDecorView();
@@ -66,13 +66,13 @@ public class GraphemeActivity extends AppCompatActivity {
         Letter letter = letterDao.queryBuilder()
                 .where(LetterDao.Properties.Text.eq("a")) // TODO: fetch value dynamically
                 .unique();
-        Log.d(getClass(), "letter: " + letter);
+        Log.i(getClass().getName(), "letter: " + letter);
 
         // Look up corresponding audio
         final Audio audio = audioDao.queryBuilder()
                 .where(AudioDao.Properties.Transcription.eq(letter.getText()))
                 .unique();
-        Log.d(getClass(), "audio: " + audio);
+        Log.i(getClass().getName(), "audio: " + audio);
 
         if (audio != null) {
             // Play audio
@@ -82,7 +82,7 @@ public class GraphemeActivity extends AppCompatActivity {
             mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mediaPlayer) {
-                    Log.d(getClass(), "onCompletion");
+                    Log.i(getClass().getName(), "onCompletion");
                     mediaPlayer.release();
                 }
             });
@@ -94,7 +94,7 @@ public class GraphemeActivity extends AppCompatActivity {
 //            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onClick(View view) {
-                Log.d(getClass(), "onClick");
+                Log.i(getClass().getName(), "onClick");
 
                 if (audio != null) {
                     // Play audio
@@ -104,7 +104,7 @@ public class GraphemeActivity extends AppCompatActivity {
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mediaPlayer) {
-                            Log.d(getClass(), "onCompletion");
+                            Log.i(getClass().getName(), "onCompletion");
                             mediaPlayer.release();
                         }
                     });
@@ -142,7 +142,7 @@ public class GraphemeActivity extends AppCompatActivity {
         mGraphemeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(getClass(), "onClick");
+                Log.i(getClass().getName(), "onClick");
 
                 Intent starIntent = new Intent(getApplicationContext(), StarActivity.class);
                 startActivity(starIntent);

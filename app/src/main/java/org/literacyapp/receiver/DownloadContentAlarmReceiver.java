@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -45,7 +46,6 @@ import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
-import org.literacyapp.util.Log;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.MultimediaLoader;
 import org.literacyapp.util.VersionHelper;
@@ -78,7 +78,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(getClass(), "onReceive");
+        Log.i(getClass().getName(), "onReceive");
 
         this.context = context;
 
@@ -92,9 +92,9 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
         videoDao = literacyApplication.getDaoSession().getVideoDao();
 
         boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(context);
-        Log.d(getClass(), "isWifiEnabled: " + isWifiEnabled);
+        Log.i(getClass().getName(), "isWifiEnabled: " + isWifiEnabled);
         boolean isWifiConnected = ConnectivityHelper.isWifiConnected(context);
-        Log.d(getClass(), "isWifiConnected: " + isWifiConnected);
+        Log.i(getClass().getName(), "isWifiConnected: " + isWifiConnected);
         if (!isWifiEnabled) {
             Toast.makeText(context, context.getString(R.string.wifi_needs_to_be_enabled), Toast.LENGTH_SHORT).show();
         } else if (!isWifiConnected) {
@@ -110,24 +110,24 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected String doInBackground(Void... voids) {
-            Log.d(getClass(), "doInBackground");
+            Log.i(getClass().getName(), "doInBackground");
 
             boolean isServerReachable = ConnectivityHelper.isServerReachable(context);
-            Log.d(getClass(), "isServerReachable: " + isServerReachable);
+            Log.i(getClass().getName(), "isServerReachable: " + isServerReachable);
             if (!isServerReachable) {
                 return null;
             } else {
                 String url = EnvironmentSettings.getRestUrl() + "/device/read/" + DeviceInfoHelper.getDeviceId(context) +
                         "?appVersionCode=" + VersionHelper.getAppVersionCode(context);
                 String jsonResponse = JsonLoader.loadJson(url);
-                Log.d(getClass(), "jsonResponse: " + jsonResponse);
+                Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
                 return jsonResponse;
             }
         }
 
         @Override
         protected void onPostExecute(String jsonResponse) {
-            Log.d(getClass(), "onPostExecute");
+            Log.i(getClass().getName(), "onPostExecute");
             super.onPostExecute(jsonResponse);
 
             if (TextUtils.isEmpty(jsonResponse)) {
@@ -145,7 +145,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                         new DownloadContentAsyncTask().execute();
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass(), null, e);
+                    Log.e(getClass().getName(), null, e);
                     Toast.makeText(context, "Error: " + e, Toast.LENGTH_LONG).show();
                 }
             }
@@ -157,10 +157,10 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected String doInBackground(Void... voids) {
-            Log.d(getClass(), "doInBackground");
+            Log.i(getClass().getName(), "doInBackground");
 
             boolean isServerReachable = ConnectivityHelper.isServerReachable(context);
-            Log.d(getClass(), "isServerReachable: " + isServerReachable);
+            Log.i(getClass().getName(), "isServerReachable: " + isServerReachable);
             if (!isServerReachable) {
                 return null;
             } else {
@@ -174,14 +174,14 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                         "&osVersion=" + Build.VERSION.SDK_INT +
                         "&locale=" + DeviceInfoHelper.getLocale(context);
                 String jsonResponse = JsonLoader.loadJson(url);
-                Log.d(getClass(), "jsonResponse: " + jsonResponse);
+                Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
                 return jsonResponse;
             }
         }
 
         @Override
         protected void onPostExecute(String jsonResponse) {
-            Log.d(getClass(), "onPostExecute");
+            Log.i(getClass().getName(), "onPostExecute");
             super.onPostExecute(jsonResponse);
 
             if (TextUtils.isEmpty(jsonResponse)) {
@@ -198,7 +198,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                         new DownloadContentAsyncTask().execute();
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass(), null, e);
+                    Log.e(getClass().getName(), null, e);
                     Toast.makeText(context, "Error: " + e, Toast.LENGTH_LONG).show();
                 }
             }
@@ -210,7 +210,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected String doInBackground(Void... voids) {
-            Log.d(getClass(), "doInBackground");
+            Log.i(getClass().getName(), "doInBackground");
 
 
             publishProgress("Downloading Allophones");
@@ -218,11 +218,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             String jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArrayAllophones = jsonObject.getJSONArray("allophones");
                     for (int i = 0; i < jsonArrayAllophones.length(); i++) {
@@ -234,14 +234,14 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingAllophone == null) {
                             allophoneDao.insert(allophone);
-                            Log.d(getClass(), "Stored Allophone with id " + allophone.getId() + " and IPA value /" + allophone.getValueIpa() + "/");
+                            Log.i(getClass().getName(), "Stored Allophone with id " + allophone.getId() + " and IPA value /" + allophone.getValueIpa() + "/");
                         } else {
-                            Log.d(getClass(), "Allophone /" + allophone.getValueIpa() + "/ already exists in database with id " + allophone.getId());
+                            Log.i(getClass().getName(), "Allophone /" + allophone.getValueIpa() + "/ already exists in database with id " + allophone.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -250,11 +250,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONArray("letters");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -266,14 +266,14 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingLetter == null) {
                             letterDao.insert(letter);
-                            Log.d(getClass(), "Stored Letter with id " + letter.getId() + " and text '" + letter.getText() + "'");
+                            Log.i(getClass().getName(), "Stored Letter with id " + letter.getId() + " and text '" + letter.getText() + "'");
                         } else {
-                            Log.d(getClass(), "Letter " + letter.getText() + " already exists in database with id " + letter.getId());
+                            Log.i(getClass().getName(), "Letter " + letter.getText() + " already exists in database with id " + letter.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -282,11 +282,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONArray("numbers");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -298,14 +298,14 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingNumber == null) {
                             numberDao.insert(number);
-                            Log.d(getClass(), "Stored Number with id " + number.getId() + " and value /" + number.getValue() + "/");
+                            Log.i(getClass().getName(), "Stored Number with id " + number.getId() + " and value /" + number.getValue() + "/");
                         } else {
-                            Log.d(getClass(), "Number " + number.getValue() + " already exists in database with id " + number.getId());
+                            Log.i(getClass().getName(), "Number " + number.getValue() + " already exists in database with id " + number.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -314,11 +314,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONArray("words");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -330,14 +330,14 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingWord == null) {
                             wordDao.insert(word);
-                            Log.d(getClass(), "Stored Word with id " + word.getId() + " and text '" + word.getText() + "'");
+                            Log.i(getClass().getName(), "Stored Word with id " + word.getId() + " and text '" + word.getText() + "'");
                         } else {
-                            Log.d(getClass(), "Word " + word.getText() + " already exists in database with id " + word.getId());
+                            Log.i(getClass().getName(), "Word " + word.getText() + " already exists in database with id " + word.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -347,11 +347,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONArray("audios");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -363,11 +363,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingAudio == null) {
                             File audioFile = MultimediaHelper.getFile(audio);
-                            Log.d(getClass(), "audioFile: " + audioFile);
+                            Log.i(getClass().getName(), "audioFile: " + audioFile);
                             if (!audioFile.exists()) {
                                 // Download bytes
                                 byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audio.getFileUrl());
-                                Log.d(getClass(), "bytes.length: " + bytes.length);
+                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
 
                                 // Store file
                                 try {
@@ -375,22 +375,22 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                     IOUtils.write(bytes, fileOutputStream);
                                     fileOutputStream.close();
                                 } catch (FileNotFoundException e) {
-                                    Log.e(getClass(), null, e);
+                                    Log.e(getClass().getName(), null, e);
                                 } catch (IOException e) {
-                                    Log.e(getClass(), null, e);
+                                    Log.e(getClass().getName(), null, e);
                                 }
                             }
                             if (audioFile.exists()) {
                                 audioDao.insert(audio);
-                                Log.d(getClass(), "Stored Audio with id " + audio.getId() + " and transcription \"" + audio.getTranscription() + "\"");
+                                Log.i(getClass().getName(), "Stored Audio with id " + audio.getId() + " and transcription \"" + audio.getTranscription() + "\"");
                             }
                         } else {
-                            Log.d(getClass(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId());
+                            Log.i(getClass().getName(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -399,11 +399,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONArray("images");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -415,11 +415,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingImage == null) {
                             File imageFile = MultimediaHelper.getFile(image);
-                            Log.d(getClass(), "imageFile: " + imageFile);
+                            Log.i(getClass().getName(), "imageFile: " + imageFile);
                             if (!imageFile.exists()) {
                                 // Download bytes
                                 byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + image.getFileUrl());
-                                Log.d(getClass(), "bytes.length: " + bytes.length);
+                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
 
                                 // Store file
                                 try {
@@ -427,22 +427,22 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                     IOUtils.write(bytes, fileOutputStream);
                                     fileOutputStream.close();
                                 } catch (FileNotFoundException e) {
-                                    Log.e(getClass(), null, e);
+                                    Log.e(getClass().getName(), null, e);
                                 } catch (IOException e) {
-                                    Log.e(getClass(), null, e);
+                                    Log.e(getClass().getName(), null, e);
                                 }
                             }
                             if (imageFile.exists()) {
                                 imageDao.insert(image);
-                                Log.d(getClass(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                                Log.i(getClass().getName(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
                             }
                         } else {
-                            Log.d(getClass(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
+                            Log.i(getClass().getName(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -451,11 +451,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                     "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
                     "&locale=" + DeviceInfoHelper.getLocale(context);
             jsonResponse = JsonLoader.loadJson(url);
-            Log.d(getClass(), "jsonResponse: " + jsonResponse);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
             try {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
-                    Log.w(getClass(), "Download failed");
+                    Log.w(getClass().getName(), "Download failed");
                 } else {
                     JSONArray jsonArray = jsonObject.getJSONArray("videos");
                     for (int i = 0; i < jsonArray.length(); i++) {
@@ -467,11 +467,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 .unique();
                         if (existingVideo == null) {
                             File videoFile = MultimediaHelper.getFile(video);
-                            Log.d(getClass(), "videoFile: " + videoFile);
+                            Log.i(getClass().getName(), "videoFile: " + videoFile);
                             if (!videoFile.exists()) {
                                 // Download bytes
                                 byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + video.getFileUrl());
-                                Log.d(getClass(), "bytes.length: " + bytes.length);
+                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
 
                                 // Store file
                                 try {
@@ -479,22 +479,22 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                     IOUtils.write(bytes, fileOutputStream);
                                     fileOutputStream.close();
                                 } catch (FileNotFoundException e) {
-                                    Log.e(getClass(), null, e);
+                                    Log.e(getClass().getName(), null, e);
                                 } catch (IOException e) {
-                                    Log.e(getClass(), null, e);
+                                    Log.e(getClass().getName(), null, e);
                                 }
                             }
                             if (videoFile.exists()) {
                                 videoDao.insert(video);
-                                Log.d(getClass(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
+                                Log.i(getClass().getName(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
                             }
                         } else {
-                            Log.d(getClass(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
+                            Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
                         }
                     }
                 }
             } catch (JSONException e) {
-                Log.e(getClass(), null, e);
+                Log.e(getClass().getName(), null, e);
             }
 
 
@@ -508,20 +508,20 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected void onProgressUpdate(String... values) {
-            Log.d(getClass(), "onProgressUpdate");
+            Log.i(getClass().getName(), "onProgressUpdate");
             super.onProgressUpdate(values);
 
             String progressMessage = values[0];
-            Log.d(getClass(), "progressMessage: " + progressMessage);
+            Log.i(getClass().getName(), "progressMessage: " + progressMessage);
             Toast.makeText(context, progressMessage, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d(getClass(), "onPostExecute");
+            Log.i(getClass().getName(), "onPostExecute");
             super.onPostExecute(result);
 
-            Log.d(getClass(), "result: " + result);
+            Log.i(getClass().getName(), "result: " + result);
             Toast.makeText(context, result, Toast.LENGTH_LONG).show();
         }
     }
