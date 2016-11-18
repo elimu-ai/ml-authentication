@@ -1,6 +1,6 @@
 ![logo-text-256x52](https://cloud.githubusercontent.com/assets/15718174/16346977/75b2f3b8-3a4a-11e6-85a0-2c3b6742b8a9.png)
 
-Android application: ~~https://play.google.com/store/apps/details?id=org.literacyapp~~ https://play.google.com/apps/testing/org.literacyapp
+Android application
 
 ## Continuous integration
 [![Build Status](https://travis-ci.org/literacyapp-org/literacyapp-android.svg)](https://travis-ci.org/literacyapp-org/literacyapp-android)
