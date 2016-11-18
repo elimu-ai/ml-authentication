@@ -8,4 +8,5 @@
     <string name="device_registration_failed">Device registration failed</string>
     <string name="download_complete">Download complete</string>
     <string name="wifi_needs_to_be_connected">Wi-Fi needs to be connected</string>
+    <string name="title_activity_letters">LettersActivity</string>
 </resources>

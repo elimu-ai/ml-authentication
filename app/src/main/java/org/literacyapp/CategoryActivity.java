@@ -3,6 +3,7 @@ package org.literacyapp;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import org.literacyapp.content.letter.LettersActivity;
 import org.literacyapp.util.MediaPlayerHelper;
 
 /**
@@ -223,7 +225,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
-                        // TODO: open list of letters
+                        Intent intent = new Intent(getActivity(), LettersActivity.class);
+                        startActivity(intent);
                     }
                 });
             } else if (sectionNumber == 2) {
