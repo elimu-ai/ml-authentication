@@ -1,9 +1,10 @@
-package org.literacyapp;
+package org.literacyapp.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.CameraViewActivity;
 
 public class ScreenOnReceiver extends BroadcastReceiver {
