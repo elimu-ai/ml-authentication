@@ -55,7 +55,6 @@
             android:screenOrientation="fullSensor" />
         <activity android:name=".task.LessonCompleteActivity" />
         <activity android:name=".authentication.CameraViewActivity" />
-        <activity android:name=".content.letter.LetterListActivity" />
         <activity
             android:name=".content.letter.LettersActivity"
             android:label="@string/title_activity_letters"
