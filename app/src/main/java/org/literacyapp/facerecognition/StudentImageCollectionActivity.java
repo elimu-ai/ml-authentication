@@ -120,10 +120,12 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         }
         @Override
         public void onDisconnected(CameraDevice camera) {
+            Log.i(getClass().getName(), "onDisconnected");
             cameraDevice.close();
         }
         @Override
         public void onError(CameraDevice camera, int error) {
+            Log.w(getClass().getName(), "onError");
             cameraDevice.close();
             cameraDevice = null;
         }
@@ -171,7 +173,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             }
             int width = 640;
             int height = 480;
-            if (jpegSizes != null && 0 < jpegSizes.length) {
+            if ((jpegSizes != null) && (jpegSizes.length > 0)) {
                 width = jpegSizes[0].getWidth();
                 height = jpegSizes[0].getHeight();
             }
@@ -182,13 +184,16 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            // Orientation
+
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
             final File file = new File(Environment.getExternalStorageDirectory() + "/student_image_" + System.currentTimeMillis() + ".jpg");
+
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
+                    Log.i(getClass().getName(), "onImageAvailable");
+
                     Image image = null;
                     try {
                         image = reader.acquireLatestImage();
@@ -197,22 +202,23 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                         buffer.get(bytes);
                         save(bytes);
                     } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                        Log.e(getClass().getName(), null, e);
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        Log.e(getClass().getName(), null, e);
                     } finally {
                         if (image != null) {
                             image.close();
                         }
                     }
                 }
+
                 private void save(byte[] bytes) throws IOException {
                     OutputStream output = null;
                     try {
                         output = new FileOutputStream(file);
                         output.write(bytes);
                     } finally {
-                        if (null != output) {
+                        if (output != null) {
                             output.close();
                         }
                     }
@@ -235,7 +241,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                     try {
                         session.capture(captureBuilder.build(), captureListener, mBackgroundHandler);
                     } catch (CameraAccessException e) {
-                        e.printStackTrace();
+                        Log.e(getClass().getName(), null, e);
                     }
                 }
                 @Override
@@ -244,7 +250,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                 }
             }, mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         }
     }
 
@@ -272,11 +278,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                 }
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-                    Toast.makeText(getApplicationContext(), "Configuration change", Toast.LENGTH_SHORT).show();
+                    Log.w(getClass().getName(), "onConfigureFailed");
                 }
             }, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         }
     }
 
@@ -290,14 +296,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            // Add permission for camera and let user grant the permission
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         }
     }
 
@@ -308,18 +313,18 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         try {
             cameraCaptureSessions.setRepeatingRequest(captureRequestBuilder.build(), null, mBackgroundHandler);
         } catch (CameraAccessException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         }
     }
 
     private void closeCamera() {
         Log.i(getClass().getName(), "closeCamera");
 
-        if (null != cameraDevice) {
+        if (cameraDevice != null) {
             cameraDevice.close();
             cameraDevice = null;
         }
-        if (null != imageReader) {
+        if (imageReader != null) {
             imageReader.close();
             imageReader = null;
         }
@@ -330,8 +335,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onRequestPermissionsResult");
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                // close the app
-                Toast.makeText(getApplicationContext(), "Sorry!!!, you can't use this app without granting permission", Toast.LENGTH_LONG).show();
                 finish();
             }
         }
