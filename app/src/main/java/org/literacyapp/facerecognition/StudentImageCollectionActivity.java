@@ -88,6 +88,12 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                 takePicture();
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
 
         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction);
     }
