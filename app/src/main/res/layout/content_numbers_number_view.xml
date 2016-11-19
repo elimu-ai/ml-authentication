@@ -15,5 +15,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="1"
-        android:textSize="200sp" />
+        android:textSize="@dimen/gridlayout_text_size" />
 </android.support.v7.widget.CardView>
