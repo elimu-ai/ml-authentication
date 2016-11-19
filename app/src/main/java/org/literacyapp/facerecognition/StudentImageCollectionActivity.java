@@ -23,6 +23,7 @@ import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -33,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.literacyapp.R;
+import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
 
 import java.io.File;
@@ -43,8 +45,13 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
+/**
+ * Collect images of student where eye gaze is directed towards the camera of the device as much
+ * as possible.
+ */
 public class StudentImageCollectionActivity extends AppCompatActivity {
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
@@ -96,6 +103,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         super.onStart();
 
         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_press_button);
+            }
+        }, 6000);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -175,6 +189,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             return;
         }
 
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.elephant);
+
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
             CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
@@ -198,7 +214,15 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
 
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory() + "/student_image_" + System.currentTimeMillis() + ".jpg");
+            String collectionPath = Environment.getExternalStorageDirectory() + "/.literacyapp/face_recognition/dataset_collection/";
+            File collectionDir = new File(collectionPath);
+            if (!collectionDir.exists()) {
+                collectionDir.mkdirs();
+            }
+            String dateFormatted = (String) DateFormat.format("yyyy-MM-dd-HHmmss", Calendar.getInstance());
+            String fileName = DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".jpg";
+            final File file = new File(collectionDir, fileName);
+            Log.i(getClass().getName(), "file: " + file);
 
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
@@ -262,6 +286,26 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             }, mBackgroundHandler);
         } catch (CameraAccessException e) {
             Log.e(getClass().getName(), null, e);
+        }
+
+        imageCounter++;
+        if (imageCounter < 5) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (imageCounter == 1) {
+                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_4_more);
+                    } else if (imageCounter == 2) {
+                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_3_more);
+                    } else if (imageCounter == 3) {
+                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_2_more);
+                    } else if (imageCounter == 4) {
+                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_1_more);
+                    }
+                }
+            }, 2000);
+        } else {
+            finish();
         }
     }
 
