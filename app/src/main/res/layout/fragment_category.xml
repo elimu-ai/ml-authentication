@@ -15,8 +15,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:background="@drawable/simplecircle">
+            android:padding="64dp"
+            android:background="@drawable/circle">
 
             <ImageView
                 android:id="@+id/section_img"

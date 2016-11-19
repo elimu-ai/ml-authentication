@@ -2,13 +2,17 @@ package org.literacyapp;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+
+import org.literacyapp.receiver.DownloadContentAlarmReceiver;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +38,19 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        Intent categoryIntent = new Intent(this, CategoryActivity.class);
-        startActivity(categoryIntent);
-        finish();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        long timeOfLastSynchronizationInMillis = sharedPreferences.getLong(DownloadContentAlarmReceiver.PREF_LAST_CONTENT_SYNC, 0);
+        if (timeOfLastSynchronizationInMillis == 0) {
+            // Download content
+            Intent intent = new Intent("org.literacyapp.receiver.DownloadContentAlarmReceiver");
+            intent.setPackage("org.literacyapp");
+            sendBroadcast(intent);
+        } else {
+            // Assume content has already been downloaded
+            Intent categoryIntent = new Intent(this, CategoryActivity.class);
+            startActivity(categoryIntent);
+            finish();
+        }
     }
 
     @Override

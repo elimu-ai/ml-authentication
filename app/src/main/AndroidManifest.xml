@@ -30,7 +30,7 @@
             android:name=".CategoryActivity"
             android:screenOrientation="fullSensor" />
 
-        <receiver android:name=".BootReceiver">
+        <receiver android:name=".receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -55,6 +55,20 @@
             android:screenOrientation="fullSensor" />
         <activity android:name=".task.LessonCompleteActivity" />
         <activity android:name=".authentication.CameraViewActivity" />
+        <activity
+            android:name=".content.letter.LettersActivity"
+            android:parentActivityName=".CategoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.literacyapp.CategoryActivity" />
+        </activity>
+        <activity
+            android:name=".content.number.NumbersActivity"
+            android:parentActivityName=".CategoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.literacyapp.CategoryActivity" />
+        </activity>
     </application>
 
 </manifest>

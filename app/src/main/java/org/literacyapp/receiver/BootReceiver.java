@@ -1,4 +1,4 @@
-package org.literacyapp;
+package org.literacyapp.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,8 +11,8 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(getClass().getName(), "onReceive");
 
-        Intent bootIntent = new Intent(context, MainActivity.class);
-        bootIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(bootIntent);
+//        Intent bootIntent = new Intent(context, MainActivity.class);
+//        bootIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.startActivity(bootIntent);
     }
 }

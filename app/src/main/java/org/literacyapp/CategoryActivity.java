@@ -3,7 +3,7 @@ package org.literacyapp;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.media.MediaPlayer;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -17,6 +17,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import org.literacyapp.content.letter.LettersActivity;
+import org.literacyapp.content.number.NumbersActivity;
+import org.literacyapp.util.MediaPlayerHelper;
 
 /**
  * Activity for selecting between literacy, numeracy, and videos.
@@ -124,8 +128,7 @@ public class CategoryActivity extends AppCompatActivity {
 
                 animateImage((ImageView) findViewById(R.id.section_img));
 
-                MediaPlayer mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.vocal_plop);
-                mediaPlayer.start();
+                MediaPlayerHelper.play(getApplicationContext(), R.raw.vocal_plop);
             }
 
             @Override
@@ -223,7 +226,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
-                        // TODO: open list of letters
+                        Intent intent = new Intent(getActivity(), LettersActivity.class);
+                        startActivity(intent);
                     }
                 });
             } else if (sectionNumber == 2) {
@@ -231,7 +235,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
-                        // TODO: open list of numbers
+                        Intent intent = new Intent(getActivity(), NumbersActivity.class);
+                        startActivity(intent);
                     }
                 });
             } else if (sectionNumber == 3) {
@@ -239,6 +244,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
+                        Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.android.gallery3d");
+                        startActivity(intent);
                         // TODO: open list of videos
                     }
                 });
