@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.literacyapp.R;
+import org.literacyapp.util.MediaPlayerHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -87,6 +88,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                 takePicture();
             }
         });
+
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
