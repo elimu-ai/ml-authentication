@@ -12,7 +12,6 @@ public class LiteracyApplication extends Application {
     private SQLiteDatabase db;
     private DaoMaster daoMaster;
     private DaoSession daoSession;
-    public static final boolean TEST_MODE = true;
 
     @Override
     public void onCreate() {
@@ -24,9 +23,6 @@ public class LiteracyApplication extends Application {
         db = openHelper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
-
-//        ScreenOnReceiver screenOnReceiver = new ScreenOnReceiver();
-//        registerReceiver(screenOnReceiver, new IntentFilter("android.intent.action.SCREEN_ON"));
     }
 
     public DaoSession getDaoSession() {
