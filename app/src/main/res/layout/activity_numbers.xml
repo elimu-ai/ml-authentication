@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/green"
-    tools:context="org.literacyapp.content.letter.LettersActivity">
+    android:background="@color/blue"
+    tools:context="org.literacyapp.content.number.NumbersActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,6 +21,6 @@
             app:popupTheme="@style/AppThemeNoActionBar.PopupOverlay" />
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_letters" />
+    <include layout="@layout/content_numbers" />
 
 </android.support.design.widget.CoordinatorLayout>

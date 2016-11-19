@@ -62,6 +62,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
+        <activity
+            android:name=".content.number.NumbersActivity"
+            android:parentActivityName=".CategoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.literacyapp.CategoryActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import org.literacyapp.content.letter.LettersActivity;
+import org.literacyapp.content.number.NumbersActivity;
 import org.literacyapp.util.MediaPlayerHelper;
 
 /**
@@ -234,7 +235,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
-                        // TODO: open list of numbers
+                        Intent intent = new Intent(getActivity(), NumbersActivity.class);
+                        startActivity(intent);
                     }
                 });
             } else if (sectionNumber == 3) {
