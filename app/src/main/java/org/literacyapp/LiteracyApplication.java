@@ -1,13 +1,11 @@
 package org.literacyapp;
 
 import android.app.Application;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.service.ScreenOnService;
 
 public class LiteracyApplication extends Application {
 
@@ -25,10 +23,6 @@ public class LiteracyApplication extends Application {
         db = openHelper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
-
-        // Start service for detecting when the screen is turned on
-        Intent screenOnServiceIntent = new Intent(getApplicationContext(), ScreenOnService.class);
-        startService(screenOnServiceIntent);
     }
 
     public DaoSession getDaoSession() {
