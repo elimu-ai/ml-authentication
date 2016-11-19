@@ -29,7 +29,7 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import org.literacyapp.R;
@@ -56,7 +56,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
 
-    private Button takePictureButton;
+    private RelativeLayout takePictureButton;
     private TextureView textureView;
     private String cameraId;
     protected CameraDevice cameraDevice;
@@ -67,6 +67,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
+    private int imageCounter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreate");
@@ -76,7 +78,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         textureView = (TextureView) findViewById(R.id.texture);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
-        takePictureButton = (Button) findViewById(R.id.btn_takepicture);
+        takePictureButton = (RelativeLayout) findViewById(R.id.btn_takepicture);
         assert takePictureButton != null;
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +109,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            Log.i(getClass().getName(), "onSurfaceTextureUpdated");
+//            Log.i(getClass().getName(), "onSurfaceTextureUpdated");
         }
     };
 
