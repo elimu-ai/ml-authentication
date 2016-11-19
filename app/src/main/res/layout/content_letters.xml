@@ -18,14 +18,14 @@
         android:layout_height="match_parent"
         android:fillViewport="true">
 
-        <GridLayout
+        <android.support.v7.widget.GridLayout
             android:id="@+id/letterGridLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:columnCount="3"
-            android:useDefaultMargins="true">
+            app:columnCount="2"
+            app:useDefaultMargins="true">
 
             <!-- Programmatically add content_letter_letter_view.xml -->
-        </GridLayout>
+        </android.support.v7.widget.GridLayout>
     </ScrollView>
 </RelativeLayout>
