@@ -69,6 +69,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
+        <activity android:name=".facerecognition.StudentImageCollectionActivity" />
     </application>
 
 </manifest>
