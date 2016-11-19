@@ -104,9 +104,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         // ToDo studenImageCollectionEvent creation local or external
         // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
         studentImages = new ArrayList<>();
-        if (literacyApplication.TEST_MODE){
-            testImages = new ArrayList<>();
-        }
+//        if (literacyApplication.TEST_MODE){
+//            testImages = new ArrayList<>();
+//        }
 
       //studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
     }
@@ -135,9 +135,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         long time = new Date().getTime();
 
         if(lastTime + timerDiff < time){
-            if (literacyApplication.TEST_MODE){
-                testImages.add(imgCopy);
-            }
+//            if (literacyApplication.TEST_MODE){
+//                testImages.add(imgCopy);
+//            }
             Mat img = ppF.getCroppedImage(imgCopy);
             if(img != null) {
                 Rect[] faces = ppF.getFacesForRecognition();
@@ -154,9 +154,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                     // Stop after numberOfImages (settings option)
                     if(imagesProcessed > numberOfImages){
                         storeStudentImages();
-                        if (literacyApplication.TEST_MODE){
-                            storeTestImages();
-                        }
+//                        if (literacyApplication.TEST_MODE){
+//                            storeTestImages();
+//                        }
                         finish();
                     }
 

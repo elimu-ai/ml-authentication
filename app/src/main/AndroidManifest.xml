@@ -70,6 +70,11 @@
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
         <activity android:name=".facerecognition.StudentImageCollectionActivity" />
+
+        <service
+            android:name=".service.ScreenOnService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

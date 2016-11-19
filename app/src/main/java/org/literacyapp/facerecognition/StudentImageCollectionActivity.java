@@ -31,7 +31,6 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import org.literacyapp.R;
 import org.literacyapp.util.DeviceInfoHelper;
@@ -265,7 +264,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     Log.i(getClass().getName(), "onCaptureCompleted");
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(getApplicationContext(), "Saved:" + file, Toast.LENGTH_SHORT).show();
                     createCameraPreview();
                 }
             };

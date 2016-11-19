@@ -1,18 +1,19 @@
 package org.literacyapp;
 
 import android.app.Application;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.service.ScreenOnService;
 
 public class LiteracyApplication extends Application {
 
     private SQLiteDatabase db;
     private DaoMaster daoMaster;
     private DaoSession daoSession;
-    public static final boolean TEST_MODE = true;
 
     @Override
     public void onCreate() {
@@ -25,8 +26,9 @@ public class LiteracyApplication extends Application {
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
 
-//        ScreenOnReceiver screenOnReceiver = new ScreenOnReceiver();
-//        registerReceiver(screenOnReceiver, new IntentFilter("android.intent.action.SCREEN_ON"));
+        // Start service for detecting when the screen is turned on
+        Intent screenOnServiceIntent = new Intent(getApplicationContext(), ScreenOnService.class);
+        startService(screenOnServiceIntent);
     }
 
     public DaoSession getDaoSession() {
