@@ -54,6 +54,7 @@ import java.util.List;
 public class StudentImageCollectionActivity extends AppCompatActivity {
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
         ORIENTATIONS.append(Surface.ROTATION_90, 0);
@@ -142,11 +143,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             cameraDevice = camera;
             createCameraPreview();
         }
+
         @Override
         public void onDisconnected(CameraDevice camera) {
             Log.i(getClass().getName(), "onDisconnected");
             cameraDevice.close();
         }
+
         @Override
         public void onError(CameraDevice camera, int error) {
             Log.w(getClass().getName(), "onError");
@@ -277,6 +280,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                         Log.e(getClass().getName(), null, e);
                     }
                 }
+
                 @Override
                 public void onConfigureFailed(CameraCaptureSession session) {
                     Log.w(getClass().getName(), "onConfigureFailed");
@@ -317,7 +321,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             Surface surface = new Surface(texture);
             captureRequestBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             captureRequestBuilder.addTarget(surface);
-            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback(){
+            cameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
                 @Override
                 public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Log.i(getClass().getName(), "onConfigured");
@@ -329,6 +333,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                     cameraCaptureSessions = cameraCaptureSession;
                     updatePreview();
                 }
+
                 @Override
                 public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
                     Log.w(getClass().getName(), "onConfigureFailed");
@@ -349,8 +354,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
             manager.openCamera(cameraId, stateCallback, null);
@@ -380,16 +384,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         if (imageReader != null) {
             imageReader.close();
             imageReader = null;
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Log.i(getClass().getName(), "onRequestPermissionsResult");
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                finish();
-            }
         }
     }
 
