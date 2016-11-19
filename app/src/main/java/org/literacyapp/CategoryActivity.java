@@ -244,6 +244,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
+                        Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.android.gallery3d");
+                        startActivity(intent);
                         // TODO: open list of videos
                     }
                 });
