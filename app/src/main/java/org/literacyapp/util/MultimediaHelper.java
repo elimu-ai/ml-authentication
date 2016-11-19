@@ -11,7 +11,7 @@ import java.io.File;
 public class MultimediaHelper {
 
     public static File getMultimediaDirectory() {
-        File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + File.separator + "LiteracyApp" + File.separator + "multimedia");
+        File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + "/.literacyapp/multimedia");
         if (!multimediaDirectory.exists()) {
             multimediaDirectory.mkdirs();
         }
