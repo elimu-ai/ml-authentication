@@ -14,6 +14,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
+import org.literacyapp.util.MediaPlayerHelper;
 
 import java.util.List;
 
@@ -48,14 +49,25 @@ public class NumbersActivity extends AppCompatActivity {
 
         List<Number> numbers = numberDao.loadAll();
         Log.i(getClass().getName(), "numbers.size(): " + numbers.size());
-        for (Number number : numbers) {
+        for (final Number number : numbers) {
             View numberView = LayoutInflater.from(this).inflate(R.layout.content_numbers_number_view, numberGridLayout, false);
             TextView numberTextView = (TextView) numberView.findViewById(R.id.numberTextView);
-            if (TextUtils.isEmpty(number.getSymbol())) {
-                numberTextView.setText(number.getValue().toString());
-            } else {
+            if (!TextUtils.isEmpty(number.getSymbol())) {
                 numberTextView.setText(number.getSymbol());
+            } else {
+                numberTextView.setText(number.getValue().toString());
             }
+
+            numberView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(getClass().getName(), "onClick");
+
+                    String audioFileName = "digit_" + number.getValue();
+                    int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
+                    MediaPlayerHelper.play(getApplicationContext(), resourceId);
+                }
+            });
 
             numberGridLayout.addView(numberView);
         }
