@@ -1,5 +1,6 @@
 package org.literacyapp.content.number;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -66,6 +67,13 @@ public class NumbersActivity extends AppCompatActivity {
                     String audioFileName = "digit_" + number.getValue();
                     int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
                     MediaPlayerHelper.play(getApplicationContext(), resourceId);
+
+                    Intent intent = new Intent();
+                    intent.setPackage("org.literacyapp.analytics");
+                    intent.setAction("literacyapp.intent.action.USAGE_EVENT");
+                    intent.putExtra("packageName", getPackageName());
+                    intent.putExtra("numeracySkill", "NUMBER_IDENTIFICATION");
+                    sendBroadcast(intent);
                 }
             });
 
