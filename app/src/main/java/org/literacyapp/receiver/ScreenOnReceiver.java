@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import org.literacyapp.facerecognition.StudentImageCollectionActivity;
-
 import java.util.Calendar;
 
 /**
@@ -35,11 +33,11 @@ public class ScreenOnReceiver extends BroadcastReceiver {
         calendar30MinutesAgo.add(Calendar.MINUTE, -30);
         Log.i(getClass().getName(), "calendar30MinutesAgo.getTime(): " + calendar30MinutesAgo.getTime());
         if ((calendarLastCollectionEvent == null) || (calendarLastCollectionEvent.before(calendar30MinutesAgo))) {
-            Intent studentImageCollectionIntent = new Intent(context, StudentImageCollectionActivity.class);
-            studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(studentImageCollectionIntent);
-
-            sharedPreferences.edit().putLong(PREF_LAST_STUDENT_IMAGE_COLLECTION, Calendar.getInstance().getTimeInMillis()).commit();
+//            Intent studentImageCollectionIntent = new Intent(context, StudentImageCollectionActivity.class);
+//            studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            context.startActivity(studentImageCollectionIntent);
+//
+//            sharedPreferences.edit().putLong(PREF_LAST_STUDENT_IMAGE_COLLECTION, Calendar.getInstance().getTimeInMillis()).commit();
         }
     }
 }
