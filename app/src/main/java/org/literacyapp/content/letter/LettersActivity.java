@@ -1,5 +1,6 @@
 package org.literacyapp.content.letter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -13,6 +14,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
+import org.literacyapp.util.MediaPlayerHelper;
 
 import java.util.List;
 
@@ -46,10 +48,34 @@ public class LettersActivity extends AppCompatActivity {
 
         List<Letter> letters = letterDao.loadAll();
         Log.i(getClass().getName(), "letters.size(): " + letters.size());
-        for (Letter letter : letters) {
+        for (final Letter letter : letters) {
             View letterView = LayoutInflater.from(this).inflate(R.layout.content_letters_letter_view, letterGridLayout, false);
             TextView letterTextView = (TextView) letterView.findViewById(R.id.letterTextView);
             letterTextView.setText(letter.getText());
+
+            letterView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i(getClass().getName(), "onClick");
+
+                    String audioFileName = "letter_" + letter.getText();
+                    int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
+                    if (resourceId != 0) {
+                        MediaPlayerHelper.play(getApplicationContext(), resourceId);
+                    } else {
+                        // Fall-back to TTS
+                        // TODO
+                    }
+
+                    Intent intent = new Intent();
+                    intent.setPackage("org.literacyapp.analytics");
+                    intent.setAction("literacyapp.intent.action.USAGE_EVENT");
+                    intent.putExtra("packageName", getPackageName());
+                    intent.putExtra("literacySkill", "LETTER_IDENTIFICATION");
+                    sendBroadcast(intent);
+                }
+            });
+
             letterGridLayout.addView(letterView);
         }
     }

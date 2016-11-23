@@ -66,7 +66,12 @@ public class NumbersActivity extends AppCompatActivity {
 
                     String audioFileName = "digit_" + number.getValue();
                     int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
-                    MediaPlayerHelper.play(getApplicationContext(), resourceId);
+                    if (resourceId != 0) {
+                        MediaPlayerHelper.play(getApplicationContext(), resourceId);
+                    } else {
+                        // Fall-back to TTS
+                        // TODO
+                    }
 
                     Intent intent = new Intent();
                     intent.setPackage("org.literacyapp.analytics");
