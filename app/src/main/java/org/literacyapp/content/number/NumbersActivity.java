@@ -1,6 +1,7 @@
 package org.literacyapp.content.number;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -16,6 +17,7 @@ import org.literacyapp.R;
 import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.util.MediaPlayerHelper;
+import org.literacyapp.util.TtsHelper;
 
 import java.util.List;
 
@@ -64,13 +66,33 @@ public class NumbersActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.i(getClass().getName(), "onClick");
 
+                    Log.i(getClass().getName(), "number.getValue(): " + number.getValue());
+                    Log.i(getClass().getName(), "number.getSymbol(): " + number.getSymbol());
+                    Log.i(getClass().getName(), "number.getWord(): " + number.getWord());
+                    if (number.getWord() != null) {
+                        Log.i(getClass().getName(), "number.getWord().getText(): " + number.getWord().getText());
+                    }
+
                     String audioFileName = "digit_" + number.getValue();
                     int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
-                    if (resourceId != 0) {
-                        MediaPlayerHelper.play(getApplicationContext(), resourceId);
-                    } else {
+                    try {
+                        if (resourceId != 0) {
+                            MediaPlayerHelper.play(getApplicationContext(), resourceId);
+                        } else {
+                            // Fall-back to TTS
+                            if (number.getWord() != null) {
+                                TtsHelper.speak(getApplicationContext(), number.getWord().getText());
+                            } else {
+                                TtsHelper.speak(getApplicationContext(), number.getValue().toString());
+                            }
+                        }
+                    } catch (Resources.NotFoundException e) {
                         // Fall-back to TTS
-                        // TODO
+                        if (number.getWord() != null) {
+                            TtsHelper.speak(getApplicationContext(), number.getWord().getText());
+                        } else {
+                            TtsHelper.speak(getApplicationContext(), number.getValue().toString());
+                        }
                     }
 
                     Intent intent = new Intent();

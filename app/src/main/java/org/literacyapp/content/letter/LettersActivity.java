@@ -1,6 +1,7 @@
 package org.literacyapp.content.letter;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -15,6 +16,7 @@ import org.literacyapp.R;
 import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.util.MediaPlayerHelper;
+import org.literacyapp.util.TtsHelper;
 
 import java.util.List;
 
@@ -60,11 +62,16 @@ public class LettersActivity extends AppCompatActivity {
 
                     String audioFileName = "letter_" + letter.getText();
                     int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
-                    if (resourceId != 0) {
-                        MediaPlayerHelper.play(getApplicationContext(), resourceId);
-                    } else {
+                    try {
+                        if (resourceId != 0) {
+                            MediaPlayerHelper.play(getApplicationContext(), resourceId);
+                        } else {
+                            // Fall-back to TTS
+                            TtsHelper.speak(getApplicationContext(), letter.getText());
+                        }
+                    } catch (Resources.NotFoundException e) {
                         // Fall-back to TTS
-                        // TODO
+                        TtsHelper.speak(getApplicationContext(), letter.getText());
                     }
 
                     Intent intent = new Intent();
