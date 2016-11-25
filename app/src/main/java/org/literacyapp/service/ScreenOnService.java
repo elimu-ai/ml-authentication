@@ -12,6 +12,7 @@ public class ScreenOnService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
+        Log.i(getClass().getName(), "onBind");
         return null;
     }
 

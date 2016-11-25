@@ -12,11 +12,13 @@
         android:layout_height="match_parent" />
 
     <ImageView
+        android:id="@+id/animal_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/elephant" />
 
-    <RelativeLayout android:id="@+id/btn_takepicture"
+    <RelativeLayout
+        android:id="@+id/btn_takepicture"
         android:layout_width="150dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
