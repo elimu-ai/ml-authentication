@@ -26,11 +26,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.util.Size;
-import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import org.literacyapp.R;
 import org.literacyapp.util.DeviceInfoHelper;
@@ -53,19 +54,10 @@ import java.util.List;
  */
 public class StudentImageCollectionActivity extends AppCompatActivity {
 
-    private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-
-    static {
-        ORIENTATIONS.append(Surface.ROTATION_0, 90);
-        ORIENTATIONS.append(Surface.ROTATION_90, 0);
-        ORIENTATIONS.append(Surface.ROTATION_180, 270);
-        ORIENTATIONS.append(Surface.ROTATION_270, 180);
-    }
-
-    private static final int REQUEST_CAMERA_PERMISSION = 200;
-
     private RelativeLayout takePictureButton;
     private TextureView textureView;
+    private ImageView imageViewAnimal;
+    private String animal;
     private String cameraId;
     protected CameraDevice cameraDevice;
     protected CameraCaptureSession cameraCaptureSessions;
@@ -84,10 +76,25 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_student_image_collection);
 
         textureView = (TextureView) findViewById(R.id.texture);
-        assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
+
+        imageViewAnimal = (ImageView) findViewById(R.id.animal_image);
+        String[] animals = new String[] {"elephant", "sheep", "pig", "cow"};
+        int randomIndex = (int) (Math.random() * animals.length);
+        Log.i(getClass().getName(), "randomIndex: " + randomIndex);
+        animal = animals[randomIndex];
+        Log.i(getClass().getName(), "animal: " + animal);
+        if ("elephant".equals(animal)) {
+            imageViewAnimal.setImageDrawable(getDrawable(R.drawable.elephant));
+        } else if ("sheep".equals(animal)) {
+            imageViewAnimal.setImageDrawable(getDrawable(R.drawable.sheep));
+        } else if ("pig".equals(animal)) {
+            imageViewAnimal.setImageDrawable(getDrawable(R.drawable.pig));
+        } else if ("cow".equals(animal)) {
+            imageViewAnimal.setImageDrawable(getDrawable(R.drawable.cow));
+        }
+
         takePictureButton = (RelativeLayout) findViewById(R.id.btn_takepicture);
-        assert takePictureButton != null;
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,11 +110,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         super.onStart();
 
         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction);
+        Toast.makeText(getApplicationContext(), "Take your tablet and turn your face towards the picture", Toast.LENGTH_LONG).show();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_press_button);
+                Toast.makeText(getApplicationContext(), "Press the button to take a picture", Toast.LENGTH_LONG).show();
             }
         }, 6000);
     }
@@ -191,7 +200,15 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             return;
         }
 
-        MediaPlayerHelper.play(getApplicationContext(), R.raw.elephant);
+        if ("elephant".equals(animal)) {
+            MediaPlayerHelper.play(getApplicationContext(), R.raw.elephant);
+        } else if ("sheep".equals(animal)) {
+            MediaPlayerHelper.play(getApplicationContext(), R.raw.sheep);
+        } else if ("pig".equals(animal)) {
+            MediaPlayerHelper.play(getApplicationContext(), R.raw.pig);
+        } else if ("cow".equals(animal)) {
+            MediaPlayerHelper.play(getApplicationContext(), R.raw.cow);
+        }
 
         CameraManager manager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
         try {
@@ -213,9 +230,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
             String collectionPath = Environment.getExternalStorageDirectory() + "/.literacyapp/face_recognition/dataset_collection/";
             File collectionDir = new File(collectionPath);
             if (!collectionDir.exists()) {
@@ -297,12 +311,16 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
                 public void run() {
                     if (imageCounter == 1) {
                         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_4_more);
+                        Toast.makeText(getApplicationContext(), "Take 4 more pictures", Toast.LENGTH_LONG).show();
                     } else if (imageCounter == 2) {
                         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_3_more);
+                        Toast.makeText(getApplicationContext(), "Take 3 more pictures", Toast.LENGTH_LONG).show();
                     } else if (imageCounter == 3) {
                         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_2_more);
+                        Toast.makeText(getApplicationContext(), "Take 2 more pictures", Toast.LENGTH_LONG).show();
                     } else if (imageCounter == 4) {
                         MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_1_more);
+                        Toast.makeText(getApplicationContext(), "Take 1 more picture", Toast.LENGTH_LONG).show();
                     }
                 }
             }, 2000);
