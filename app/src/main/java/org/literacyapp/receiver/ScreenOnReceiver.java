@@ -9,8 +9,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 
-import org.literacyapp.facerecognition.StudentImageCollectionActivity;
-
 import java.util.Calendar;
 
 /**
@@ -44,15 +42,15 @@ public class ScreenOnReceiver extends BroadcastReceiver {
             calendarLastCollectionEvent.setTimeInMillis(timeOfLastCollectionInMillis);
             Log.i(getClass().getName(), "calendarLastCollectionEvent.getTime(): " + calendarLastCollectionEvent.getTime());
         }
-        Calendar calendarExpiryTime = Calendar.getInstance();
-        calendarExpiryTime.add(Calendar.MINUTE, -MINUTES_OF_INACTIVITY_BETWEEN_SESSIONS);
-        Log.i(getClass().getName(), "calendarLastTimeOfScreenOff.getTime(): " + calendarExpiryTime.getTime());
-//        if ((calendarLastCollectionEvent == null) || (calendarLastCollectionEvent.before(calendarExpiryTime))) {
-            Intent studentImageCollectionIntent = new Intent(context, StudentImageCollectionActivity.class);
-            studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(studentImageCollectionIntent);
-
-            sharedPreferences.edit().putLong(PREF_LAST_STUDENT_IMAGE_COLLECTION, Calendar.getInstance().getTimeInMillis()).commit();
+        Calendar calendarLastTimeOfScreenOff = Calendar.getInstance();
+        calendarLastTimeOfScreenOff.add(Calendar.MINUTE, -MINUTES_OF_INACTIVITY_BETWEEN_SESSIONS);
+        Log.i(getClass().getName(), "calendarLastTimeOfScreenOff.getTime(): " + calendarLastTimeOfScreenOff.getTime());
+//        if ((calendarLastCollectionEvent == null) || (calendarLastCollectionEvent.before(calendarLastTimeOfScreenOff))) {
+//            Intent studentImageCollectionIntent = new Intent(context, StudentImageCollectionActivity.class);
+//            studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            context.startActivity(studentImageCollectionIntent);
+//
+//            sharedPreferences.edit().putLong(PREF_LAST_STUDENT_IMAGE_COLLECTION, Calendar.getInstance().getTimeInMillis()).commit();
 //        }
     }
 }
