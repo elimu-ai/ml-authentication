@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.converter.CustomDaoMaster;
 
 public class LiteracyApplication extends Application {
 
@@ -20,9 +20,9 @@ public class LiteracyApplication extends Application {
         super.onCreate();
 
         // Initialize greenDAO database
-        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
+        CustomDaoMaster.DevOpenHelper openHelper = new CustomDaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
         SQLiteDatabase db = openHelper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(db);
+        CustomDaoMaster daoMaster = new CustomDaoMaster(db);
         daoSession = daoMaster.newSession();
 
         // Initialize TTS
