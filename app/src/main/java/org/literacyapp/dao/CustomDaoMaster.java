@@ -1,13 +1,8 @@
-package org.literacyapp.dao.converter;
+package org.literacyapp.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
-import org.literacyapp.dao.DaoMaster;
-import org.literacyapp.dao.DbMigrationHelper;
-import org.literacyapp.dao.DeviceDao;
-import org.literacyapp.dao.StudentImageDao;
 
 public class CustomDaoMaster extends DaoMaster {
 
