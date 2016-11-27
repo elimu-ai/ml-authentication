@@ -1,14 +1,19 @@
 package org.literacyapp;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import org.literacyapp.dao.DaoMaster;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.CustomDaoMaster;
+import org.literacyapp.util.VersionHelper;
 
 public class LiteracyApplication extends Application {
+
+    public static final String PREF_APP_VERSION_CODE = "pref_app_version_code";
 
     private DaoSession daoSession;
 
@@ -20,10 +25,22 @@ public class LiteracyApplication extends Application {
         super.onCreate();
 
         // Initialize greenDAO database
-        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
+        CustomDaoMaster.DevOpenHelper openHelper = new CustomDaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
         SQLiteDatabase db = openHelper.getWritableDatabase();
-        DaoMaster daoMaster = new DaoMaster(db);
+        CustomDaoMaster daoMaster = new CustomDaoMaster(db);
         daoSession = daoMaster.newSession();
+
+        // Check if the application's versionCode was upgraded
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        int oldVersionCode = sharedPreferences.getInt(PREF_APP_VERSION_CODE, 0);
+        int newVersionCode = VersionHelper.getAppVersionCode(getApplicationContext());
+        if ((oldVersionCode > 0) && (oldVersionCode < newVersionCode)) {
+            Log.i(getClass().getName(), "Upgrading application from version " + oldVersionCode + " to " + newVersionCode);
+//            if (newVersionCode == ???) {
+//                // Put relevant tasks required for upgrading here
+//            }
+            sharedPreferences.edit().putInt(PREF_APP_VERSION_CODE, newVersionCode).commit();
+        }
 
         // Initialize TTS
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {

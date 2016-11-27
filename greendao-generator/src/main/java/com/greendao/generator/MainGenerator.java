@@ -26,10 +26,10 @@ public class MainGenerator {
     public static void main(String [] args) {
         System.out.println("greendao-generator main");
 
-        int versionCode = 1001018; // 1.1.18 (this should match the version of the dependency org.literacyapp:literacyapp-model)
-        // NOTE: If you increase the schema version, all tables in the database will be deleted!
-        // TODO: handle database migration when upgrade to new schema version
-        Schema schema = new Schema(versionCode, "org.literacyapp.dao");
+        int schemaVersion = 1001018; // 1.1.18 (this should match the version of the dependency org.literacyapp:literacyapp-model)
+        // NOTE: If you upgrade to a version of literacyapp-model that involves changes in the entities,
+        // you might need to add a custom DB migration script in CustomDaoMaster.DevOpenHelper#onUpgrade
+        Schema schema = new Schema(schemaVersion, "org.literacyapp.dao");
 
         // Model entities
         Entity device = EntityHelper.createEntityFromClass(DeviceGson.class, schema);
