@@ -13,7 +13,7 @@ import org.literacyapp.util.VersionHelper;
 
 public class LiteracyApplication extends Application {
 
-    public static final String PREF_APP_VERSION_CODE = "pref_last_content_sync";
+    public static final String PREF_APP_VERSION_CODE = "pref_app_version_code";
 
     private DaoSession daoSession;
 
