@@ -5,6 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.literacyapp.dao.DaoMaster;
+import org.literacyapp.dao.DbMigrationHelper;
+import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentImageDao;
 
 public class CustomDaoMaster extends DaoMaster {
 
@@ -21,8 +24,17 @@ public class CustomDaoMaster extends DaoMaster {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.i(getClass().getName(), "Upgrading schema from version " + oldVersion + " to " + newVersion);
-            // TODO: add new tables and/or columns automatically
-            // TODO: execute custom migration script for a specific version
+
+            // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
+            if (newVersion == 1001018) {
+                DbMigrationHelper.migrate(db,
+                        DeviceDao.class,
+                        StudentImageDao.class
+                );
+            }
+
+            // If tables and/or columns have been renamed, add custom script.
+//            db.execSQL("...");
         }
     }
 }
