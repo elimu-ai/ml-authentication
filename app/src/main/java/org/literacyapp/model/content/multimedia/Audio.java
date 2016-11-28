@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.literacyapp.dao.converter.AudioFormatConverter;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
@@ -54,7 +55,7 @@ public class Audio {
     private String transcription;
 
     @NotNull
-    @Convert(converter = StringSetConverter.class, columnType = String.class)
+    @Convert(converter = AudioFormatConverter.class, columnType = String.class)
     private AudioFormat audioFormat;
 
     @Generated(hash = 1550087614)

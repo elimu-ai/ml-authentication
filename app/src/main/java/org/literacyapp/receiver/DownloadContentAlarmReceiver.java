@@ -20,19 +20,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.Allophone;
 import org.literacyapp.dao.AllophoneDao;
-import org.literacyapp.dao.Audio;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
 import org.literacyapp.dao.ImageDao;
-import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
-import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.VideoDao;
-import org.literacyapp.dao.Word;
 import org.literacyapp.dao.WordDao;
+import org.literacyapp.model.content.Allophone;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.Letter;
+import org.literacyapp.model.content.Number;
+import org.literacyapp.model.content.Word;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -362,7 +362,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                             Log.i(getClass().getName(), "audioFile: " + audioFile);
                             if (!audioFile.exists()) {
                                 // Download bytes
-                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audio.getFileUrl());
+                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audioGson.getDownloadUrl());
                                 Log.i(getClass().getName(), "bytes.length: " + bytes.length);
 
                                 // Store file
@@ -414,7 +414,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 //                            Log.i(getClass().getName(), "imageFile: " + imageFile);
 //                            if (!imageFile.exists()) {
 //                                // Download bytes
-//                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + image.getFileUrl());
+//                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
 //                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
 //
 //                                // Store file
@@ -466,7 +466,7 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
 //                            Log.i(getClass().getName(), "videoFile: " + videoFile);
 //                            if (!videoFile.exists()) {
 //                                // Download bytes
-//                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + video.getFileUrl());
+//                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
 //                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
 //
 //                                // Store file

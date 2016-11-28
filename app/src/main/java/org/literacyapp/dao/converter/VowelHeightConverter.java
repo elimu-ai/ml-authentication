@@ -2,9 +2,8 @@ package org.literacyapp.dao.converter;
 
 import android.util.Log;
 
+import org.greenrobot.greendao.converter.PropertyConverter;
 import org.literacyapp.model.enums.content.allophone.VowelHeight;
-
-import de.greenrobot.dao.converter.PropertyConverter;
 
 public class VowelHeightConverter implements PropertyConverter<VowelHeight, String> {
 

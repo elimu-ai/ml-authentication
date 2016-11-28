@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.Number;
 import org.literacyapp.dao.NumberDao;
+import org.literacyapp.model.content.Number;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.TtsHelper;
 

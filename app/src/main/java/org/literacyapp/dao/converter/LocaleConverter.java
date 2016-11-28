@@ -2,9 +2,8 @@ package org.literacyapp.dao.converter;
 
 import android.util.Log;
 
+import org.greenrobot.greendao.converter.PropertyConverter;
 import org.literacyapp.model.enums.Locale;
-
-import de.greenrobot.dao.converter.PropertyConverter;
 
 public class LocaleConverter implements PropertyConverter<Locale, String> {
 

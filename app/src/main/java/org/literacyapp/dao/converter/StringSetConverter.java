@@ -2,13 +2,12 @@ package org.literacyapp.dao.converter;
 
 import android.util.Log;
 
+import org.greenrobot.greendao.converter.PropertyConverter;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import de.greenrobot.dao.converter.PropertyConverter;
 
 public class StringSetConverter implements PropertyConverter<Set, String> {
 

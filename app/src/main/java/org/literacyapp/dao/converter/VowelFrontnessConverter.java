@@ -2,9 +2,8 @@ package org.literacyapp.dao.converter;
 
 import android.util.Log;
 
+import org.greenrobot.greendao.converter.PropertyConverter;
 import org.literacyapp.model.enums.content.allophone.VowelFrontness;
-
-import de.greenrobot.dao.converter.PropertyConverter;
 
 public class VowelFrontnessConverter implements PropertyConverter<VowelFrontness, String> {
 

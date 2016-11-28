@@ -9,8 +9,8 @@ import android.widget.VideoView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.Video;
 import org.literacyapp.dao.VideoDao;
+import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;

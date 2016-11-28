@@ -6,17 +6,20 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentDao;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
- * Based on {@link org.literacyapp.model.gson.StudentImageGson}
+ * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}
  */
 @Entity
 public class StudentImageCollectionEvent {
@@ -30,31 +33,37 @@ public class StudentImageCollectionEvent {
 
     @NotNull
     @Convert(converter = CalendarConverter.class, columnType = Long.class)
-    private Calendar timeCollected;
+    private Calendar time;
 
-    @NotNull
-    private String imageFileUrl;
+//    @ToOne
+//    private Application application;
 
     @ToOne
-    private StudentImageFeature studentImageFeature;
+    private Student student;
+
+//    @NotNull
+    @ToMany(referencedJoinProperty = "id")
+    private List<StudentImage> studentImages;
+
+    private boolean svmTrainingExecuted;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    @Generated(hash = 1350049245)
-    private transient StudentImageDao myDao;
+    @Generated(hash = 136770604)
+    private transient StudentImageCollectionEventDao myDao;
 
-    @Generated(hash = 1699503080)
-    public StudentImageCollectionEvent(Long id, @NotNull Calendar timeCollected,
-                                       @NotNull String imageFileUrl) {
+    @Generated(hash = 505686841)
+    public StudentImageCollectionEvent(Long id, @NotNull Calendar time,
+            boolean svmTrainingExecuted) {
         this.id = id;
-        this.timeCollected = timeCollected;
-        this.imageFileUrl = imageFileUrl;
+        this.time = time;
+        this.svmTrainingExecuted = svmTrainingExecuted;
     }
 
-    @Generated(hash = 1888893194)
+    @Generated(hash = 802935259)
     public StudentImageCollectionEvent() {
     }
 
@@ -66,20 +75,20 @@ public class StudentImageCollectionEvent {
         this.id = id;
     }
 
-    public Calendar getTimeCollected() {
-        return this.timeCollected;
+    public Calendar getTime() {
+        return this.time;
     }
 
-    public void setTimeCollected(Calendar timeCollected) {
-        this.timeCollected = timeCollected;
+    public void setTime(Calendar time) {
+        this.time = time;
     }
 
-    public String getImageFileUrl() {
-        return this.imageFileUrl;
+    public boolean getSvmTrainingExecuted() {
+        return this.svmTrainingExecuted;
     }
 
-    public void setImageFileUrl(String imageFileUrl) {
-        this.imageFileUrl = imageFileUrl;
+    public void setSvmTrainingExecuted(boolean svmTrainingExecuted) {
+        this.svmTrainingExecuted = svmTrainingExecuted;
     }
 
     @Generated(hash = 1114998901)
@@ -118,37 +127,65 @@ public class StudentImageCollectionEvent {
         }
     }
 
-    @Generated(hash = 350087450)
-    private transient boolean studentImageFeature__refreshed;
+    @Generated(hash = 1402753087)
+    private transient boolean student__refreshed;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1683738455)
-    public StudentImageFeature getStudentImageFeature() {
-        if (studentImageFeature != null || !studentImageFeature__refreshed) {
+    @Generated(hash = 428694139)
+    public Student getStudent() {
+        if (student != null || !student__refreshed) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            StudentImageFeatureDao targetDao = daoSession
-                    .getStudentImageFeatureDao();
-            targetDao.refresh(studentImageFeature);
-            studentImageFeature__refreshed = true;
+            StudentDao targetDao = daoSession.getStudentDao();
+            targetDao.refresh(student);
+            student__refreshed = true;
         }
-        return studentImageFeature;
+        return student;
     }
 
     /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 537228336)
-    public StudentImageFeature peakStudentImageFeature() {
-        return studentImageFeature;
+    @Generated(hash = 1055461273)
+    public Student peakStudent() {
+        return student;
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 841110149)
-    public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
+    @Generated(hash = 1990573816)
+    public void setStudent(Student student) {
         synchronized (this) {
-            this.studentImageFeature = studentImageFeature;
-            studentImageFeature__refreshed = true;
+            this.student = student;
+            student__refreshed = true;
         }
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1492710689)
+    public List<StudentImage> getStudentImages() {
+        if (studentImages == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            StudentImageDao targetDao = daoSession.getStudentImageDao();
+            List<StudentImage> studentImagesNew = targetDao
+                    ._queryStudentImageCollectionEvent_StudentImages(id);
+            synchronized (this) {
+                if (studentImages == null) {
+                    studentImages = studentImagesNew;
+                }
+            }
+        }
+        return studentImages;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1313731009)
+    public synchronized void resetStudentImages() {
+        studentImages = null;
     }
 
     /**
@@ -188,9 +225,9 @@ public class StudentImageCollectionEvent {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 971423104)
+    @Generated(hash = 76995743)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getStudentImageDao() : null;
+        myDao = daoSession != null ? daoSession.getStudentImageCollectionEventDao() : null;
     }
 }

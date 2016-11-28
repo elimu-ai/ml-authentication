@@ -1,5 +1,12 @@
 package org.literacyapp.dao;
 
+import org.literacyapp.model.content.Allophone;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.Letter;
+import org.literacyapp.model.content.Number;
+import org.literacyapp.model.content.multimedia.Video;
+import org.literacyapp.model.content.Word;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -15,10 +22,13 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Allophone allophone = new Allophone();
+
             allophone.setId(allophoneGson.getId());
+
             allophone.setLocale(allophoneGson.getLocale());
             allophone.setTimeLastUpdate(allophoneGson.getTimeLastUpdate());
             allophone.setRevisionNumber(allophoneGson.getRevisionNumber());
+            allophone.setContentStatus(allophoneGson.getContentStatus());
 
             allophone.setValueIpa(allophoneGson.getValueIpa());
             allophone.setValueSampa(allophoneGson.getValueSampa());
@@ -40,10 +50,13 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Letter letter = new Letter();
+
             letter.setId(letterGson.getId());
+
             letter.setLocale(letterGson.getLocale());
             letter.setTimeLastUpdate(letterGson.getTimeLastUpdate());
             letter.setRevisionNumber(letterGson.getRevisionNumber());
+            letter.setContentStatus(letterGson.getContentStatus());
 
             letter.setText(letterGson.getText());
 
@@ -56,10 +69,13 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Number number = new Number();
+
             number.setId(numberGson.getId());
+
             number.setLocale(numberGson.getLocale());
             number.setTimeLastUpdate(numberGson.getTimeLastUpdate());
             number.setRevisionNumber(numberGson.getRevisionNumber());
+            number.setContentStatus(number.getContentStatus());
 
             number.setValue(numberGson.getValue());
             number.setSymbol(numberGson.getSymbol());
@@ -74,10 +90,13 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Word word = new Word();
+
             word.setId(wordGson.getId());
+
             word.setLocale(wordGson.getLocale());
             word.setTimeLastUpdate(wordGson.getTimeLastUpdate());
             word.setRevisionNumber(wordGson.getRevisionNumber());
+            word.setContentStatus(wordGson.getContentStatus());
 
             word.setText(wordGson.getText());
 
@@ -90,13 +109,14 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Audio audio = new Audio();
+
             audio.setId(audioGson.getId());
+
             audio.setLocale(audioGson.getLocale());
             audio.setTimeLastUpdate(audioGson.getTimeLastUpdate());
             audio.setRevisionNumber(audioGson.getRevisionNumber());
+            audio.setContentStatus(audioGson.getContentStatus());
 
-            audio.setFileUrl(audioGson.getFileUrl());
-            audio.setFileSize(audioGson.getFileSize());
             audio.setContentType(audioGson.getContentType());
             audio.setLiteracySkills(audioGson.getLiteracySkills());
             audio.setNumeracySkills(audioGson.getNumeracySkills());
@@ -113,13 +133,14 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Image image = new Image();
+
             image.setId(imageGson.getId());
+
             image.setLocale(imageGson.getLocale());
             image.setTimeLastUpdate(imageGson.getTimeLastUpdate());
             image.setRevisionNumber(imageGson.getRevisionNumber());
+            image.setContentStatus(imageGson.getContentStatus());
 
-            image.setFileUrl(imageGson.getFileUrl());
-            image.setFileSize(imageGson.getFileSize());
             image.setContentType(imageGson.getContentType());
             image.setLiteracySkills(imageGson.getLiteracySkills());
             image.setNumeracySkills(imageGson.getNumeracySkills());
@@ -137,13 +158,14 @@ public class GsonToGreenDaoConverter {
             return null;
         } else {
             Video video = new Video();
+
             video.setId(videoGson.getId());
+
             video.setLocale(videoGson.getLocale());
             video.setTimeLastUpdate(videoGson.getTimeLastUpdate());
             video.setRevisionNumber(videoGson.getRevisionNumber());
+            video.setContentStatus(videoGson.getContentStatus());
 
-            video.setFileUrl(videoGson.getFileUrl());
-            video.setFileSize(videoGson.getFileSize());
             video.setContentType(videoGson.getContentType());
             video.setLiteracySkills(videoGson.getLiteracySkills());
             video.setNumeracySkills(videoGson.getNumeracySkills());

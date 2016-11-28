@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
+import org.literacyapp.model.content.Letter;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.TtsHelper;
 
