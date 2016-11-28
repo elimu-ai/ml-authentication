@@ -35,8 +35,6 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property Time = new Property(1, long.class, "time", false, "TIME");
         public final static Property SvmTrainingExecuted = new Property(2, boolean.class, "svmTrainingExecuted", false, "SVM_TRAINING_EXECUTED");
-        public final static Property Device = new Property(3, long.class, "device", false, "DEVICE");
-        public final static Property Student = new Property(4, Long.class, "student", false, "STUDENT");
     }
 
     private DaoSession daoSession;
@@ -58,9 +56,7 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT_IMAGE_COLLECTION_EVENT\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME\" INTEGER NOT NULL ," + // 1: time
-                "\"SVM_TRAINING_EXECUTED\" INTEGER NOT NULL ," + // 2: svmTrainingExecuted
-                "\"DEVICE\" INTEGER NOT NULL ," + // 3: device
-                "\"STUDENT\" INTEGER);"); // 4: student
+                "\"SVM_TRAINING_EXECUTED\" INTEGER NOT NULL );"); // 2: svmTrainingExecuted
     }
 
     /** Drops the underlying database table. */
@@ -157,8 +153,8 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
             builder.append(',');
             SqlUtils.appendColumns(builder, "T1", daoSession.getStudentDao().getAllColumns());
             builder.append(" FROM STUDENT_IMAGE_COLLECTION_EVENT T");
-            builder.append(" LEFT JOIN DEVICE T0 ON T.\"DEVICE\"=T0.\"_id\"");
-            builder.append(" LEFT JOIN STUDENT T1 ON T.\"STUDENT\"=T1.\"_id\"");
+            builder.append(" LEFT JOIN DEVICE T0 ON T.\"_id\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT T1 ON T.\"_id\"=T1.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -170,9 +166,7 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         int offset = getAllColumns().length;
 
         Device device = loadCurrentOther(daoSession.getDeviceDao(), cursor, offset);
-         if(device != null) {
-            entity.setDevice(device);
-        }
+        entity.setDevice(device);
         offset += daoSession.getDeviceDao().getAllColumns().length;
 
         Student student = loadCurrentOther(daoSession.getStudentDao(), cursor, offset);

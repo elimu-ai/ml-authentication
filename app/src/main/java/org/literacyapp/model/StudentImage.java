@@ -82,72 +82,68 @@ public class StudentImage {
         this.imageFileUrl = imageFileUrl;
     }
 
-    @Generated(hash = 1114998901)
-    private transient boolean device__refreshed;
-
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 952566151)
+    @Generated(hash = 944779146)
     public Device getDevice() {
-        if (device != null || !device__refreshed) {
+        Long __key = this.id;
+        if (device__resolvedKey == null || !device__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             DeviceDao targetDao = daoSession.getDeviceDao();
-            targetDao.refresh(device);
-            device__refreshed = true;
+            Device deviceNew = targetDao.load(__key);
+            synchronized (this) {
+                device = deviceNew;
+                device__resolvedKey = __key;
+            }
         }
-        return device;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 400002126)
-    public Device peakDevice() {
         return device;
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1764284664)
-    public void setDevice(@NotNull Device device) {
-        if (device == null) {
-            throw new DaoException(
-                    "To-one property 'device' has not-null constraint; cannot set to-one to null");
-        }
+    @Generated(hash = 733207827)
+    public void setDevice(Device device) {
         synchronized (this) {
             this.device = device;
-            device__refreshed = true;
+            id = device == null ? null : device.getId();
+            device__resolvedKey = id;
         }
     }
 
-    @Generated(hash = 350087450)
-    private transient boolean studentImageFeature__refreshed;
+    @Generated(hash = 708752895)
+    private transient Long device__resolvedKey;
+
+    @Generated(hash = 1724262783)
+    private transient Long studentImageFeature__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1683738455)
+    @Generated(hash = 1014901179)
     public StudentImageFeature getStudentImageFeature() {
-        if (studentImageFeature != null || !studentImageFeature__refreshed) {
+        Long __key = this.id;
+        if (studentImageFeature__resolvedKey == null
+                || !studentImageFeature__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            StudentImageFeatureDao targetDao = daoSession
-                    .getStudentImageFeatureDao();
-            targetDao.refresh(studentImageFeature);
-            studentImageFeature__refreshed = true;
+            StudentImageFeatureDao targetDao = daoSession.getStudentImageFeatureDao();
+            StudentImageFeature studentImageFeatureNew = targetDao.load(__key);
+            synchronized (this) {
+                studentImageFeature = studentImageFeatureNew;
+                studentImageFeature__resolvedKey = __key;
+            }
         }
         return studentImageFeature;
     }
 
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 537228336)
-    public StudentImageFeature peakStudentImageFeature() {
-        return studentImageFeature;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 841110149)
+    @Generated(hash = 1559283393)
     public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
         synchronized (this) {
             this.studentImageFeature = studentImageFeature;
-            studentImageFeature__refreshed = true;
+            id = studentImageFeature == null ? null : studentImageFeature.getId();
+            studentImageFeature__resolvedKey = id;
         }
     }
 

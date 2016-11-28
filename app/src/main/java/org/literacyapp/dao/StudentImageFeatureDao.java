@@ -34,7 +34,6 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TimeCreated = new Property(1, long.class, "timeCreated", false, "TIME_CREATED");
         public final static Property SvmVector = new Property(2, String.class, "svmVector", false, "SVM_VECTOR");
-        public final static Property Student = new Property(3, Long.class, "student", false, "STUDENT");
     }
 
     private DaoSession daoSession;
@@ -56,8 +55,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT_IMAGE_FEATURE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME_CREATED\" INTEGER NOT NULL ," + // 1: timeCreated
-                "\"SVM_VECTOR\" TEXT NOT NULL ," + // 2: svmVector
-                "\"STUDENT\" INTEGER);"); // 3: student
+                "\"SVM_VECTOR\" TEXT NOT NULL );"); // 2: svmVector
     }
 
     /** Drops the underlying database table. */
@@ -152,7 +150,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
             builder.append(',');
             SqlUtils.appendColumns(builder, "T0", daoSession.getStudentDao().getAllColumns());
             builder.append(" FROM STUDENT_IMAGE_FEATURE T");
-            builder.append(" LEFT JOIN STUDENT T0 ON T.\"STUDENT\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT T0 ON T.\"_id\"=T0.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
