@@ -25,7 +25,7 @@ public class StudentImage {
     private Long id;
 
     @NotNull
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Device device;
 
     @NotNull
@@ -35,7 +35,7 @@ public class StudentImage {
     @NotNull
     private String imageFileUrl;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private StudentImageFeature studentImageFeature;
 
     /** Used to resolve relations */

@@ -28,7 +28,7 @@ public class StudentImageCollectionEvent {
     private Long id;
 
     @NotNull
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Device device;
 
     @NotNull
@@ -38,7 +38,7 @@ public class StudentImageCollectionEvent {
 //    @ToOne
 //    private Application application;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Student student;
 
 //    @NotNull

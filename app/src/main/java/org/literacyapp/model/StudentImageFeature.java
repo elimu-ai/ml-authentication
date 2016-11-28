@@ -23,7 +23,7 @@ public class StudentImageFeature {
     @Id(autoincrement = true)
     private Long id;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Student student;
 
     @NotNull
