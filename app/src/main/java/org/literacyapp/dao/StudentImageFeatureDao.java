@@ -1,20 +1,16 @@
 package org.literacyapp.dao;
 
-import java.util.List;
-import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.Property;
-import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
-import org.literacyapp.model.Student;
 
 import org.literacyapp.model.StudentImageFeature;
 
@@ -36,8 +32,6 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         public final static Property SvmVector = new Property(2, String.class, "svmVector", false, "SVM_VECTOR");
     }
 
-    private DaoSession daoSession;
-
     private final CalendarConverter timeCreatedConverter = new CalendarConverter();
 
     public StudentImageFeatureDao(DaoConfig config) {
@@ -46,7 +40,6 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
     
     public StudentImageFeatureDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
-        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -86,12 +79,6 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         }
         stmt.bindLong(2, timeCreatedConverter.convertToDatabaseValue(entity.getTimeCreated()));
         stmt.bindString(3, entity.getSvmVector());
-    }
-
-    @Override
-    protected final void attachEntity(StudentImageFeature entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
     }
 
     @Override
@@ -141,95 +128,4 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         return true;
     }
     
-    private String selectDeep;
-
-    protected String getSelectDeep() {
-        if (selectDeep == null) {
-            StringBuilder builder = new StringBuilder("SELECT ");
-            SqlUtils.appendColumns(builder, "T", getAllColumns());
-            builder.append(',');
-            SqlUtils.appendColumns(builder, "T0", daoSession.getStudentDao().getAllColumns());
-            builder.append(" FROM STUDENT_IMAGE_FEATURE T");
-            builder.append(" LEFT JOIN STUDENT T0 ON T.\"_id\"=T0.\"_id\"");
-            builder.append(' ');
-            selectDeep = builder.toString();
-        }
-        return selectDeep;
-    }
-    
-    protected StudentImageFeature loadCurrentDeep(Cursor cursor, boolean lock) {
-        StudentImageFeature entity = loadCurrent(cursor, 0, lock);
-        int offset = getAllColumns().length;
-
-        Student student = loadCurrentOther(daoSession.getStudentDao(), cursor, offset);
-        entity.setStudent(student);
-
-        return entity;    
-    }
-
-    public StudentImageFeature loadDeep(Long key) {
-        assertSinglePk();
-        if (key == null) {
-            return null;
-        }
-
-        StringBuilder builder = new StringBuilder(getSelectDeep());
-        builder.append("WHERE ");
-        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
-        String sql = builder.toString();
-        
-        String[] keyArray = new String[] { key.toString() };
-        Cursor cursor = db.rawQuery(sql, keyArray);
-        
-        try {
-            boolean available = cursor.moveToFirst();
-            if (!available) {
-                return null;
-            } else if (!cursor.isLast()) {
-                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
-            }
-            return loadCurrentDeep(cursor, true);
-        } finally {
-            cursor.close();
-        }
-    }
-    
-    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
-    public List<StudentImageFeature> loadAllDeepFromCursor(Cursor cursor) {
-        int count = cursor.getCount();
-        List<StudentImageFeature> list = new ArrayList<StudentImageFeature>(count);
-        
-        if (cursor.moveToFirst()) {
-            if (identityScope != null) {
-                identityScope.lock();
-                identityScope.reserveRoom(count);
-            }
-            try {
-                do {
-                    list.add(loadCurrentDeep(cursor, false));
-                } while (cursor.moveToNext());
-            } finally {
-                if (identityScope != null) {
-                    identityScope.unlock();
-                }
-            }
-        }
-        return list;
-    }
-    
-    protected List<StudentImageFeature> loadDeepAllAndCloseCursor(Cursor cursor) {
-        try {
-            return loadAllDeepFromCursor(cursor);
-        } finally {
-            cursor.close();
-        }
-    }
-    
-
-    /** A raw-style query where you can pass any WHERE clause and arguments. */
-    public List<StudentImageFeature> queryDeep(String where, String... selectionArg) {
-        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
-        return loadDeepAllAndCloseCursor(cursor);
-    }
- 
 }
