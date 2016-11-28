@@ -42,7 +42,6 @@ public class NumberDao extends AbstractDao<Number, Long> {
         public final static Property ContentStatus = new Property(4, String.class, "contentStatus", false, "CONTENT_STATUS");
         public final static Property Value = new Property(5, Integer.class, "value", false, "VALUE");
         public final static Property Symbol = new Property(6, String.class, "symbol", false, "SYMBOL");
-        public final static Property Word = new Property(7, Long.class, "word", false, "WORD");
     }
 
     private DaoSession daoSession;
@@ -70,8 +69,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
                 "\"REVISION_NUMBER\" INTEGER NOT NULL ," + // 3: revisionNumber
                 "\"CONTENT_STATUS\" TEXT NOT NULL ," + // 4: contentStatus
                 "\"VALUE\" INTEGER NOT NULL ," + // 5: value
-                "\"SYMBOL\" TEXT," + // 6: symbol
-                "\"WORD\" INTEGER);"); // 7: word
+                "\"SYMBOL\" TEXT);"); // 6: symbol
     }
 
     /** Drops the underlying database table. */
@@ -198,7 +196,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
             builder.append(',');
             SqlUtils.appendColumns(builder, "T0", daoSession.getWordDao().getAllColumns());
             builder.append(" FROM NUMBER T");
-            builder.append(" LEFT JOIN WORD T0 ON T.\"WORD\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN WORD T0 ON T.\"_id\"=T0.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }

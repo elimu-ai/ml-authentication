@@ -23,7 +23,7 @@ public class StudentImageFeature {
     @Id(autoincrement = true)
     private Long id;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Student student;
 
     @NotNull
@@ -77,35 +77,35 @@ public class StudentImageFeature {
         this.svmVector = svmVector;
     }
 
-    @Generated(hash = 1402753087)
-    private transient boolean student__refreshed;
+    @Generated(hash = 79695740)
+    private transient Long student__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 428694139)
+    @Generated(hash = 1631318883)
     public Student getStudent() {
-        if (student != null || !student__refreshed) {
+        Long __key = this.id;
+        if (student__resolvedKey == null || !student__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             StudentDao targetDao = daoSession.getStudentDao();
-            targetDao.refresh(student);
-            student__refreshed = true;
+            Student studentNew = targetDao.load(__key);
+            synchronized (this) {
+                student = studentNew;
+                student__resolvedKey = __key;
+            }
         }
         return student;
     }
 
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 1055461273)
-    public Student peakStudent() {
-        return student;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1990573816)
+    @Generated(hash = 1371817362)
     public void setStudent(Student student) {
         synchronized (this) {
             this.student = student;
-            student__refreshed = true;
+            id = student == null ? null : student.getId();
+            student__resolvedKey = id;
         }
     }
 

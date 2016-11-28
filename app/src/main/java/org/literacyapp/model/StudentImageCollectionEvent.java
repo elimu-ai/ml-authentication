@@ -28,7 +28,7 @@ public class StudentImageCollectionEvent {
     private Long id;
 
     @NotNull
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Device device;
 
     @NotNull
@@ -38,7 +38,7 @@ public class StudentImageCollectionEvent {
 //    @ToOne
 //    private Application application;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Student student;
 
 //    @NotNull
@@ -91,71 +91,67 @@ public class StudentImageCollectionEvent {
         this.svmTrainingExecuted = svmTrainingExecuted;
     }
 
-    @Generated(hash = 1114998901)
-    private transient boolean device__refreshed;
-
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 952566151)
+    @Generated(hash = 944779146)
     public Device getDevice() {
-        if (device != null || !device__refreshed) {
+        Long __key = this.id;
+        if (device__resolvedKey == null || !device__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             DeviceDao targetDao = daoSession.getDeviceDao();
-            targetDao.refresh(device);
-            device__refreshed = true;
+            Device deviceNew = targetDao.load(__key);
+            synchronized (this) {
+                device = deviceNew;
+                device__resolvedKey = __key;
+            }
         }
-        return device;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 400002126)
-    public Device peakDevice() {
         return device;
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1764284664)
-    public void setDevice(@NotNull Device device) {
-        if (device == null) {
-            throw new DaoException(
-                    "To-one property 'device' has not-null constraint; cannot set to-one to null");
-        }
+    @Generated(hash = 733207827)
+    public void setDevice(Device device) {
         synchronized (this) {
             this.device = device;
-            device__refreshed = true;
+            id = device == null ? null : device.getId();
+            device__resolvedKey = id;
         }
     }
 
-    @Generated(hash = 1402753087)
-    private transient boolean student__refreshed;
+    @Generated(hash = 708752895)
+    private transient Long device__resolvedKey;
+
+    @Generated(hash = 79695740)
+    private transient Long student__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 428694139)
+    @Generated(hash = 1631318883)
     public Student getStudent() {
-        if (student != null || !student__refreshed) {
+        Long __key = this.id;
+        if (student__resolvedKey == null || !student__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             StudentDao targetDao = daoSession.getStudentDao();
-            targetDao.refresh(student);
-            student__refreshed = true;
+            Student studentNew = targetDao.load(__key);
+            synchronized (this) {
+                student = studentNew;
+                student__resolvedKey = __key;
+            }
         }
         return student;
     }
 
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 1055461273)
-    public Student peakStudent() {
-        return student;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1990573816)
+    @Generated(hash = 1371817362)
     public void setStudent(Student student) {
         synchronized (this) {
             this.student = student;
-            student__refreshed = true;
+            id = student == null ? null : student.getId();
+            student__resolvedKey = id;
         }
     }
 
