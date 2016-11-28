@@ -9,6 +9,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImage;
+import org.literacyapp.dao.StudentImageCollectionEvent;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.util.DeviceInfoHelper;
@@ -43,6 +44,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private long lastTime;
     private String deviceId;
     private String collectionEventId;
+    private StudentImageCollectionEvent studentImageCollectionEvent;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Mat imgOverlay;
@@ -99,11 +101,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
 
-        collectionEventId = deviceId + String.format("%016d",studentImageCollectionEventDao.count() + 1);
+        // Create Collection Even for Student Images
+        collectionEventId = String.format("%06d",studentImageCollectionEventDao.count() + 1);
+        studentImageCollectionEvent = new StudentImageCollectionEvent(Long.parseLong(collectionEventId), null, Calendar.getInstance(), null, null);
+        studentImageCollectionEventDao.insert(studentImageCollectionEvent);
 
-        // ToDo studenImageCollectionEvent creation local or external
-        // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
         studentImages = new ArrayList<>();
+
 //        if (literacyApplication.TEST_MODE){
 //            testImages = new ArrayList<>();
 //        }
@@ -182,23 +186,25 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     private void storeStudentImages(){
         for(int i=0; i<studentImages.size(); i++){
-            String sId = collectionEventId + i;
-            MatName matName = new MatName(sId, studentImages.get(i));
+            String FileName = collectionEventId + String.format("%03d",i);
+            Long studentImageId = Long.parseLong(FileName);
+
+            MatName matName = new MatName(FileName, studentImages.get(i));
             FileHelper fh = new FileHelper();
             String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + collectionEventId;
+
             new File(wholeFolderPath).mkdirs();
             fh.saveMatToImage(matName, wholeFolderPath + "/");
 
-            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
-            StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
+            StudentImage studentImage = new StudentImage(studentImageId, null, wholeFolderPath + "/" + FileName + ".png", Calendar.getInstance(), null);
             studentImageDao.insert(studentImage);
         }
     }
 
     private void storeTestImages(){
         for(int i=0; i<testImages.size(); i++){
-            String sId = collectionEventId + i;
-            MatName matName = new MatName(sId, testImages.get(i));
+            String FileName = collectionEventId + String.format("%03d",i);
+            MatName matName = new MatName(FileName, testImages.get(i));
             FileHelper fh = new FileHelper();
             String wholeFolderPath = MultimediaHelper.getTestImageDirectory() + "/" + deviceId + "/" + collectionEventId;
             new File(wholeFolderPath).mkdirs();
