@@ -2,9 +2,9 @@ package org.literacyapp.util;
 
 import android.os.Environment;
 
-import org.literacyapp.dao.Audio;
-import org.literacyapp.dao.Image;
-import org.literacyapp.dao.Video;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.Video;
 
 import java.io.File;
 

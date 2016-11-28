@@ -16,10 +16,10 @@ import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.Audio;
 import org.literacyapp.dao.AudioDao;
-import org.literacyapp.dao.Letter;
 import org.literacyapp.dao.LetterDao;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.Letter;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;

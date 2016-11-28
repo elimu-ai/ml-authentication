@@ -8,7 +8,6 @@ import android.view.SurfaceView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentImage;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.util.DeviceInfoHelper;
@@ -24,7 +23,6 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -189,9 +187,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             new File(wholeFolderPath).mkdirs();
             fh.saveMatToImage(matName, wholeFolderPath + "/");
 
-            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
-            StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
-            studentImageDao.insert(studentImage);
+//            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
+//            StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
+//            studentImageDao.insert(studentImage);
         }
     }
 

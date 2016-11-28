@@ -2,9 +2,9 @@ package org.literacyapp.dao.converter;
 
 import android.util.Log;
 
-import java.util.Calendar;
+import org.greenrobot.greendao.converter.PropertyConverter;
 
-import de.greenrobot.dao.converter.PropertyConverter;
+import java.util.Calendar;
 
 public class CalendarConverter implements PropertyConverter<Calendar, Long> {
 

@@ -5,21 +5,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import org.greenrobot.greendao.AbstractDao;
+import org.greenrobot.greendao.database.Database;
+import org.greenrobot.greendao.internal.DaoConfig;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.internal.DaoConfig;
-
 /**
  * Based on http://stackoverflow.com/a/38984100/354173
  */
 public final class DbMigrationHelper {
 
-    public static void migrate(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    public static void migrate(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
         generateNewTablesIfNotExists(db, daoClasses);
         generateTempTables(db, daoClasses);
         dropAllTables(db, true, daoClasses);
@@ -27,11 +28,11 @@ public final class DbMigrationHelper {
         restoreData(db, daoClasses);
     }
 
-    private static void generateNewTablesIfNotExists(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    private static void generateNewTablesIfNotExists(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
         reflectMethod(db, "createTable", true, daoClasses);
     }
 
-    private static void generateTempTables(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    private static void generateTempTables(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
         for (int i = 0; i < daoClasses.length; i++) {
             DaoConfig daoConfig = new DaoConfig(db, daoClasses[i]);
             String tableName = daoConfig.tablename;
@@ -43,18 +44,18 @@ public final class DbMigrationHelper {
         }
     }
 
-    private static void dropAllTables(SQLiteDatabase db, boolean ifExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    private static void dropAllTables(Database db, boolean ifExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
         reflectMethod(db, "dropTable", ifExists, daoClasses);
     }
 
-    private static void createAllTables(SQLiteDatabase db, boolean ifNotExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    private static void createAllTables(Database db, boolean ifNotExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
         reflectMethod(db, "createTable", ifNotExists, daoClasses);
     }
 
     /**
      * dao class already define the sql exec method, so just invoke it
      */
-    private static void reflectMethod(SQLiteDatabase db, String methodName, boolean isExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    private static void reflectMethod(Database db, String methodName, boolean isExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
         if (daoClasses.length < 1) {
             return;
         }
@@ -72,7 +73,7 @@ public final class DbMigrationHelper {
         }
     }
 
-    private static void restoreData(SQLiteDatabase db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+    private static void restoreData(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
         for (int i = 0; i < daoClasses.length; i++) {
             DaoConfig daoConfig = new DaoConfig(db, daoClasses[i]);
             String tableName = daoConfig.tablename;
@@ -103,7 +104,7 @@ public final class DbMigrationHelper {
         }
     }
 
-    private static List<String> getColumns(SQLiteDatabase db, String tableName) {
+    private static List<String> getColumns(Database db, String tableName) {
         List<String> columns = null;
         Cursor cursor = null;
         try {
