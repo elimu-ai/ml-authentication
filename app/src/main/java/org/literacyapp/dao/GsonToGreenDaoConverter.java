@@ -75,7 +75,7 @@ public class GsonToGreenDaoConverter {
             number.setLocale(numberGson.getLocale());
             number.setTimeLastUpdate(numberGson.getTimeLastUpdate());
             number.setRevisionNumber(numberGson.getRevisionNumber());
-            number.setContentStatus(number.getContentStatus());
+            number.setContentStatus(numberGson.getContentStatus());
 
             number.setValue(numberGson.getValue());
             number.setSymbol(numberGson.getSymbol());
