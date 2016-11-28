@@ -46,7 +46,7 @@ public class Number {
 
     private String symbol;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private Word word;
 
     /** Used to resolve relations */
@@ -130,35 +130,35 @@ public class Number {
         this.symbol = symbol;
     }
 
-    @Generated(hash = 320474872)
-    private transient boolean word__refreshed;
+    @Generated(hash = 1683684945)
+    private transient Long word__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 109869981)
+    @Generated(hash = 839858443)
     public Word getWord() {
-        if (word != null || !word__refreshed) {
+        Long __key = this.id;
+        if (word__resolvedKey == null || !word__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             WordDao targetDao = daoSession.getWordDao();
-            targetDao.refresh(word);
-            word__refreshed = true;
+            Word wordNew = targetDao.load(__key);
+            synchronized (this) {
+                word = wordNew;
+                word__resolvedKey = __key;
+            }
         }
         return word;
     }
 
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 2041825700)
-    public Word peakWord() {
-        return word;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 727558134)
+    @Generated(hash = 424680845)
     public void setWord(Word word) {
         synchronized (this) {
             this.word = word;
-            word__refreshed = true;
+            id = word == null ? null : word.getId();
+            word__resolvedKey = id;
         }
     }
 
