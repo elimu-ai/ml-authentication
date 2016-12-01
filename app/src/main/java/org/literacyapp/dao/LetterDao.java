@@ -1,5 +1,6 @@
 package org.literacyapp.dao;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,8 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
@@ -42,6 +45,9 @@ public class LetterDao extends AbstractDao<Letter, Long> {
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
+    private Query<Letter> audio_LettersQuery;
+    private Query<Letter> image_LettersQuery;
+    private Query<Letter> video_LettersQuery;
 
     public LetterDao(DaoConfig config) {
         super(config);
@@ -160,4 +166,46 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "letters" to-many relationship of Audio. */
+    public List<Letter> _queryAudio_Letters(Long id) {
+        synchronized (this) {
+            if (audio_LettersQuery == null) {
+                QueryBuilder<Letter> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                audio_LettersQuery = queryBuilder.build();
+            }
+        }
+        Query<Letter> query = audio_LettersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "letters" to-many relationship of Image. */
+    public List<Letter> _queryImage_Letters(Long id) {
+        synchronized (this) {
+            if (image_LettersQuery == null) {
+                QueryBuilder<Letter> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                image_LettersQuery = queryBuilder.build();
+            }
+        }
+        Query<Letter> query = image_LettersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "letters" to-many relationship of Video. */
+    public List<Letter> _queryVideo_Letters(Long id) {
+        synchronized (this) {
+            if (video_LettersQuery == null) {
+                QueryBuilder<Letter> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                video_LettersQuery = queryBuilder.build();
+            }
+        }
+        Query<Letter> query = video_LettersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
 }

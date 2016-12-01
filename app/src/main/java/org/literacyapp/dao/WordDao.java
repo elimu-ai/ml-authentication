@@ -1,5 +1,6 @@
 package org.literacyapp.dao;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,8 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
@@ -43,6 +46,9 @@ public class WordDao extends AbstractDao<Word, Long> {
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
+    private Query<Word> audio_WordsQuery;
+    private Query<Word> image_WordsQuery;
+    private Query<Word> video_WordsQuery;
 
     public WordDao(DaoConfig config) {
         super(config);
@@ -166,4 +172,46 @@ public class WordDao extends AbstractDao<Word, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "words" to-many relationship of Audio. */
+    public List<Word> _queryAudio_Words(Long id) {
+        synchronized (this) {
+            if (audio_WordsQuery == null) {
+                QueryBuilder<Word> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                audio_WordsQuery = queryBuilder.build();
+            }
+        }
+        Query<Word> query = audio_WordsQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "words" to-many relationship of Image. */
+    public List<Word> _queryImage_Words(Long id) {
+        synchronized (this) {
+            if (image_WordsQuery == null) {
+                QueryBuilder<Word> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                image_WordsQuery = queryBuilder.build();
+            }
+        }
+        Query<Word> query = image_WordsQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "words" to-many relationship of Video. */
+    public List<Word> _queryVideo_Words(Long id) {
+        synchronized (this) {
+            if (video_WordsQuery == null) {
+                QueryBuilder<Word> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                video_WordsQuery = queryBuilder.build();
+            }
+        }
+        Query<Word> query = video_WordsQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
 }

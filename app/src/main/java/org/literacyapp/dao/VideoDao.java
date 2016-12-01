@@ -47,6 +47,8 @@ public class VideoDao extends AbstractDao<Video, Long> {
         public final static Property VideoFormat = new Property(9, String.class, "videoFormat", false, "VIDEO_FORMAT");
     }
 
+    private DaoSession daoSession;
+
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
@@ -60,6 +62,7 @@ public class VideoDao extends AbstractDao<Video, Long> {
     
     public VideoDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -144,6 +147,12 @@ public class VideoDao extends AbstractDao<Video, Long> {
         }
         stmt.bindString(9, entity.getTitle());
         stmt.bindString(10, videoFormatConverter.convertToDatabaseValue(entity.getVideoFormat()));
+    }
+
+    @Override
+    protected final void attachEntity(Video entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

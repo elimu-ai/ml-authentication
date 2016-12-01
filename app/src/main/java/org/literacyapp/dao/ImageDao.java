@@ -48,6 +48,8 @@ public class ImageDao extends AbstractDao<Image, Long> {
         public final static Property DominantColor = new Property(10, String.class, "dominantColor", false, "DOMINANT_COLOR");
     }
 
+    private DaoSession daoSession;
+
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
@@ -61,6 +63,7 @@ public class ImageDao extends AbstractDao<Image, Long> {
     
     public ImageDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -156,6 +159,12 @@ public class ImageDao extends AbstractDao<Image, Long> {
         if (dominantColor != null) {
             stmt.bindString(11, dominantColor);
         }
+    }
+
+    @Override
+    protected final void attachEntity(Image entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

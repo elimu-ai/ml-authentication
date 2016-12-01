@@ -47,6 +47,8 @@ public class AudioDao extends AbstractDao<Audio, Long> {
         public final static Property AudioFormat = new Property(9, String.class, "audioFormat", false, "AUDIO_FORMAT");
     }
 
+    private DaoSession daoSession;
+
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
@@ -60,6 +62,7 @@ public class AudioDao extends AbstractDao<Audio, Long> {
     
     public AudioDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -144,6 +147,12 @@ public class AudioDao extends AbstractDao<Audio, Long> {
         }
         stmt.bindString(9, entity.getTranscription());
         stmt.bindString(10, audioFormatConverter.convertToDatabaseValue(entity.getAudioFormat()));
+    }
+
+    @Override
+    protected final void attachEntity(Audio entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override
