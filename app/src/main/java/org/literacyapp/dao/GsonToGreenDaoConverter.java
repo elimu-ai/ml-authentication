@@ -125,26 +125,32 @@ public class GsonToGreenDaoConverter {
             audio.setLiteracySkills(audioGson.getLiteracySkills());
             audio.setNumeracySkills(audioGson.getNumeracySkills());
 
-            List<Letter> letters = new ArrayList<>();
-            for (LetterGson letterGson : audioGson.getLetters()) {
-                Letter letter = getLetter(letterGson);
-                letters.add(letter);
+            if (audioGson.getLetters() != null) {
+                List<Letter> letters = new ArrayList<>();
+                for (LetterGson letterGson : audioGson.getLetters()) {
+                    Letter letter = getLetter(letterGson);
+                    letters.add(letter);
+                }
+                audio.setLetters(letters);
             }
-            audio.setLetters(letters);
 
-            List<Number> numbers = new ArrayList<>();
-            for (NumberGson numberGson : audioGson.getNumbers()) {
-                Number number = getNumber(numberGson);
-                numbers.add(number);
+            if (audioGson.getNumbers() != null) {
+                List<Number> numbers = new ArrayList<>();
+                for (NumberGson numberGson : audioGson.getNumbers()) {
+                    Number number = getNumber(numberGson);
+                    numbers.add(number);
+                }
+                audio.setNumbers(numbers);
             }
-            audio.setNumbers(numbers);
 
-            List<Word> words = new ArrayList<>();
-            for (WordGson wordGson : audioGson.getWords()) {
-                Word word = getWord(wordGson);
-                words.add(word);
+            if (audioGson.getWords() != null) {
+                List<Word> words = new ArrayList<>();
+                for (WordGson wordGson : audioGson.getWords()) {
+                    Word word = getWord(wordGson);
+                    words.add(word);
+                }
+                audio.setWords(words);
             }
-            audio.setWords(words);
 
             audio.setTranscription(audioGson.getTranscription());
             audio.setAudioFormat(audioGson.getAudioFormat());
@@ -170,26 +176,32 @@ public class GsonToGreenDaoConverter {
             image.setLiteracySkills(imageGson.getLiteracySkills());
             image.setNumeracySkills(imageGson.getNumeracySkills());
 
-            List<Letter> letters = new ArrayList<>();
-            for (LetterGson letterGson : imageGson.getLetters()) {
-                Letter letter = getLetter(letterGson);
-                letters.add(letter);
+            if (imageGson.getLetters() != null) {
+                List<Letter> letters = new ArrayList<>();
+                for (LetterGson letterGson : imageGson.getLetters()) {
+                    Letter letter = getLetter(letterGson);
+                    letters.add(letter);
+                }
+                image.setLetters(letters);
             }
-            image.setLetters(letters);
 
-            List<Number> numbers = new ArrayList<>();
-            for (NumberGson numberGson : imageGson.getNumbers()) {
-                Number number = getNumber(numberGson);
-                numbers.add(number);
+            if (imageGson.getNumbers() != null) {
+                List<Number> numbers = new ArrayList<>();
+                for (NumberGson numberGson : imageGson.getNumbers()) {
+                    Number number = getNumber(numberGson);
+                    numbers.add(number);
+                }
+                image.setNumbers(numbers);
             }
-            image.setNumbers(numbers);
 
-            List<Word> words = new ArrayList<>();
-            for (WordGson wordGson : imageGson.getWords()) {
-                Word word = getWord(wordGson);
-                words.add(word);
+            if (imageGson.getWords() != null) {
+                List<Word> words = new ArrayList<>();
+                for (WordGson wordGson : imageGson.getWords()) {
+                    Word word = getWord(wordGson);
+                    words.add(word);
+                }
+                image.setWords(words);
             }
-            image.setWords(words);
 
             image.setTitle(imageGson.getTitle());
             image.setImageFormat(imageGson.getImageFormat());
@@ -216,26 +228,32 @@ public class GsonToGreenDaoConverter {
             video.setLiteracySkills(videoGson.getLiteracySkills());
             video.setNumeracySkills(videoGson.getNumeracySkills());
 
-            List<Letter> letters = new ArrayList<>();
-            for (LetterGson letterGson : videoGson.getLetters()) {
-                Letter letter = getLetter(letterGson);
-                letters.add(letter);
+            if (videoGson.getLetters() != null) {
+                List<Letter> letters = new ArrayList<>();
+                for (LetterGson letterGson : videoGson.getLetters()) {
+                    Letter letter = getLetter(letterGson);
+                    letters.add(letter);
+                }
+                video.setLetters(letters);
             }
-            video.setLetters(letters);
 
-            List<Number> numbers = new ArrayList<>();
-            for (NumberGson numberGson : videoGson.getNumbers()) {
-                Number number = getNumber(numberGson);
-                numbers.add(number);
+            if (videoGson.getNumbers() != null) {
+                List<Number> numbers = new ArrayList<>();
+                for (NumberGson numberGson : videoGson.getNumbers()) {
+                    Number number = getNumber(numberGson);
+                    numbers.add(number);
+                }
+                video.setNumbers(numbers);
             }
-            video.setNumbers(numbers);
 
-            List<Word> words = new ArrayList<>();
-            for (WordGson wordGson : videoGson.getWords()) {
-                Word word = getWord(wordGson);
-                words.add(word);
+            if (videoGson.getWords() != null) {
+                List<Word> words = new ArrayList<>();
+                for (WordGson wordGson : videoGson.getWords()) {
+                    Word word = getWord(wordGson);
+                    words.add(word);
+                }
+                video.setWords(words);
             }
-            video.setWords(words);
 
             video.setTitle(videoGson.getTitle());
             video.setVideoFormat(videoGson.getVideoFormat());
