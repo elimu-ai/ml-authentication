@@ -11,6 +11,8 @@ import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
@@ -49,6 +51,7 @@ public class NumberDao extends AbstractDao<Number, Long> {
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
+    private Query<Number> audio_NumbersQuery;
 
     public NumberDao(DaoConfig config) {
         super(config);
@@ -187,6 +190,20 @@ public class NumberDao extends AbstractDao<Number, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "numbers" to-many relationship of Audio. */
+    public List<Number> _queryAudio_Numbers(Long id) {
+        synchronized (this) {
+            if (audio_NumbersQuery == null) {
+                QueryBuilder<Number> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                audio_NumbersQuery = queryBuilder.build();
+            }
+        }
+        Query<Number> query = audio_NumbersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
     private String selectDeep;
 
     protected String getSelectDeep() {

@@ -34,10 +34,10 @@ public class CustomDaoMaster extends DaoMaster {
 //                );
 //            }
 
-            if (newVersion == 1001021) {
-                // Drop all tables
-                dropAllTables(db, true);
-                onCreate(db);
+            if (newVersion == 1001022) {
+                DbMigrationHelper.migrate(db,
+                        AudioDao.class
+                );
             }
 
             // If tables and/or columns have been renamed, add custom script.
