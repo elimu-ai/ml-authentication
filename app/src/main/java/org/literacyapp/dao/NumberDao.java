@@ -52,6 +52,8 @@ public class NumberDao extends AbstractDao<Number, Long> {
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
     private Query<Number> audio_NumbersQuery;
+    private Query<Number> image_NumbersQuery;
+    private Query<Number> video_NumbersQuery;
 
     public NumberDao(DaoConfig config) {
         super(config);
@@ -200,6 +202,34 @@ public class NumberDao extends AbstractDao<Number, Long> {
             }
         }
         Query<Number> query = audio_NumbersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "numbers" to-many relationship of Image. */
+    public List<Number> _queryImage_Numbers(Long id) {
+        synchronized (this) {
+            if (image_NumbersQuery == null) {
+                QueryBuilder<Number> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                image_NumbersQuery = queryBuilder.build();
+            }
+        }
+        Query<Number> query = image_NumbersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "numbers" to-many relationship of Video. */
+    public List<Number> _queryVideo_Numbers(Long id) {
+        synchronized (this) {
+            if (video_NumbersQuery == null) {
+                QueryBuilder<Number> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                video_NumbersQuery = queryBuilder.build();
+            }
+        }
+        Query<Number> query = video_NumbersQuery.forCurrentThread();
         query.setParameter(0, id);
         return query.list();
     }

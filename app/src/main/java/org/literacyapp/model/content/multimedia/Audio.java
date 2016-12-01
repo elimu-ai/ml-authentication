@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.literacyapp.dao.AudioDao;
@@ -106,6 +107,21 @@ public class Audio {
 
     @Generated(hash = 1642629471)
     public Audio() {
+    }
+
+    @Keep
+    public void setLetters(List<Letter> letters) {
+        this.letters = letters;
+    }
+
+    @Keep
+    public void setNumbers(List<Number> numbers) {
+        this.numbers = numbers;
+    }
+
+    @Keep
+    public void setWords(List<Word> words) {
+        this.words = words;
     }
 
     public Long getId() {

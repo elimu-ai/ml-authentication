@@ -46,6 +46,8 @@ public class LetterDao extends AbstractDao<Letter, Long> {
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
     private Query<Letter> audio_LettersQuery;
+    private Query<Letter> image_LettersQuery;
+    private Query<Letter> video_LettersQuery;
 
     public LetterDao(DaoConfig config) {
         super(config);
@@ -174,6 +176,34 @@ public class LetterDao extends AbstractDao<Letter, Long> {
             }
         }
         Query<Letter> query = audio_LettersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "letters" to-many relationship of Image. */
+    public List<Letter> _queryImage_Letters(Long id) {
+        synchronized (this) {
+            if (image_LettersQuery == null) {
+                QueryBuilder<Letter> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                image_LettersQuery = queryBuilder.build();
+            }
+        }
+        Query<Letter> query = image_LettersQuery.forCurrentThread();
+        query.setParameter(0, id);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "letters" to-many relationship of Video. */
+    public List<Letter> _queryVideo_Letters(Long id) {
+        synchronized (this) {
+            if (video_LettersQuery == null) {
+                QueryBuilder<Letter> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.Id.eq(null));
+                video_LettersQuery = queryBuilder.build();
+            }
+        }
+        Query<Letter> query = video_LettersQuery.forCurrentThread();
         query.setParameter(0, id);
         return query.list();
     }
