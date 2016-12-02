@@ -29,15 +29,19 @@ import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.VideoDao;
 import org.literacyapp.dao.WordDao;
 import org.literacyapp.model.content.Allophone;
-import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.Word;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
+import org.literacyapp.model.gson.content.multimedia.ImageGson;
+import org.literacyapp.model.gson.content.multimedia.VideoGson;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
@@ -390,108 +394,108 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
             }
 
 
-//            publishProgress("Downloading Images");
-//            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/image/list" +
-//                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
-//                    "&locale=" + DeviceInfoHelper.getLocale(context);
-//            jsonResponse = JsonLoader.loadJson(url);
-//            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
-//            try {
-//                JSONObject jsonObject = new JSONObject(jsonResponse);
-//                if (!"success".equals(jsonObject.getString("result"))) {
-//                    Log.w(getClass().getName(), "Download failed");
-//                } else {
-//                    JSONArray jsonArray = jsonObject.getJSONArray("images");
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        Type type = new TypeToken<ImageGson>(){}.getType();
-//                        ImageGson imageGson = new Gson().fromJson(jsonArray.getString(i), type);
-//                        Image image = GsonToGreenDaoConverter.getImage(imageGson);
-//                        Image existingImage = imageDao.queryBuilder()
-//                                .where(ImageDao.Properties.Id.eq(image.getId()))
-//                                .unique();
-//                        if (existingImage == null) {
-//                            File imageFile = MultimediaHelper.getFile(image);
-//                            Log.i(getClass().getName(), "imageFile: " + imageFile);
-//                            if (!imageFile.exists()) {
-//                                // Download bytes
-//                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
-//                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-//
-//                                // Store file
-//                                try {
-//                                    FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
-//                                    IOUtils.write(bytes, fileOutputStream);
-//                                    fileOutputStream.close();
-//                                } catch (FileNotFoundException e) {
-//                                    Log.e(getClass().getName(), null, e);
-//                                } catch (IOException e) {
-//                                    Log.e(getClass().getName(), null, e);
-//                                }
-//                            }
-//                            if (imageFile.exists()) {
-//                                imageDao.insert(image);
-//                                Log.i(getClass().getName(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
-//                            }
-//                        } else {
-//                            Log.i(getClass().getName(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
-//                        }
-//                    }
-//                }
-//            } catch (JSONException e) {
-//                Log.e(getClass().getName(), null, e);
-//            }
+            publishProgress("Downloading Images");
+            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/image/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass().getName(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("images");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<ImageGson>(){}.getType();
+                        ImageGson imageGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Image image = GsonToGreenDaoConverter.getImage(imageGson);
+                        Image existingImage = imageDao.queryBuilder()
+                                .where(ImageDao.Properties.Id.eq(image.getId()))
+                                .unique();
+                        if (existingImage == null) {
+                            File imageFile = MultimediaHelper.getFile(image);
+                            Log.i(getClass().getName(), "imageFile: " + imageFile);
+                            if (!imageFile.exists()) {
+                                // Download bytes
+                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
+                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
+
+                                // Store file
+                                try {
+                                    FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+                                    IOUtils.write(bytes, fileOutputStream);
+                                    fileOutputStream.close();
+                                } catch (FileNotFoundException e) {
+                                    Log.e(getClass().getName(), null, e);
+                                } catch (IOException e) {
+                                    Log.e(getClass().getName(), null, e);
+                                }
+                            }
+                            if (imageFile.exists()) {
+                                imageDao.insert(image);
+                                Log.i(getClass().getName(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                            }
+                        } else {
+                            Log.i(getClass().getName(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass().getName(), null, e);
+            }
 
 
-//            publishProgress("Downloading Videos");
-//            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/video/list" +
-//                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
-//                    "&locale=" + DeviceInfoHelper.getLocale(context);
-//            jsonResponse = JsonLoader.loadJson(url);
-//            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
-//            try {
-//                JSONObject jsonObject = new JSONObject(jsonResponse);
-//                if (!"success".equals(jsonObject.getString("result"))) {
-//                    Log.w(getClass().getName(), "Download failed");
-//                } else {
-//                    JSONArray jsonArray = jsonObject.getJSONArray("videos");
-//                    for (int i = 0; i < jsonArray.length(); i++) {
-//                        Type type = new TypeToken<VideoGson>(){}.getType();
-//                        VideoGson videoGson = new Gson().fromJson(jsonArray.getString(i), type);
-//                        Video video = GsonToGreenDaoConverter.getVideo(videoGson);
-//                        Video existingVideo = videoDao.queryBuilder()
-//                                .where(VideoDao.Properties.Id.eq(video.getId()))
-//                                .unique();
-//                        if (existingVideo == null) {
-//                            File videoFile = MultimediaHelper.getFile(video);
-//                            Log.i(getClass().getName(), "videoFile: " + videoFile);
-//                            if (!videoFile.exists()) {
-//                                // Download bytes
-//                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
-//                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-//
-//                                // Store file
-//                                try {
-//                                    FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
-//                                    IOUtils.write(bytes, fileOutputStream);
-//                                    fileOutputStream.close();
-//                                } catch (FileNotFoundException e) {
-//                                    Log.e(getClass().getName(), null, e);
-//                                } catch (IOException e) {
-//                                    Log.e(getClass().getName(), null, e);
-//                                }
-//                            }
-//                            if (videoFile.exists()) {
-//                                videoDao.insert(video);
-//                                Log.i(getClass().getName(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
-//                            }
-//                        } else {
-//                            Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
-//                        }
-//                    }
-//                }
-//            } catch (JSONException e) {
-//                Log.e(getClass().getName(), null, e);
-//            }
+            publishProgress("Downloading Videos");
+            url = EnvironmentSettings.getRestUrl() + "/content/multimedia/video/list" +
+                    "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                    "&locale=" + DeviceInfoHelper.getLocale(context);
+            jsonResponse = JsonLoader.loadJson(url);
+            Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
+            try {
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+                if (!"success".equals(jsonObject.getString("result"))) {
+                    Log.w(getClass().getName(), "Download failed");
+                } else {
+                    JSONArray jsonArray = jsonObject.getJSONArray("videos");
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        Type type = new TypeToken<VideoGson>(){}.getType();
+                        VideoGson videoGson = new Gson().fromJson(jsonArray.getString(i), type);
+                        Video video = GsonToGreenDaoConverter.getVideo(videoGson);
+                        Video existingVideo = videoDao.queryBuilder()
+                                .where(VideoDao.Properties.Id.eq(video.getId()))
+                                .unique();
+                        if (existingVideo == null) {
+                            File videoFile = MultimediaHelper.getFile(video);
+                            Log.i(getClass().getName(), "videoFile: " + videoFile);
+                            if (!videoFile.exists()) {
+                                // Download bytes
+                                byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
+                                Log.i(getClass().getName(), "bytes.length: " + bytes.length);
+
+                                // Store file
+                                try {
+                                    FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
+                                    IOUtils.write(bytes, fileOutputStream);
+                                    fileOutputStream.close();
+                                } catch (FileNotFoundException e) {
+                                    Log.e(getClass().getName(), null, e);
+                                } catch (IOException e) {
+                                    Log.e(getClass().getName(), null, e);
+                                }
+                            }
+                            if (videoFile.exists()) {
+                                videoDao.insert(video);
+                                Log.i(getClass().getName(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
+                            }
+                        } else {
+                            Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                Log.e(getClass().getName(), null, e);
+            }
 
 
             // Update time of last content synchronization
