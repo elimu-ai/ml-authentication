@@ -41,12 +41,7 @@ public class LettersActivity extends AppCompatActivity {
         letterDao = literacyApplication.getDaoSession().getLetterDao();
 
         letterGridLayout = (GridLayout) findViewById(R.id.letterGridLayout);
-    }
 
-    @Override
-    protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
-        super.onStart();
 
         List<Letter> letters = letterDao.loadAll();
         Log.i(getClass().getName(), "letters.size(): " + letters.size());
@@ -85,5 +80,13 @@ public class LettersActivity extends AppCompatActivity {
 
             letterGridLayout.addView(letterView);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+
     }
 }

@@ -45,7 +45,7 @@
             android:name=".task.TagItemsActivity"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".task.VideoActivity"
+            android:name=".content.multimedia.video.VideoActivity"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".task.GraphemeActivity"
@@ -64,6 +64,13 @@
         </activity>
         <activity
             android:name=".content.number.NumbersActivity"
+            android:parentActivityName=".CategoryActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.literacyapp.CategoryActivity" />
+        </activity>
+        <activity
+            android:name=".content.multimedia.video.VideosActivity"
             android:parentActivityName=".CategoryActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

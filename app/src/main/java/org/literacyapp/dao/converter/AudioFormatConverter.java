@@ -9,19 +9,19 @@ public class AudioFormatConverter implements PropertyConverter<AudioFormat, Stri
 
     @Override
     public AudioFormat convertToEntityProperty(String databaseValue) {
-        Log.i(getClass().getName(), "convertToEntityProperty");
+        Log.d(getClass().getName(), "convertToEntityProperty");
 
         AudioFormat entityProperty = AudioFormat.valueOf(databaseValue);
-        Log.i(getClass().getName(), "entityProperty: " + entityProperty);
+        Log.d(getClass().getName(), "entityProperty: " + entityProperty);
         return entityProperty;
     }
 
     @Override
     public String convertToDatabaseValue(AudioFormat entityProperty) {
-        Log.i(getClass().getName(), "convertToDatabaseValue");
+        Log.d(getClass().getName(), "convertToDatabaseValue");
 
         String databaseValue = entityProperty.toString();
-        Log.i(getClass().getName(), "databaseValue: " + databaseValue);
+        Log.d(getClass().getName(), "databaseValue: " + databaseValue);
         return databaseValue;
     }
 }

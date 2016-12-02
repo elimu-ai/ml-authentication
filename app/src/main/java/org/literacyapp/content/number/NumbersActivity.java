@@ -43,12 +43,7 @@ public class NumbersActivity extends AppCompatActivity {
         numberDao = literacyApplication.getDaoSession().getNumberDao();
 
         numberGridLayout = (GridLayout) findViewById(R.id.numberGridLayout);
-    }
 
-    @Override
-    protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
-        super.onStart();
 
         List<Number> numbers = numberDao.loadAll();
         Log.i(getClass().getName(), "numbers.size(): " + numbers.size());
@@ -106,5 +101,13 @@ public class NumbersActivity extends AppCompatActivity {
 
             numberGridLayout.addView(numberView);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+
     }
 }

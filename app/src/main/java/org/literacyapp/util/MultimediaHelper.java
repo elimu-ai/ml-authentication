@@ -96,4 +96,17 @@ public class MultimediaHelper {
 
         return file;
     }
+
+    public static File getThumbnail(Video video) {
+        File file = null;
+
+        if (video == null) {
+            return null;
+        }
+
+        File videoDirectory = getVideoDirectory();
+        file = new File(videoDirectory, video.getId() + "_r" + video.getRevisionNumber() + ".png");
+
+        return file;
+    }
 }

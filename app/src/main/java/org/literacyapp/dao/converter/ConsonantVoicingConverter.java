@@ -9,19 +9,19 @@ public class ConsonantVoicingConverter implements PropertyConverter<ConsonantVoi
 
     @Override
     public ConsonantVoicing convertToEntityProperty(String databaseValue) {
-        Log.i(getClass().getName(), "convertToEntityProperty");
+        Log.d(getClass().getName(), "convertToEntityProperty");
 
         ConsonantVoicing entityProperty = ConsonantVoicing.valueOf(databaseValue);
-        Log.i(getClass().getName(), "entityProperty: " + entityProperty);
+        Log.d(getClass().getName(), "entityProperty: " + entityProperty);
         return entityProperty;
     }
 
     @Override
     public String convertToDatabaseValue(ConsonantVoicing entityProperty) {
-        Log.i(getClass().getName(), "convertToDatabaseValue");
+        Log.d(getClass().getName(), "convertToDatabaseValue");
 
         String databaseValue = entityProperty.toString();
-        Log.i(getClass().getName(), "databaseValue: " + databaseValue);
+        Log.d(getClass().getName(), "databaseValue: " + databaseValue);
         return databaseValue;
     }
 }

@@ -38,6 +38,10 @@ public class CustomDaoMaster extends DaoMaster {
                 DbMigrationHelper.migrate(db,
                         AudioDao.class
                 );
+            } else if (newVersion == 1001023) {
+                DbMigrationHelper.migrate(db,
+                        AudioDao.class
+                );
             }
 
             // If tables and/or columns have been renamed, add custom script.

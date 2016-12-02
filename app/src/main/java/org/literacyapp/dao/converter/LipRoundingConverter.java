@@ -9,19 +9,19 @@ public class LipRoundingConverter implements PropertyConverter<LipRounding, Stri
 
     @Override
     public LipRounding convertToEntityProperty(String databaseValue) {
-        Log.i(getClass().getName(), "convertToEntityProperty");
+        Log.d(getClass().getName(), "convertToEntityProperty");
 
         LipRounding entityProperty = LipRounding.valueOf(databaseValue);
-        Log.i(getClass().getName(), "entityProperty: " + entityProperty);
+        Log.d(getClass().getName(), "entityProperty: " + entityProperty);
         return entityProperty;
     }
 
     @Override
     public String convertToDatabaseValue(LipRounding entityProperty) {
-        Log.i(getClass().getName(), "convertToDatabaseValue");
+        Log.d(getClass().getName(), "convertToDatabaseValue");
 
         String databaseValue = entityProperty.toString();
-        Log.i(getClass().getName(), "databaseValue: " + databaseValue);
+        Log.d(getClass().getName(), "databaseValue: " + databaseValue);
         return databaseValue;
     }
 }

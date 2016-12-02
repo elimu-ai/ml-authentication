@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import org.literacyapp.content.letter.LettersActivity;
+import org.literacyapp.content.multimedia.video.VideosActivity;
 import org.literacyapp.content.number.NumbersActivity;
 import org.literacyapp.util.MediaPlayerHelper;
 
@@ -244,9 +245,8 @@ public class CategoryActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Log.i(getClass().getName(), "onClick");
-                        Intent intent = getActivity().getPackageManager().getLaunchIntentForPackage("com.android.gallery3d");
+                        Intent intent = new Intent(getActivity(), VideosActivity.class);
                         startActivity(intent);
-                        // TODO: open list of videos
                     }
                 });
             }
