@@ -1,7 +1,6 @@
 package org.literacyapp.dao;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
@@ -61,7 +60,7 @@ public final class DbMigrationHelper {
         }
         try {
             for (Class cls : daoClasses) {
-                Method method = cls.getDeclaredMethod(methodName, SQLiteDatabase.class, boolean.class);
+                Method method = cls.getDeclaredMethod(methodName, Database.class, boolean.class);
                 method.invoke(null, db, isExists);
             }
         } catch (NoSuchMethodException e) {
