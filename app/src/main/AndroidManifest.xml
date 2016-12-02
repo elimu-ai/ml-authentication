@@ -77,6 +77,12 @@
             android:name=".service.ScreenOnService"
             android:enabled="true"
             android:exported="true" />
+
+        <service
+            android:name=".service.ContentSynchronizationJobService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
