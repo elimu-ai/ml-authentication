@@ -1,4 +1,4 @@
-package org.literacyapp.task;
+package org.literacyapp.content.task;
 
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;

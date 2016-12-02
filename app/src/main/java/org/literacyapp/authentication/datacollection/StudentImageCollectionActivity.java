@@ -1,4 +1,4 @@
-package org.literacyapp.facerecognition;
+package org.literacyapp.authentication.datacollection;
 
 import android.Manifest;
 import android.content.Context;
