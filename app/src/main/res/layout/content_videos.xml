@@ -25,7 +25,7 @@
             app:columnCount="2"
             app:useDefaultMargins="true">
 
-            <!-- Programmatically add content_number_number_view.xml -->
+            <!-- Programmatically add content_videos_video_view.xml -->
         </android.support.v7.widget.GridLayout>
     </ScrollView>
 </RelativeLayout>

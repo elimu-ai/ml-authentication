@@ -1,5 +1,7 @@
 package org.literacyapp.content.multimedia.video;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -7,13 +9,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.VideoDao;
 import org.literacyapp.model.content.multimedia.Video;
+import org.literacyapp.util.MultimediaHelper;
 
+import java.io.File;
 import java.util.List;
 
 public class VideosActivity extends AppCompatActivity {
@@ -49,8 +53,13 @@ public class VideosActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "videos.size(): " + videos.size());
         for (final Video video : videos) {
             View videoView = LayoutInflater.from(this).inflate(R.layout.content_videos_video_view, videoGridLayout, false);
-            TextView videoTextView = (TextView) videoView.findViewById(R.id.videoTextView);
-            videoTextView.setText(video.getTitle());
+
+            File videoThumbnailFile = MultimediaHelper.getThumbnail(video);
+            if (videoThumbnailFile.exists()) {
+                ImageView videoImageView = (ImageView) videoView.findViewById(R.id.videoImageView);
+                Bitmap bitmap = BitmapFactory.decodeFile(videoThumbnailFile.getAbsolutePath());
+                videoImageView.setImageBitmap(bitmap);
+            }
 
             videoView.setOnClickListener(new View.OnClickListener() {
                 @Override
