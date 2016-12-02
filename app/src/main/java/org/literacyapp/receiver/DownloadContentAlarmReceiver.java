@@ -368,12 +368,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 // Download bytes
                                 byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audioGson.getDownloadUrl());
                                 Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-
-                                // Store file
                                 try {
                                     FileOutputStream fileOutputStream = new FileOutputStream(audioFile);
                                     IOUtils.write(bytes, fileOutputStream);
                                     fileOutputStream.close();
+                                    Log.i(getClass().getName(), "Stored Audio file at " + audioFile.getAbsolutePath());
                                 } catch (FileNotFoundException e) {
                                     Log.e(getClass().getName(), null, e);
                                 } catch (IOException e) {
@@ -420,12 +419,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 // Download bytes
                                 byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
                                 Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-
-                                // Store file
                                 try {
                                     FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
                                     IOUtils.write(bytes, fileOutputStream);
                                     fileOutputStream.close();
+                                    Log.i(getClass().getName(), "Stored Image file at " + imageFile.getAbsolutePath());
                                 } catch (FileNotFoundException e) {
                                     Log.e(getClass().getName(), null, e);
                                 } catch (IOException e) {
@@ -472,12 +470,11 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                                 // Download bytes
                                 byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
                                 Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-
-                                // Store file
                                 try {
                                     FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
                                     IOUtils.write(bytes, fileOutputStream);
                                     fileOutputStream.close();
+                                    Log.i(getClass().getName(), "Stored Video file at " + videoFile.getAbsolutePath());
                                 } catch (FileNotFoundException e) {
                                     Log.e(getClass().getName(), null, e);
                                 } catch (IOException e) {
@@ -487,6 +484,24 @@ public class DownloadContentAlarmReceiver extends BroadcastReceiver {
                             if (videoFile.exists()) {
                                 videoDao.insert(video);
                                 Log.i(getClass().getName(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
+                            }
+
+                            File thumbnailFile = MultimediaHelper.getThumbnail(video);
+                            Log.i(getClass().getName(), "thumbnailFile: " + thumbnailFile);
+                            if (!thumbnailFile.exists()) {
+                                // Download bytes
+                                byte[] thumbnailBytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getThumbnailDownloadUrl());
+                                Log.i(getClass().getName(), "thumbnailBytes.length: " + thumbnailBytes.length);
+                                try {
+                                    FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFile);
+                                    IOUtils.write(thumbnailBytes, fileOutputStream);
+                                    fileOutputStream.close();
+                                    Log.i(getClass().getName(), "Stored Video thumbnail at " + thumbnailFile.getAbsolutePath());
+                                } catch (FileNotFoundException e) {
+                                    Log.e(getClass().getName(), null, e);
+                                } catch (IOException e) {
+                                    Log.e(getClass().getName(), null, e);
+                                }
                             }
                         } else {
                             Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
