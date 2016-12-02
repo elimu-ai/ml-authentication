@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.literacyapp.task.LessonCompleteActivity">
+    tools:context=".content.task.LessonCompleteActivity">
 
     <pl.droidsonroids.gif.GifTextView
         android:id="@+id/lessonCompleteGifTextView"
