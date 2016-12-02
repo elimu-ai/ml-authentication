@@ -1,4 +1,4 @@
-package org.literacyapp.task;
+package org.literacyapp.content.task;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

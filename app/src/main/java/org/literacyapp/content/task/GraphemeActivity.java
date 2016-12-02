@@ -1,4 +1,4 @@
-package org.literacyapp.task;
+package org.literacyapp.content.task;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;

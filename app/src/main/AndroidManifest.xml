@@ -35,25 +35,20 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.DownloadContentAlarmReceiver">
-            <intent-filter>
-                <action android:name="org.literacyapp.receiver.DownloadContentAlarmReceiver" />
-            </intent-filter>
-        </receiver>
 
         <activity
-            android:name=".task.TagItemsActivity"
+            android:name=".content.task.TagItemsActivity"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".content.multimedia.video.VideoActivity"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".task.GraphemeActivity"
+            android:name=".content.task.GraphemeActivity"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".task.StarActivity"
+            android:name=".content.task.StarActivity"
             android:screenOrientation="fullSensor" />
-        <activity android:name=".task.LessonCompleteActivity" />
+        <activity android:name=".content.task.LessonCompleteActivity" />
         <activity android:name=".authentication.CameraViewActivity" />
         <activity
             android:name=".content.letter.LettersActivity"
@@ -76,7 +71,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
-        <activity android:name=".facerecognition.StudentImageCollectionActivity" />
+        <activity android:name=".authentication.datacollection.StudentImageCollectionActivity" />
 
         <service
             android:name=".service.ScreenOnService"

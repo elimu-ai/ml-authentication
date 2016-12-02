@@ -2,22 +2,25 @@ package org.literacyapp;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
-import org.literacyapp.receiver.DownloadContentAlarmReceiver;
+import org.literacyapp.dao.LetterDao;
+import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
+import org.literacyapp.util.ConnectivityHelper;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     public static final int PERMISSION_REQUEST_CAMERA = 1;
+
+    private LetterDao letterDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
+        letterDao = literacyApplication.getDaoSession().getLetterDao();
     }
 
     @Override
@@ -44,13 +50,19 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        long timeOfLastSynchronizationInMillis = sharedPreferences.getLong(DownloadContentAlarmReceiver.PREF_LAST_CONTENT_SYNC, 0);
-        if (timeOfLastSynchronizationInMillis == 0) {
+        if (letterDao.loadAll().isEmpty()) {
             // Download content
-            Intent intent = new Intent("org.literacyapp.receiver.DownloadContentAlarmReceiver");
-            intent.setPackage("org.literacyapp");
-            sendBroadcast(intent);
+            boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(getApplicationContext());
+            Log.i(getClass().getName(), "isWifiEnabled: " + isWifiEnabled);
+            boolean isWifiConnected = ConnectivityHelper.isWifiConnected(getApplicationContext());
+            Log.i(getClass().getName(), "isWifiConnected: " + isWifiConnected);
+            if (!isWifiEnabled) {
+                Toast.makeText(getApplicationContext(), getString(R.string.wifi_needs_to_be_enabled), Toast.LENGTH_SHORT).show();
+            } else if (!isWifiConnected) {
+                Toast.makeText(getApplicationContext(), getString(R.string.wifi_needs_to_be_connected), Toast.LENGTH_SHORT).show();
+            } else {
+                new ReadDeviceAsyncTask(getApplicationContext()).execute();
+            }
         } else {
             // Assume content has already been downloaded
             Intent categoryIntent = new Intent(this, CategoryActivity.class);

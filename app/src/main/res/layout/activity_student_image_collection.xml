@@ -4,7 +4,7 @@
     android:id="@+id/activity_student_image_collection"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.literacyapp.facerecognition.StudentImageCollectionActivity">
+    tools:context=".authentication.datacollection.StudentImageCollectionActivity">
 
     <TextureView
         android:id="@+id/texture"
