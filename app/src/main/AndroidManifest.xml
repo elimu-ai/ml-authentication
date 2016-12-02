@@ -45,7 +45,7 @@
             android:name=".task.TagItemsActivity"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".task.VideoActivity"
+            android:name=".content.multimedia.video.VideoActivity"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".task.GraphemeActivity"

@@ -1,4 +1,4 @@
-package org.literacyapp.task;
+package org.literacyapp.content.multimedia.video;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -14,9 +14,10 @@ import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;
-import java.util.List;
 
 public class VideoActivity extends AppCompatActivity {
+
+    public static final String EXTRA_KEY_VIDEO_ID = "videoId";
 
     private VideoDao videoDao;
 
@@ -39,9 +40,11 @@ public class VideoActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        List<Video> videos = videoDao.loadAll(); // TODO: load video matching student's current level
-        Log.i(getClass().getName(), "videos.size(): " + videos.size());
-        Video video = videos.get(0);
+        Bundle extras = getIntent().getExtras();
+        long videoId = extras.getLong(EXTRA_KEY_VIDEO_ID);
+        Log.i(getClass().getName(), "videoId: " + videoId);
+
+        Video video = videoDao.load(videoId);
         File videoFile = MultimediaHelper.getFile(video);
         Log.i(getClass().getName(), "videoFile: " + videoFile);
 
@@ -53,8 +56,9 @@ public class VideoActivity extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Log.i(getClass().getName(), "onCompletion");
+                finish();
 
-                // TODO: take winner picture for completing lesson
+                // TODO: track VideoCompletedEvent
             }
         });
     }

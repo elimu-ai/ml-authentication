@@ -1,5 +1,6 @@
 package org.literacyapp.content.multimedia.video;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -64,7 +65,9 @@ public class VideosActivity extends AppCompatActivity {
                     Log.i(getClass().getName(), "video.getId(): " + video.getId());
                     Log.i(getClass().getName(), "video.getTitle(): " + video.getTitle());
 
-                    // TODO: open VideoActivity
+                    Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+                    intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
+                    startActivity(intent);
                 }
             });
 
