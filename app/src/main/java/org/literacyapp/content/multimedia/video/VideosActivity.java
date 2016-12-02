@@ -42,12 +42,7 @@ public class VideosActivity extends AppCompatActivity {
         videoDao = literacyApplication.getDaoSession().getVideoDao();
 
         videoGridLayout = (GridLayout) findViewById(R.id.videoGridLayout);
-    }
 
-    @Override
-    protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
-        super.onStart();
 
         List<Video> videos = videoDao.loadAll();
         Log.i(getClass().getName(), "videos.size(): " + videos.size());
@@ -75,5 +70,13 @@ public class VideosActivity extends AppCompatActivity {
 
             videoGridLayout.addView(videoView);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+
     }
 }
