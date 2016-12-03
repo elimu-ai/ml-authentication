@@ -11,12 +11,11 @@ import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
-import org.greenrobot.greendao.query.Query;
-import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.model.Device;
+import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 
 import org.literacyapp.model.StudentImage;
@@ -37,13 +36,14 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TimeCollected = new Property(1, long.class, "timeCollected", false, "TIME_COLLECTED");
         public final static Property ImageFileUrl = new Property(2, String.class, "imageFileUrl", false, "IMAGE_FILE_URL");
-        public final static Property StudentImageFeature = new Property(3, Long.class, "studentImageFeature", false, "STUDENT_IMAGE_FEATURE");
+        public final static Property Device = new Property(3, long.class, "device", false, "DEVICE");
+        public final static Property StudentImageFeature = new Property(4, Long.class, "studentImageFeature", false, "STUDENT_IMAGE_FEATURE");
+        public final static Property StudentImageCollectionEvent = new Property(5, Long.class, "studentImageCollectionEvent", false, "STUDENT_IMAGE_COLLECTION_EVENT");
     }
 
     private DaoSession daoSession;
 
     private final CalendarConverter timeCollectedConverter = new CalendarConverter();
-    private Query<StudentImage> studentImageCollectionEvent_StudentImagesQuery;
 
     public StudentImageDao(DaoConfig config) {
         super(config);
@@ -61,7 +61,9 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME_COLLECTED\" INTEGER NOT NULL ," + // 1: timeCollected
                 "\"IMAGE_FILE_URL\" TEXT NOT NULL ," + // 2: imageFileUrl
-                "\"STUDENT_IMAGE_FEATURE\" INTEGER);"); // 3: studentImageFeature
+                "\"DEVICE\" INTEGER NOT NULL ," + // 3: device
+                "\"STUDENT_IMAGE_FEATURE\" INTEGER," + // 4: studentImageFeature
+                "\"STUDENT_IMAGE_COLLECTION_EVENT\" INTEGER);"); // 5: studentImageCollectionEvent
     }
 
     /** Drops the underlying database table. */
@@ -147,20 +149,6 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         return true;
     }
     
-    /** Internal query to resolve the "studentImages" to-many relationship of StudentImageCollectionEvent. */
-    public List<StudentImage> _queryStudentImageCollectionEvent_StudentImages(Long id) {
-        synchronized (this) {
-            if (studentImageCollectionEvent_StudentImagesQuery == null) {
-                QueryBuilder<StudentImage> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
-                studentImageCollectionEvent_StudentImagesQuery = queryBuilder.build();
-            }
-        }
-        Query<StudentImage> query = studentImageCollectionEvent_StudentImagesQuery.forCurrentThread();
-        query.setParameter(0, id);
-        return query.list();
-    }
-
     private String selectDeep;
 
     protected String getSelectDeep() {
@@ -171,9 +159,12 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
             SqlUtils.appendColumns(builder, "T0", daoSession.getDeviceDao().getAllColumns());
             builder.append(',');
             SqlUtils.appendColumns(builder, "T1", daoSession.getStudentImageFeatureDao().getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T2", daoSession.getStudentImageCollectionEventDao().getAllColumns());
             builder.append(" FROM STUDENT_IMAGE T");
-            builder.append(" LEFT JOIN DEVICE T0 ON T.\"_id\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN DEVICE T0 ON T.\"DEVICE\"=T0.\"_id\"");
             builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T1 ON T.\"STUDENT_IMAGE_FEATURE\"=T1.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE_COLLECTION_EVENT T2 ON T.\"STUDENT_IMAGE_COLLECTION_EVENT\"=T2.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -185,11 +176,17 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         int offset = getAllColumns().length;
 
         Device device = loadCurrentOther(daoSession.getDeviceDao(), cursor, offset);
-        entity.setDevice(device);
+         if(device != null) {
+            entity.setDevice(device);
+        }
         offset += daoSession.getDeviceDao().getAllColumns().length;
 
         StudentImageFeature studentImageFeature = loadCurrentOther(daoSession.getStudentImageFeatureDao(), cursor, offset);
         entity.setStudentImageFeature(studentImageFeature);
+        offset += daoSession.getStudentImageFeatureDao().getAllColumns().length;
+
+        StudentImageCollectionEvent studentImageCollectionEvent = loadCurrentOther(daoSession.getStudentImageCollectionEventDao(), cursor, offset);
+        entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
 
         return entity;    
     }

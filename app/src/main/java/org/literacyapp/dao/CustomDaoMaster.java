@@ -26,21 +26,28 @@ public class CustomDaoMaster extends DaoMaster {
         public void onUpgrade(Database db, int oldVersion, int newVersion) {
             Log.i(getClass().getName(), "Upgrading schema from version " + oldVersion + " to " + newVersion);
 
-//            if (newVersion == 1001018) {
-//                // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
-//                DbMigrationHelper.migrate(db,
-//                        DeviceDao.class,
-//                        StudentImageDao.class
-//                );
-//            }
-
-            if (newVersion == 1001022) {
+            if (oldVersion < 1001018) {
+                // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
+                DbMigrationHelper.migrate(db,
+                        DeviceDao.class,
+                        StudentImageDao.class
+                );
+            }
+            if (oldVersion < 1001022) {
                 DbMigrationHelper.migrate(db,
                         AudioDao.class
                 );
-            } else if (newVersion == 1001023) {
+            }
+            if (oldVersion < 1001023) {
                 DbMigrationHelper.migrate(db,
                         AudioDao.class
+                );
+            }
+
+            if (oldVersion < 1001025) {
+                DbMigrationHelper.migrate(db,
+                        StudentImageDao.class,
+                        StudentImageCollectionEventDao.class
                 );
             }
 
