@@ -35,7 +35,7 @@ public class StudentImage {
     @NotNull
     private String imageFileUrl;
 
-    @ToOne(joinProperty = "id")
+    @ToOne
     private StudentImageFeature studentImageFeature;
 
     /** Used to resolve relations */
@@ -114,36 +114,29 @@ public class StudentImage {
     @Generated(hash = 708752895)
     private transient Long device__resolvedKey;
 
-    @Generated(hash = 1724262783)
-    private transient Long studentImageFeature__resolvedKey;
+    @Generated(hash = 350087450)
+    private transient boolean studentImageFeature__refreshed;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1014901179)
+    @Generated(hash = 1683738455)
     public StudentImageFeature getStudentImageFeature() {
-        Long __key = this.id;
-        if (studentImageFeature__resolvedKey == null
-                || !studentImageFeature__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
+        if (studentImageFeature != null || !studentImageFeature__refreshed) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             StudentImageFeatureDao targetDao = daoSession.getStudentImageFeatureDao();
-            StudentImageFeature studentImageFeatureNew = targetDao.load(__key);
-            synchronized (this) {
-                studentImageFeature = studentImageFeatureNew;
-                studentImageFeature__resolvedKey = __key;
-            }
+            targetDao.refresh(studentImageFeature);
+            studentImageFeature__refreshed = true;
         }
         return studentImageFeature;
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1559283393)
+    @Generated(hash = 841110149)
     public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
         synchronized (this) {
             this.studentImageFeature = studentImageFeature;
-            id = studentImageFeature == null ? null : studentImageFeature.getId();
-            studentImageFeature__resolvedKey = id;
+            studentImageFeature__refreshed = true;
         }
     }
 
@@ -188,5 +181,11 @@ public class StudentImage {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getStudentImageDao() : null;
+    }
+
+    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    @Generated(hash = 537228336)
+    public StudentImageFeature peakStudentImageFeature() {
+        return studentImageFeature;
     }
 }
