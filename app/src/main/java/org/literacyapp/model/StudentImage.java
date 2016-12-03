@@ -40,6 +40,7 @@ public class StudentImage {
     @ToOne
     private StudentImageFeature studentImageFeature;
 
+    @NotNull
     @ToOne
     private StudentImageCollectionEvent studentImageCollectionEvent;
 
@@ -178,9 +179,13 @@ public class StudentImage {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1288968146)
+    @Generated(hash = 503194988)
     public void setStudentImageCollectionEvent(
-            StudentImageCollectionEvent studentImageCollectionEvent) {
+            @NotNull StudentImageCollectionEvent studentImageCollectionEvent) {
+        if (studentImageCollectionEvent == null) {
+            throw new DaoException(
+                    "To-one property 'studentImageCollectionEvent' has not-null constraint; cannot set to-one to null");
+        }
         synchronized (this) {
             this.studentImageCollectionEvent = studentImageCollectionEvent;
             studentImageCollectionEvent__refreshed = true;
