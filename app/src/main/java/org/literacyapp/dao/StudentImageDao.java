@@ -37,6 +37,7 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TimeCollected = new Property(1, long.class, "timeCollected", false, "TIME_COLLECTED");
         public final static Property ImageFileUrl = new Property(2, String.class, "imageFileUrl", false, "IMAGE_FILE_URL");
+        public final static Property StudentImageFeature = new Property(3, Long.class, "studentImageFeature", false, "STUDENT_IMAGE_FEATURE");
     }
 
     private DaoSession daoSession;
@@ -59,7 +60,8 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT_IMAGE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME_COLLECTED\" INTEGER NOT NULL ," + // 1: timeCollected
-                "\"IMAGE_FILE_URL\" TEXT NOT NULL );"); // 2: imageFileUrl
+                "\"IMAGE_FILE_URL\" TEXT NOT NULL ," + // 2: imageFileUrl
+                "\"STUDENT_IMAGE_FEATURE\" INTEGER);"); // 3: studentImageFeature
     }
 
     /** Drops the underlying database table. */
@@ -171,7 +173,7 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
             SqlUtils.appendColumns(builder, "T1", daoSession.getStudentImageFeatureDao().getAllColumns());
             builder.append(" FROM STUDENT_IMAGE T");
             builder.append(" LEFT JOIN DEVICE T0 ON T.\"_id\"=T0.\"_id\"");
-            builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T1 ON T.\"_id\"=T1.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T1 ON T.\"STUDENT_IMAGE_FEATURE\"=T1.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
