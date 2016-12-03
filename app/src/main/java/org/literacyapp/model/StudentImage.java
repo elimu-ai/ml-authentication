@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
@@ -62,6 +63,20 @@ public class StudentImage {
     public StudentImage() {
     }
 
+    @Generated(hash = 1114998901)
+    private transient boolean device__refreshed;
+
+    @Generated(hash = 350087450)
+    private transient boolean studentImageFeature__refreshed;
+
+    @Generated(hash = 2145224794)
+    private transient boolean studentImageCollectionEvent__refreshed;
+
+    @Keep
+    public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
+        this.studentImageFeature = studentImageFeature;
+    }
+
     public Long getId() {
         return this.id;
     }
@@ -100,6 +115,12 @@ public class StudentImage {
         return device;
     }
 
+    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    @Generated(hash = 400002126)
+    public Device peakDevice() {
+        return device;
+    }
+
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 1764284664)
     public void setDevice(@NotNull Device device) {
@@ -113,15 +134,6 @@ public class StudentImage {
         }
     }
 
-    @Generated(hash = 350087450)
-    private transient boolean studentImageFeature__refreshed;
-
-    @Generated(hash = 1114998901)
-    private transient boolean device__refreshed;
-
-    @Generated(hash = 2145224794)
-    private transient boolean studentImageCollectionEvent__refreshed;
-
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1683738455)
     public StudentImageFeature getStudentImageFeature() {
@@ -129,19 +141,49 @@ public class StudentImage {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            StudentImageFeatureDao targetDao = daoSession.getStudentImageFeatureDao();
+            StudentImageFeatureDao targetDao = daoSession
+                    .getStudentImageFeatureDao();
             targetDao.refresh(studentImageFeature);
             studentImageFeature__refreshed = true;
         }
         return studentImageFeature;
     }
 
+    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    @Generated(hash = 537228336)
+    public StudentImageFeature peakStudentImageFeature() {
+        return studentImageFeature;
+    }
+
+    /** To-one relationship, resolved on first access. */
+    @Generated(hash = 1433496216)
+    public StudentImageCollectionEvent getStudentImageCollectionEvent() {
+        if (studentImageCollectionEvent != null
+                || !studentImageCollectionEvent__refreshed) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            StudentImageCollectionEventDao targetDao = daoSession
+                    .getStudentImageCollectionEventDao();
+            targetDao.refresh(studentImageCollectionEvent);
+            studentImageCollectionEvent__refreshed = true;
+        }
+        return studentImageCollectionEvent;
+    }
+
+    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
+    @Generated(hash = 476286207)
+    public StudentImageCollectionEvent peakStudentImageCollectionEvent() {
+        return studentImageCollectionEvent;
+    }
+
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 841110149)
-    public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
+    @Generated(hash = 1288968146)
+    public void setStudentImageCollectionEvent(
+            StudentImageCollectionEvent studentImageCollectionEvent) {
         synchronized (this) {
-            this.studentImageFeature = studentImageFeature;
-            studentImageFeature__refreshed = true;
+            this.studentImageCollectionEvent = studentImageCollectionEvent;
+            studentImageCollectionEvent__refreshed = true;
         }
     }
 
@@ -186,47 +228,5 @@ public class StudentImage {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getStudentImageDao() : null;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 537228336)
-    public StudentImageFeature peakStudentImageFeature() {
-        return studentImageFeature;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 400002126)
-    public Device peakDevice() {
-        return device;
-    }
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1433496216)
-    public StudentImageCollectionEvent getStudentImageCollectionEvent() {
-        if (studentImageCollectionEvent != null || !studentImageCollectionEvent__refreshed) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            StudentImageCollectionEventDao targetDao = daoSession.getStudentImageCollectionEventDao();
-            targetDao.refresh(studentImageCollectionEvent);
-            studentImageCollectionEvent__refreshed = true;
-        }
-        return studentImageCollectionEvent;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 476286207)
-    public StudentImageCollectionEvent peakStudentImageCollectionEvent() {
-        return studentImageCollectionEvent;
-    }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1288968146)
-    public void setStudentImageCollectionEvent(
-            StudentImageCollectionEvent studentImageCollectionEvent) {
-        synchronized (this) {
-            this.studentImageCollectionEvent = studentImageCollectionEvent;
-            studentImageCollectionEvent__refreshed = true;
-        }
     }
 }
