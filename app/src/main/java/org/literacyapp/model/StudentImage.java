@@ -53,8 +53,7 @@ public class StudentImage {
     private transient StudentImageDao myDao;
 
     @Generated(hash = 1699503080)
-    public StudentImage(Long id, @NotNull Calendar timeCollected,
-            @NotNull String imageFileUrl) {
+    public StudentImage(Long id, @NotNull Calendar timeCollected, @NotNull String imageFileUrl) {
         this.id = id;
         this.timeCollected = timeCollected;
         this.imageFileUrl = imageFileUrl;
@@ -74,8 +73,18 @@ public class StudentImage {
     private transient boolean studentImageCollectionEvent__refreshed;
 
     @Keep
+    public void setDevice(Device device) {
+        this.device = device;
+    }
+
+    @Keep
     public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
         this.studentImageFeature = studentImageFeature;
+    }
+
+    @Keep
+    public void setStudentImageCollectionEvent(StudentImageCollectionEvent studentImageCollectionEvent) {
+        this.studentImageCollectionEvent = studentImageCollectionEvent;
     }
 
     public Long getId() {
@@ -122,19 +131,6 @@ public class StudentImage {
         return device;
     }
 
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1764284664)
-    public void setDevice(@NotNull Device device) {
-        if (device == null) {
-            throw new DaoException(
-                    "To-one property 'device' has not-null constraint; cannot set to-one to null");
-        }
-        synchronized (this) {
-            this.device = device;
-            device__refreshed = true;
-        }
-    }
-
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1683738455)
     public StudentImageFeature getStudentImageFeature() {
@@ -142,8 +138,7 @@ public class StudentImage {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            StudentImageFeatureDao targetDao = daoSession
-                    .getStudentImageFeatureDao();
+            StudentImageFeatureDao targetDao = daoSession.getStudentImageFeatureDao();
             targetDao.refresh(studentImageFeature);
             studentImageFeature__refreshed = true;
         }
@@ -159,13 +154,11 @@ public class StudentImage {
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1433496216)
     public StudentImageCollectionEvent getStudentImageCollectionEvent() {
-        if (studentImageCollectionEvent != null
-                || !studentImageCollectionEvent__refreshed) {
+        if (studentImageCollectionEvent != null || !studentImageCollectionEvent__refreshed) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            StudentImageCollectionEventDao targetDao = daoSession
-                    .getStudentImageCollectionEventDao();
+            StudentImageCollectionEventDao targetDao = daoSession.getStudentImageCollectionEventDao();
             targetDao.refresh(studentImageCollectionEvent);
             studentImageCollectionEvent__refreshed = true;
         }
@@ -176,20 +169,6 @@ public class StudentImage {
     @Generated(hash = 476286207)
     public StudentImageCollectionEvent peakStudentImageCollectionEvent() {
         return studentImageCollectionEvent;
-    }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 503194988)
-    public void setStudentImageCollectionEvent(
-            @NotNull StudentImageCollectionEvent studentImageCollectionEvent) {
-        if (studentImageCollectionEvent == null) {
-            throw new DaoException(
-                    "To-one property 'studentImageCollectionEvent' has not-null constraint; cannot set to-one to null");
-        }
-        synchronized (this) {
-            this.studentImageCollectionEvent = studentImageCollectionEvent;
-            studentImageCollectionEvent__refreshed = true;
-        }
     }
 
     /**
