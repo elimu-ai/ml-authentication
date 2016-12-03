@@ -97,10 +97,13 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                             .where(AllophoneDao.Properties.Id.eq(allophone.getId()))
                             .unique();
                     if (existingAllophone == null) {
+                        Log.i(getClass().getName(), "Storing Allophone, id: " + allophone.getId() + ", valueIpa: /" + allophone.getValueIpa() + "/, valueSampa: \"" + allophone.getValueSampa() + "\", revisionNumber: " + allophone.getRevisionNumber());
                         allophoneDao.insert(allophone);
-                        Log.i(getClass().getName(), "Stored Allophone with id " + allophone.getId() + " and IPA value /" + allophone.getValueIpa() + "/");
+                    } else if (existingAllophone.getRevisionNumber() < allophone.getRevisionNumber()) {
+                        Log.i(getClass().getName(), "Updating Allophone with id " + existingAllophone.getId() + " from revisionNumber " + existingAllophone.getRevisionNumber() + " to revisionNumber " + allophone.getRevisionNumber());
+                        allophoneDao.update(allophone);
                     } else {
-                        Log.i(getClass().getName(), "Allophone /" + allophone.getValueIpa() + "/ already exists in database with id " + allophone.getId());
+                        Log.i(getClass().getName(), "Allophone /" + allophone.getValueIpa() + "/ already exists in database with id " + allophone.getId() + " (revision " + allophone.getRevisionNumber() + ")");
                     }
                 }
             }
@@ -129,10 +132,13 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                             .where(LetterDao.Properties.Id.eq(letter.getId()))
                             .unique();
                     if (existingLetter == null) {
+                        Log.i(getClass().getName(), "Storing Letter, id: " + letter.getId() + ", text: \"" + letter.getText() + "\", revisionNumber: " + letter.getRevisionNumber());
                         letterDao.insert(letter);
-                        Log.i(getClass().getName(), "Stored Letter with id " + letter.getId() + " and text '" + letter.getText() + "'");
+                    } else if (existingLetter.getRevisionNumber() < letter.getRevisionNumber()) {
+                        Log.i(getClass().getName(), "Updating Letter with id " + existingLetter.getId() + " from revisionNumber " + existingLetter.getRevisionNumber() + " to revisionNumber " + letter.getRevisionNumber());
+                        letterDao.update(letter);
                     } else {
-                        Log.i(getClass().getName(), "Letter " + letter.getText() + " already exists in database with id " + letter.getId());
+                        Log.i(getClass().getName(), "Letter \"" + letter.getText() + "\" already exists in database with id " + letter.getId() + " (revision " + letter.getRevisionNumber() + ")");
                     }
                 }
             }
@@ -161,10 +167,13 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                             .where(NumberDao.Properties.Id.eq(number.getId()))
                             .unique();
                     if (existingNumber == null) {
+                        Log.i(getClass().getName(), "Storing Number, id: " + number.getId() + ", value: \"" + number.getValue() + "\", revisionNumber: " + number.getRevisionNumber());
                         numberDao.insert(number);
-                        Log.i(getClass().getName(), "Stored Number with id " + number.getId() + " and value /" + number.getValue() + "/");
+                    } else if (existingNumber.getRevisionNumber() < number.getRevisionNumber()) {
+                        Log.i(getClass().getName(), "Updating Number with id " + existingNumber.getId() + " from revisionNumber " + existingNumber.getRevisionNumber() + " to revisionNumber " + number.getRevisionNumber());
+                        numberDao.update(number);
                     } else {
-                        Log.i(getClass().getName(), "Number " + number.getValue() + " already exists in database with id " + number.getId());
+                        Log.i(getClass().getName(), "Number \"" + number.getValue() + "\" already exists in database with id " + number.getId() + " (revision " + number.getRevisionNumber() + ")");
                     }
                 }
             }
@@ -193,10 +202,13 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                             .where(WordDao.Properties.Id.eq(word.getId()))
                             .unique();
                     if (existingWord == null) {
+                        Log.i(getClass().getName(), "Storing Word, id: " + word.getId() + ", text: \"" + word.getText() + "\", revisionNumber: " + word.getRevisionNumber());
                         wordDao.insert(word);
-                        Log.i(getClass().getName(), "Stored Word with id " + word.getId() + " and text '" + word.getText() + "'");
+                    } else if (existingWord.getRevisionNumber() < word.getRevisionNumber()) {
+                        Log.i(getClass().getName(), "Updating Word with id " + existingWord.getId() + " from revisionNumber " + existingWord.getRevisionNumber() + " to revisionNumber " + word.getRevisionNumber());
+                        wordDao.update(word);
                     } else {
-                        Log.i(getClass().getName(), "Word " + word.getText() + " already exists in database with id " + word.getId());
+                        Log.i(getClass().getName(), "Word \"" + word.getText() + "\" already exists in database with id " + word.getId() + " (revision " + word.getRevisionNumber() + ")");
                     }
                 }
             }
@@ -222,33 +234,38 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Type type = new TypeToken<AudioGson>(){}.getType();
                     AudioGson audioGson = new Gson().fromJson(jsonArray.getString(i), type);
                     Audio audio = GsonToGreenDaoConverter.getAudio(audioGson);
-                    Audio existingAudio = audioDao.queryBuilder()
-                            .where(AudioDao.Properties.Id.eq(audio.getId()))
-                            .unique();
-                    if (existingAudio == null) {
-                        File audioFile = MultimediaHelper.getFile(audio);
-                        Log.i(getClass().getName(), "audioFile: " + audioFile);
-                        if (!audioFile.exists()) {
-                            // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audioGson.getDownloadUrl());
-                            Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-                            try {
-                                FileOutputStream fileOutputStream = new FileOutputStream(audioFile);
-                                IOUtils.write(bytes, fileOutputStream);
-                                fileOutputStream.close();
-                                Log.i(getClass().getName(), "Stored Audio file at " + audioFile.getAbsolutePath());
-                            } catch (FileNotFoundException e) {
-                                Log.e(getClass().getName(), null, e);
-                            } catch (IOException e) {
-                                Log.e(getClass().getName(), null, e);
-                            }
+
+                    File audioFile = MultimediaHelper.getFile(audio);
+                    Log.i(getClass().getName(), "audioFile: " + audioFile);
+                    if (!audioFile.exists()) {
+                        // Download bytes
+                        byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audioGson.getDownloadUrl());
+                        Log.i(getClass().getName(), "bytes.length: " + bytes.length);
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(audioFile);
+                            IOUtils.write(bytes, fileOutputStream);
+                            fileOutputStream.close();
+                            Log.i(getClass().getName(), "Stored Audio file at " + audioFile.getAbsolutePath());
+                        } catch (FileNotFoundException e) {
+                            Log.e(getClass().getName(), null, e);
+                        } catch (IOException e) {
+                            Log.e(getClass().getName(), null, e);
                         }
-                        if (audioFile.exists()) {
+                    }
+
+                    if (audioFile.exists()) {
+                        Audio existingAudio = audioDao.queryBuilder()
+                                .where(AudioDao.Properties.Id.eq(audio.getId()))
+                                .unique();
+                        if (existingAudio == null) {
+                            Log.i(getClass().getName(), "Storing Audio. id: " + audio.getId() + ", transcription: \"" + audio.getTranscription() + "\", revisionNumber: " + audio.getRevisionNumber());
                             audioDao.insert(audio);
-                            Log.i(getClass().getName(), "Stored Audio with id " + audio.getId() + " and transcription \"" + audio.getTranscription() + "\"");
+                        } else if (existingAudio.getRevisionNumber() < audio.getRevisionNumber()) {
+                            Log.i(getClass().getName(), "Updating Audio with id " + existingAudio.getId() + " from revisionNumber " + existingAudio.getRevisionNumber() + " to revisionNumber " + audio.getRevisionNumber());
+                            audioDao.update(audio);
+                        } else {
+                            Log.i(getClass().getName(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId() + " (revision " + audio.getRevisionNumber() + ")");
                         }
-                    } else {
-                        Log.i(getClass().getName(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId());
                     }
                 }
             }
@@ -273,33 +290,38 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Type type = new TypeToken<ImageGson>(){}.getType();
                     ImageGson imageGson = new Gson().fromJson(jsonArray.getString(i), type);
                     Image image = GsonToGreenDaoConverter.getImage(imageGson);
-                    Image existingImage = imageDao.queryBuilder()
-                            .where(ImageDao.Properties.Id.eq(image.getId()))
-                            .unique();
-                    if (existingImage == null) {
-                        File imageFile = MultimediaHelper.getFile(image);
-                        Log.i(getClass().getName(), "imageFile: " + imageFile);
-                        if (!imageFile.exists()) {
-                            // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
-                            Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-                            try {
-                                FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
-                                IOUtils.write(bytes, fileOutputStream);
-                                fileOutputStream.close();
-                                Log.i(getClass().getName(), "Stored Image file at " + imageFile.getAbsolutePath());
-                            } catch (FileNotFoundException e) {
-                                Log.e(getClass().getName(), null, e);
-                            } catch (IOException e) {
-                                Log.e(getClass().getName(), null, e);
-                            }
+
+                    File imageFile = MultimediaHelper.getFile(image);
+                    Log.i(getClass().getName(), "imageFile: " + imageFile);
+                    if (!imageFile.exists()) {
+                        // Download bytes
+                        byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
+                        Log.i(getClass().getName(), "bytes.length: " + bytes.length);
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
+                            IOUtils.write(bytes, fileOutputStream);
+                            fileOutputStream.close();
+                            Log.i(getClass().getName(), "Stored Image file at " + imageFile.getAbsolutePath());
+                        } catch (FileNotFoundException e) {
+                            Log.e(getClass().getName(), null, e);
+                        } catch (IOException e) {
+                            Log.e(getClass().getName(), null, e);
                         }
-                        if (imageFile.exists()) {
+                    }
+
+                    if (imageFile.exists()) {
+                        Image existingImage = imageDao.queryBuilder()
+                                .where(ImageDao.Properties.Id.eq(image.getId()))
+                                .unique();
+                        if (existingImage == null) {
+                            Log.i(getClass().getName(), "Storing Image. id: " + image.getId() + ", title: \"" + image.getTitle() + "\", revisionNumber: " + image.getRevisionNumber());
                             imageDao.insert(image);
-                            Log.i(getClass().getName(), "Stored Image with id " + image.getId() + " and title \"" + image.getTitle() + "\"");
+                        } else if (existingImage.getRevisionNumber() < image.getRevisionNumber()) {
+                            Log.i(getClass().getName(), "Updating Image with id " + existingImage.getId() + " from revisionNumber " + existingImage.getRevisionNumber() + " to revisionNumber " + image.getRevisionNumber());
+                            imageDao.update(image);
+                        } else {
+                            Log.i(getClass().getName(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId() + " (revision " + image.getRevisionNumber() + ")");
                         }
-                    } else {
-                        Log.i(getClass().getName(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId());
                     }
                 }
             }
@@ -324,51 +346,56 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Type type = new TypeToken<VideoGson>(){}.getType();
                     VideoGson videoGson = new Gson().fromJson(jsonArray.getString(i), type);
                     Video video = GsonToGreenDaoConverter.getVideo(videoGson);
-                    Video existingVideo = videoDao.queryBuilder()
-                            .where(VideoDao.Properties.Id.eq(video.getId()))
-                            .unique();
-                    if (existingVideo == null) {
-                        File videoFile = MultimediaHelper.getFile(video);
-                        Log.i(getClass().getName(), "videoFile: " + videoFile);
-                        if (!videoFile.exists()) {
-                            // Download bytes
-                            byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
-                            Log.i(getClass().getName(), "bytes.length: " + bytes.length);
-                            try {
-                                FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
-                                IOUtils.write(bytes, fileOutputStream);
-                                fileOutputStream.close();
-                                Log.i(getClass().getName(), "Stored Video file at " + videoFile.getAbsolutePath());
-                            } catch (FileNotFoundException e) {
-                                Log.e(getClass().getName(), null, e);
-                            } catch (IOException e) {
-                                Log.e(getClass().getName(), null, e);
-                            }
-                        }
-                        if (videoFile.exists()) {
-                            videoDao.insert(video);
-                            Log.i(getClass().getName(), "Stored Video with id " + video.getId() + " and title \"" + video.getTitle() + "\"");
-                        }
 
-                        File thumbnailFile = MultimediaHelper.getThumbnail(video);
-                        Log.i(getClass().getName(), "thumbnailFile: " + thumbnailFile);
-                        if (!thumbnailFile.exists()) {
-                            // Download bytes
-                            byte[] thumbnailBytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getThumbnailDownloadUrl());
-                            Log.i(getClass().getName(), "thumbnailBytes.length: " + thumbnailBytes.length);
-                            try {
-                                FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFile);
-                                IOUtils.write(thumbnailBytes, fileOutputStream);
-                                fileOutputStream.close();
-                                Log.i(getClass().getName(), "Stored Video thumbnail at " + thumbnailFile.getAbsolutePath());
-                            } catch (FileNotFoundException e) {
-                                Log.e(getClass().getName(), null, e);
-                            } catch (IOException e) {
-                                Log.e(getClass().getName(), null, e);
-                            }
+                    File videoFile = MultimediaHelper.getFile(video);
+                    Log.i(getClass().getName(), "videoFile: " + videoFile);
+                    if (!videoFile.exists()) {
+                        // Download bytes
+                        byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
+                        Log.i(getClass().getName(), "bytes.length: " + bytes.length);
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
+                            IOUtils.write(bytes, fileOutputStream);
+                            fileOutputStream.close();
+                            Log.i(getClass().getName(), "Stored Video file at " + videoFile.getAbsolutePath());
+                        } catch (FileNotFoundException e) {
+                            Log.e(getClass().getName(), null, e);
+                        } catch (IOException e) {
+                            Log.e(getClass().getName(), null, e);
                         }
-                    } else {
-                        Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId());
+                    }
+
+                    File thumbnailFile = MultimediaHelper.getThumbnail(video);
+                    Log.i(getClass().getName(), "thumbnailFile: " + thumbnailFile);
+                    if (!thumbnailFile.exists()) {
+                        // Download bytes
+                        byte[] thumbnailBytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getThumbnailDownloadUrl());
+                        Log.i(getClass().getName(), "thumbnailBytes.length: " + thumbnailBytes.length);
+                        try {
+                            FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFile);
+                            IOUtils.write(thumbnailBytes, fileOutputStream);
+                            fileOutputStream.close();
+                            Log.i(getClass().getName(), "Stored Video thumbnail at " + thumbnailFile.getAbsolutePath());
+                        } catch (FileNotFoundException e) {
+                            Log.e(getClass().getName(), null, e);
+                        } catch (IOException e) {
+                            Log.e(getClass().getName(), null, e);
+                        }
+                    }
+
+                    if (videoFile.exists() && thumbnailFile.exists()) {
+                        Video existingVideo = videoDao.queryBuilder()
+                                .where(VideoDao.Properties.Id.eq(video.getId()))
+                                .unique();
+                        if (existingVideo == null) {
+                            Log.i(getClass().getName(), "Storing Video. id: " + video.getId() + ", title: \"" + video.getTitle() + "\", revisionNumber: " + video.getRevisionNumber());
+                            videoDao.insert(video);
+                        } else if (existingVideo.getRevisionNumber() < video.getRevisionNumber()) {
+                            Log.i(getClass().getName(), "Updating Video with id " + existingVideo.getId() + " from revisionNumber " + existingVideo.getRevisionNumber() + " to revisionNumber " + video.getRevisionNumber());
+                            videoDao.update(video);
+                        } else {
+                            Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId() + " (revision " + video.getRevisionNumber() + ")");
+                        }
                     }
                 }
             }
