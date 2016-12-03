@@ -38,7 +38,7 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         public final static Property ImageFileUrl = new Property(2, String.class, "imageFileUrl", false, "IMAGE_FILE_URL");
         public final static Property Device = new Property(3, long.class, "device", false, "DEVICE");
         public final static Property StudentImageFeature = new Property(4, Long.class, "studentImageFeature", false, "STUDENT_IMAGE_FEATURE");
-        public final static Property StudentImageCollectionEvent = new Property(5, Long.class, "studentImageCollectionEvent", false, "STUDENT_IMAGE_COLLECTION_EVENT");
+        public final static Property StudentImageCollectionEvent = new Property(5, long.class, "studentImageCollectionEvent", false, "STUDENT_IMAGE_COLLECTION_EVENT");
     }
 
     private DaoSession daoSession;
@@ -63,7 +63,7 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
                 "\"IMAGE_FILE_URL\" TEXT NOT NULL ," + // 2: imageFileUrl
                 "\"DEVICE\" INTEGER NOT NULL ," + // 3: device
                 "\"STUDENT_IMAGE_FEATURE\" INTEGER," + // 4: studentImageFeature
-                "\"STUDENT_IMAGE_COLLECTION_EVENT\" INTEGER);"); // 5: studentImageCollectionEvent
+                "\"STUDENT_IMAGE_COLLECTION_EVENT\" INTEGER NOT NULL );"); // 5: studentImageCollectionEvent
     }
 
     /** Drops the underlying database table. */
@@ -186,7 +186,9 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         offset += daoSession.getStudentImageFeatureDao().getAllColumns().length;
 
         StudentImageCollectionEvent studentImageCollectionEvent = loadCurrentOther(daoSession.getStudentImageCollectionEventDao(), cursor, offset);
-        entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
+         if(studentImageCollectionEvent != null) {
+            entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
+        }
 
         return entity;    
     }
