@@ -6,17 +6,14 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
-import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}
@@ -40,10 +37,6 @@ public class StudentImageCollectionEvent {
 
     @ToOne(joinProperty = "id")
     private Student student;
-
-//    @NotNull
-    @ToMany(referencedJoinProperty = "id")
-    private List<StudentImage> studentImages;
 
     private boolean svmTrainingExecuted;
 
@@ -153,35 +146,6 @@ public class StudentImageCollectionEvent {
             id = student == null ? null : student.getId();
             student__resolvedKey = id;
         }
-    }
-
-    /**
-     * To-many relationship, resolved on first access (and after reset).
-     * Changes to to-many relations are not persisted, make changes to the target entity.
-     */
-    @Generated(hash = 1492710689)
-    public List<StudentImage> getStudentImages() {
-        if (studentImages == null) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            StudentImageDao targetDao = daoSession.getStudentImageDao();
-            List<StudentImage> studentImagesNew = targetDao
-                    ._queryStudentImageCollectionEvent_StudentImages(id);
-            synchronized (this) {
-                if (studentImages == null) {
-                    studentImages = studentImagesNew;
-                }
-            }
-        }
-        return studentImages;
-    }
-
-    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
-    @Generated(hash = 1313731009)
-    public synchronized void resetStudentImages() {
-        studentImages = null;
     }
 
     /**
