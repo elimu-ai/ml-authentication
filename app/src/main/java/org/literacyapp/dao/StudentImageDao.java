@@ -14,7 +14,6 @@ import org.greenrobot.greendao.database.DatabaseStatement;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
-import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 
@@ -36,9 +35,6 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TimeCollected = new Property(1, long.class, "timeCollected", false, "TIME_COLLECTED");
         public final static Property ImageFileUrl = new Property(2, String.class, "imageFileUrl", false, "IMAGE_FILE_URL");
-        public final static Property Device = new Property(3, long.class, "device", false, "DEVICE");
-        public final static Property StudentImageFeature = new Property(4, Long.class, "studentImageFeature", false, "STUDENT_IMAGE_FEATURE");
-        public final static Property StudentImageCollectionEvent = new Property(5, long.class, "studentImageCollectionEvent", false, "STUDENT_IMAGE_COLLECTION_EVENT");
     }
 
     private DaoSession daoSession;
@@ -60,10 +56,7 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT_IMAGE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME_COLLECTED\" INTEGER NOT NULL ," + // 1: timeCollected
-                "\"IMAGE_FILE_URL\" TEXT NOT NULL ," + // 2: imageFileUrl
-                "\"DEVICE\" INTEGER NOT NULL ," + // 3: device
-                "\"STUDENT_IMAGE_FEATURE\" INTEGER," + // 4: studentImageFeature
-                "\"STUDENT_IMAGE_COLLECTION_EVENT\" INTEGER NOT NULL );"); // 5: studentImageCollectionEvent
+                "\"IMAGE_FILE_URL\" TEXT NOT NULL );"); // 2: imageFileUrl
     }
 
     /** Drops the underlying database table. */
@@ -156,15 +149,12 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
             StringBuilder builder = new StringBuilder("SELECT ");
             SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
-            SqlUtils.appendColumns(builder, "T0", daoSession.getDeviceDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T0", daoSession.getStudentImageFeatureDao().getAllColumns());
             builder.append(',');
-            SqlUtils.appendColumns(builder, "T1", daoSession.getStudentImageFeatureDao().getAllColumns());
-            builder.append(',');
-            SqlUtils.appendColumns(builder, "T2", daoSession.getStudentImageCollectionEventDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T1", daoSession.getStudentImageCollectionEventDao().getAllColumns());
             builder.append(" FROM STUDENT_IMAGE T");
-            builder.append(" LEFT JOIN DEVICE T0 ON T.\"DEVICE\"=T0.\"_id\"");
-            builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T1 ON T.\"STUDENT_IMAGE_FEATURE\"=T1.\"_id\"");
-            builder.append(" LEFT JOIN STUDENT_IMAGE_COLLECTION_EVENT T2 ON T.\"STUDENT_IMAGE_COLLECTION_EVENT\"=T2.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T0 ON T.\"_id\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE_COLLECTION_EVENT T1 ON T.\"_id\"=T1.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -175,20 +165,12 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         StudentImage entity = loadCurrent(cursor, 0, lock);
         int offset = getAllColumns().length;
 
-        Device device = loadCurrentOther(daoSession.getDeviceDao(), cursor, offset);
-         if(device != null) {
-            entity.setDevice(device);
-        }
-        offset += daoSession.getDeviceDao().getAllColumns().length;
-
         StudentImageFeature studentImageFeature = loadCurrentOther(daoSession.getStudentImageFeatureDao(), cursor, offset);
         entity.setStudentImageFeature(studentImageFeature);
         offset += daoSession.getStudentImageFeatureDao().getAllColumns().length;
 
         StudentImageCollectionEvent studentImageCollectionEvent = loadCurrentOther(daoSession.getStudentImageCollectionEventDao(), cursor, offset);
-         if(studentImageCollectionEvent != null) {
-            entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
-        }
+        entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
 
         return entity;    
     }
