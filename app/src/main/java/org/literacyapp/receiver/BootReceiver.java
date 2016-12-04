@@ -13,7 +13,7 @@ import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.service.ScreenOnService;
 
 public class BootReceiver extends BroadcastReceiver {
-    private static final int FACE_RECOGNITION_TRAINING_JOB_SERVICE = 0;
+    private static final int FACE_RECOGNITION_TRAINING_JOB_ID = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -41,7 +41,7 @@ public class BootReceiver extends BroadcastReceiver {
 
         // Initiate background job for face recognition training
         ComponentName componentNameFaceRecognitionTranining = new ComponentName(context, FaceRecognitionTrainingJobService.class);
-        JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(FACE_RECOGNITION_TRAINING_JOB_SERVICE, componentNameFaceRecognitionTranining);
+        JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
         builderFaceRecognitionTranining.setPeriodic(15 * 60 * 1000); // Every 15 minutes
         JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
         JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);

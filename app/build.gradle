@@ -90,6 +90,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.7.5'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.0'
 
-    compile 'ch.zhaw:facerecognitionlibrary:1.2.5'
+    compile 'ch.zhaw:facerecognitionlibrary:1.2.5.1'
     compile project(':openCVLibrary310')
 }

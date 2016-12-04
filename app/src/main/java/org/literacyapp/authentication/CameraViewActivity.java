@@ -46,8 +46,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private JavaCameraView preview;
     private PreProcessorFactory ppF;
     private long lastTime;
-    private String deviceId;
-    private String collectionEventId;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private StudentDao studentDao;
@@ -93,8 +91,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         lastTime = new Date().getTime();
 
-        deviceId = DeviceInfoHelper.getDeviceId(getApplicationContext());
-
         // Reset imageProcessed counter
         imagesProcessed = 0;
 
@@ -108,14 +104,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
         deviceDao = daoSession.getDeviceDao();
+        String deviceId = DeviceInfoHelper.getDeviceId(getApplicationContext());
         device = deviceDao.queryBuilder().where(DeviceDao.Properties.DeviceId.eq(deviceId)).unique();
         if (device == null) {
             device = new Device();
             device.setDeviceId(deviceId);
             deviceDao.insert(device);
         }
-
-        collectionEventId = deviceId + String.format("%016d",studentImageCollectionEventDao.count() + 1);
 
         // ToDo studenImageCollectionEvent creation local or external
         // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
@@ -200,39 +195,23 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     }
 
     private synchronized void storeStudentImages(){
-        Student student = new Student();
-        studentDao.insert(student);
         StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
-        studentImageCollectionEvent.setStudent(student);
         studentImageCollectionEvent.setTime(Calendar.getInstance());
         studentImageCollectionEvent.setDevice(device);
-        studentImageCollectionEventDao.insert(studentImageCollectionEvent);
+        Long studentImageCollectionEventId = studentImageCollectionEventDao.insert(studentImageCollectionEvent);
         for(int i=0; i<studentImages.size(); i++){
-            String sId = collectionEventId + i;
-            MatName matName = new MatName(sId, studentImages.get(i));
+            MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
             FileHelper fh = new FileHelper();
-            String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + deviceId + "/" + collectionEventId;
+            String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
             new File(wholeFolderPath).mkdirs();
             fh.saveMatToImage(matName, wholeFolderPath + "/");
 
-            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
-            String imageUrl = wholeFolderPath + "/" + sId + ".png";
+            String imageUrl = wholeFolderPath + "/" + Integer.toString(i) + ".png";
             StudentImage studentImage = new StudentImage();
             studentImage.setTimeCollected(Calendar.getInstance());
             studentImage.setImageFileUrl(imageUrl);
             studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
             studentImageDao.insert(studentImage);
-        }
-    }
-
-    private void storeTestImages(){
-        for(int i=0; i<testImages.size(); i++){
-            String sId = collectionEventId + i;
-            MatName matName = new MatName(sId, testImages.get(i));
-            FileHelper fh = new FileHelper();
-            String wholeFolderPath = MultimediaHelper.getTestImageDirectory() + "/" + deviceId + "/" + collectionEventId;
-            new File(wholeFolderPath).mkdirs();
-            fh.saveMatToImage(matName, wholeFolderPath + "/");
         }
     }
 

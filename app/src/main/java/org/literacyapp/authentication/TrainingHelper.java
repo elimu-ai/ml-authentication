@@ -53,8 +53,11 @@ public class TrainingHelper {
     }
 
 
+    /**
+     * Get all the StudentImages where the features haven't been extracted yet
+     * Extract features for every StudentImage and store them as StudentImageFeature
+     */
     public void extractFeatures(){
-        // Get all the StudentImages where the features haven't been extracted yet
         List<StudentImage> studentImageList = studentImageDao.queryBuilder()
                 .where(StudentImageDao.Properties.StudentImageFeatureId.eq(0))
                 .list();
@@ -62,27 +65,49 @@ public class TrainingHelper {
         TensorFlow tensorFlow = getInitializedTensorFlow();
         for(StudentImage studentImage : studentImageList){
             String svmVector = getSvmVector(tensorFlow, studentImage);
-            storeStudentImageFeature(studentImage, svmVector);
+            if (svmVector != null){
+                storeStudentImageFeature(studentImage, svmVector);
+            }
+            // TODO housekeeping job #226
         }
     }
 
+    /**
+     * Stores a StudentImageFeature to the database
+     * @param studentImage - StudentImage
+     * @param svmVector - Extracted features converted to an SVM string for LIBSVM (without the label)
+     */
     private void storeStudentImageFeature(StudentImage studentImage, String svmVector){
         StudentImageFeature studentImageFeature = new StudentImageFeature(studentImage.getId(), Calendar.getInstance(), svmVector);
         studentImage.setStudentImageFeature(studentImageFeature);
         studentImageFeatureDao.insert(studentImageFeature);
         studentImageDao.update(studentImage);
-        Log.d(getClass().getName(), "StudentImageFeature for StudentImage with Id " + studentImage.getId() + " has been extracted and stored.");
+        Log.d(getClass().getName(), "StudentImageFeature with Id " + studentImageFeature.getId() + " for StudentImage with Id " + studentImage.getId() + " has been extracted and stored.");
     }
 
+    /**
+     * Load image into OpenCV Mat object
+     * Extract features from TensorFlow model
+     * Convert feature to SVM string
+     * @param tensorFlow
+     * @param studentImage
+     * @return
+     */
     private String getSvmVector(TensorFlow tensorFlow, StudentImage studentImage){
         // Load image into OpenCV Mat object
         Mat img = Imgcodecs.imread(studentImage.getImageFileUrl());
+        Log.d(getClass().getName(), "StudentImage has been loaded from file " + studentImage.getImageFileUrl());
         // Extract features from TensorFlow model
         Mat featureVector = tensorFlow.getFeatureVector(img);
+        Log.d(getClass().getName(), "Feature vector has been extracted for StudentImage: " + studentImage.getId());
         // Convert featureVector to SVM string
-        return svm.getSvmString(featureVector, String.valueOf(studentImage.getStudentImageCollectionEvent().getStudentId()));
+        return svm.getSvmString(featureVector);
     }
 
+    /**
+     * Initialize TensorFlow model
+     * @return
+     */
     private TensorFlow getInitializedTensorFlow(){
         String model = AiHelper.getModelDirectory() + "/vgg_faces.pb";
         int inputSize = 224;
