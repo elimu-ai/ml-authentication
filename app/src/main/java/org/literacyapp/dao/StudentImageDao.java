@@ -35,6 +35,8 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TimeCollected = new Property(1, long.class, "timeCollected", false, "TIME_COLLECTED");
         public final static Property ImageFileUrl = new Property(2, String.class, "imageFileUrl", false, "IMAGE_FILE_URL");
+        public final static Property StudentImageFeatureId = new Property(3, long.class, "studentImageFeatureId", false, "STUDENT_IMAGE_FEATURE_ID");
+        public final static Property StudentImageCollectionEventId = new Property(4, long.class, "studentImageCollectionEventId", false, "STUDENT_IMAGE_COLLECTION_EVENT_ID");
     }
 
     private DaoSession daoSession;
@@ -56,7 +58,9 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT_IMAGE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME_COLLECTED\" INTEGER NOT NULL ," + // 1: timeCollected
-                "\"IMAGE_FILE_URL\" TEXT NOT NULL );"); // 2: imageFileUrl
+                "\"IMAGE_FILE_URL\" TEXT NOT NULL ," + // 2: imageFileUrl
+                "\"STUDENT_IMAGE_FEATURE_ID\" INTEGER NOT NULL ," + // 3: studentImageFeatureId
+                "\"STUDENT_IMAGE_COLLECTION_EVENT_ID\" INTEGER NOT NULL );"); // 4: studentImageCollectionEventId
     }
 
     /** Drops the underlying database table. */
@@ -75,6 +79,8 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         }
         stmt.bindLong(2, timeCollectedConverter.convertToDatabaseValue(entity.getTimeCollected()));
         stmt.bindString(3, entity.getImageFileUrl());
+        stmt.bindLong(4, entity.getStudentImageFeatureId());
+        stmt.bindLong(5, entity.getStudentImageCollectionEventId());
     }
 
     @Override
@@ -87,6 +93,8 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         }
         stmt.bindLong(2, timeCollectedConverter.convertToDatabaseValue(entity.getTimeCollected()));
         stmt.bindString(3, entity.getImageFileUrl());
+        stmt.bindLong(4, entity.getStudentImageFeatureId());
+        stmt.bindLong(5, entity.getStudentImageCollectionEventId());
     }
 
     @Override
@@ -105,7 +113,9 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         StudentImage entity = new StudentImage( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             timeCollectedConverter.convertToEntityProperty(cursor.getLong(offset + 1)), // timeCollected
-            cursor.getString(offset + 2) // imageFileUrl
+            cursor.getString(offset + 2), // imageFileUrl
+            cursor.getLong(offset + 3), // studentImageFeatureId
+            cursor.getLong(offset + 4) // studentImageCollectionEventId
         );
         return entity;
     }
@@ -115,6 +125,8 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTimeCollected(timeCollectedConverter.convertToEntityProperty(cursor.getLong(offset + 1)));
         entity.setImageFileUrl(cursor.getString(offset + 2));
+        entity.setStudentImageFeatureId(cursor.getLong(offset + 3));
+        entity.setStudentImageCollectionEventId(cursor.getLong(offset + 4));
      }
     
     @Override
@@ -153,8 +165,8 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
             builder.append(',');
             SqlUtils.appendColumns(builder, "T1", daoSession.getStudentImageCollectionEventDao().getAllColumns());
             builder.append(" FROM STUDENT_IMAGE T");
-            builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T0 ON T.\"_id\"=T0.\"_id\"");
-            builder.append(" LEFT JOIN STUDENT_IMAGE_COLLECTION_EVENT T1 ON T.\"_id\"=T1.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE_FEATURE T0 ON T.\"STUDENT_IMAGE_FEATURE_ID\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE_COLLECTION_EVENT T1 ON T.\"STUDENT_IMAGE_COLLECTION_EVENT_ID\"=T1.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -166,11 +178,15 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         int offset = getAllColumns().length;
 
         StudentImageFeature studentImageFeature = loadCurrentOther(daoSession.getStudentImageFeatureDao(), cursor, offset);
-        entity.setStudentImageFeature(studentImageFeature);
+         if(studentImageFeature != null) {
+            entity.setStudentImageFeature(studentImageFeature);
+        }
         offset += daoSession.getStudentImageFeatureDao().getAllColumns().length;
 
         StudentImageCollectionEvent studentImageCollectionEvent = loadCurrentOther(daoSession.getStudentImageCollectionEventDao(), cursor, offset);
-        entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
+         if(studentImageCollectionEvent != null) {
+            entity.setStudentImageCollectionEvent(studentImageCollectionEvent);
+        }
 
         return entity;    
     }
