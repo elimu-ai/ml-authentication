@@ -5,7 +5,6 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
@@ -25,8 +24,10 @@ public class StudentImageCollectionEvent {
     @Id(autoincrement = true)
     private Long id;
 
+    private long deviceId;
+
     @NotNull
-    @ToOne(joinProperty = "id")
+    @ToOne(joinProperty = "deviceId")
     private Device device;
 
     @NotNull
@@ -36,7 +37,9 @@ public class StudentImageCollectionEvent {
 //    @ToOne
 //    private Application application;
 
-    @ToOne(joinProperty = "id")
+    private long studentId;
+
+    @ToOne(joinProperty = "studentId")
     private Student student;
 
     private boolean svmTrainingExecuted;
@@ -49,27 +52,18 @@ public class StudentImageCollectionEvent {
     @Generated(hash = 136770604)
     private transient StudentImageCollectionEventDao myDao;
 
-    @Generated(hash = 505686841)
-    public StudentImageCollectionEvent(Long id, @NotNull Calendar time,
-            boolean svmTrainingExecuted) {
+    @Generated(hash = 1512432081)
+    public StudentImageCollectionEvent(Long id, long deviceId, @NotNull Calendar time,
+            long studentId, boolean svmTrainingExecuted) {
         this.id = id;
+        this.deviceId = deviceId;
         this.time = time;
+        this.studentId = studentId;
         this.svmTrainingExecuted = svmTrainingExecuted;
     }
 
     @Generated(hash = 802935259)
     public StudentImageCollectionEvent() {
-    }
-
-    @Generated(hash = 708752895)
-    private transient Long device__resolvedKey;
-
-    @Generated(hash = 79695740)
-    private transient Long student__resolvedKey;
-
-    @Keep
-    public void setDevice(Device device) {
-        this.device = device;
     }
 
     public Long getId() {
@@ -80,12 +74,28 @@ public class StudentImageCollectionEvent {
         this.id = id;
     }
 
+    public long getDeviceId() {
+        return this.deviceId;
+    }
+
+    public void setDeviceId(long deviceId) {
+        this.deviceId = deviceId;
+    }
+
     public Calendar getTime() {
         return this.time;
     }
 
     public void setTime(Calendar time) {
         this.time = time;
+    }
+
+    public long getStudentId() {
+        return this.studentId;
+    }
+
+    public void setStudentId(long studentId) {
+        this.studentId = studentId;
     }
 
     public boolean getSvmTrainingExecuted() {
@@ -96,10 +106,13 @@ public class StudentImageCollectionEvent {
         this.svmTrainingExecuted = svmTrainingExecuted;
     }
 
+    @Generated(hash = 708752895)
+    private transient Long device__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 944779146)
+    @Generated(hash = 983487634)
     public Device getDevice() {
-        Long __key = this.id;
+        long __key = this.deviceId;
         if (device__resolvedKey == null || !device__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
@@ -115,10 +128,27 @@ public class StudentImageCollectionEvent {
         return device;
     }
 
+    /** called by internal mechanisms, do not call yourself. */
+    @Generated(hash = 1110771717)
+    public void setDevice(@NotNull Device device) {
+        if (device == null) {
+            throw new DaoException(
+                    "To-one property 'deviceId' has not-null constraint; cannot set to-one to null");
+        }
+        synchronized (this) {
+            this.device = device;
+            deviceId = device.getId();
+            device__resolvedKey = deviceId;
+        }
+    }
+
+    @Generated(hash = 79695740)
+    private transient Long student__resolvedKey;
+
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1631318883)
+    @Generated(hash = 1299365531)
     public Student getStudent() {
-        Long __key = this.id;
+        long __key = this.studentId;
         if (student__resolvedKey == null || !student__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
@@ -135,12 +165,16 @@ public class StudentImageCollectionEvent {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1371817362)
-    public void setStudent(Student student) {
+    @Generated(hash = 1384923540)
+    public void setStudent(@NotNull Student student) {
+        if (student == null) {
+            throw new DaoException(
+                    "To-one property 'studentId' has not-null constraint; cannot set to-one to null");
+        }
         synchronized (this) {
             this.student = student;
-            id = student == null ? null : student.getId();
-            student__resolvedKey = id;
+            studentId = student.getId();
+            student__resolvedKey = studentId;
         }
     }
 
