@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.literacyapp.service.ContentSynchronizationJobService;
+import org.literacyapp.service.FaceRecognitionTrainingJobService;
+import org.literacyapp.service.ScreenOnService;
 
 public class BootReceiver extends BroadcastReceiver {
+    private static final int FACE_RECOGNITION_TRAINING_JOB_SERVICE = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -32,5 +35,16 @@ public class BootReceiver extends BroadcastReceiver {
         JobInfo jobInfo = builder.build();
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
+        // Start service for detecting when the screen is turned on
+        Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
+        context.startService(screenOnServiceIntent);
+
+        // Initiate background job for face recognition training
+        ComponentName componentNameFaceRecognitionTranining = new ComponentName(context, FaceRecognitionTrainingJobService.class);
+        JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(FACE_RECOGNITION_TRAINING_JOB_SERVICE, componentNameFaceRecognitionTranining);
+        builderFaceRecognitionTranining.setPeriodic(15 * 60 * 1000); // Every 15 minutes
+        JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
+        JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
     }
 }

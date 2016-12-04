@@ -8,8 +8,14 @@ import android.view.SurfaceView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentDao;
+import org.literacyapp.model.Device;
+import org.literacyapp.model.Student;
+import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.CameraBridgeViewBase;
@@ -23,6 +29,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +50,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private String collectionEventId;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
+    private StudentDao studentDao;
+    private Device device;
+    private DeviceDao deviceDao;
     private Mat imgOverlay;
     private LiteracyApplication literacyApplication;
     private List<Mat> studentImages;
@@ -94,8 +104,16 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
 
         // Create required DB Objects
+        studentDao = daoSession.getStudentDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
+        deviceDao = daoSession.getDeviceDao();
+        device = deviceDao.queryBuilder().where(DeviceDao.Properties.DeviceId.eq(deviceId)).unique();
+        if (device == null) {
+            device = new Device();
+            device.setDeviceId(deviceId);
+            deviceDao.insert(device);
+        }
 
         collectionEventId = deviceId + String.format("%016d",studentImageCollectionEventDao.count() + 1);
 
@@ -136,29 +154,32 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 //            if (literacyApplication.TEST_MODE){
 //                testImages.add(imgCopy);
 //            }
-            Mat img = ppF.getCroppedImage(imgCopy);
-            if(img != null) {
-                Rect[] faces = ppF.getFacesForRecognition();
-                if ((faces != null) && (faces.length == 1)) {
-                    faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
+            List<Mat> images = ppF.getCroppedImage(imgCopy);
+            if(images != null && images.size() == 1){
+                Mat img = images.get(0);
+                if(img != null) {
+                    Rect[] faces = ppF.getFacesForRecognition();
+                    if ((faces != null) && (faces.length == 1)) {
+                        faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
 
-                    // Name = DeviceId_CollectionEventId_ImageNumber
-                    studentImages.add(img);
+                        // Name = DeviceId_CollectionEventId_ImageNumber
+                        studentImages.add(img);
 
-                    if(diagnoseMode) {
-                        MatOperation.drawRectangleAndLabelOnPreview(imgRgba, faces[0], "Face detected", true);
-                    }
+                        if(diagnoseMode) {
+                            MatOperation.drawRectangleAndLabelOnPreview(imgRgba, faces[0], "Face detected", true);
+                        }
 
-                    // Stop after numberOfImages (settings option)
-                    if(imagesProcessed > numberOfImages){
-                        storeStudentImages();
+                        // Stop after numberOfImages (settings option)
+                        if(imagesProcessed > numberOfImages){
+                            storeStudentImages();
 //                        if (literacyApplication.TEST_MODE){
 //                            storeTestImages();
 //                        }
-                        finish();
-                    }
+                            finish();
+                        }
 
-                    imagesProcessed++;
+                        imagesProcessed++;
+                    }
                 }
             }
         }
@@ -178,7 +199,14 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         preview.enableView();
     }
 
-    private void storeStudentImages(){
+    private synchronized void storeStudentImages(){
+        Student student = new Student();
+        studentDao.insert(student);
+        StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
+        studentImageCollectionEvent.setStudent(student);
+        studentImageCollectionEvent.setTime(Calendar.getInstance());
+        studentImageCollectionEvent.setDevice(device);
+        studentImageCollectionEventDao.insert(studentImageCollectionEvent);
         for(int i=0; i<studentImages.size(); i++){
             String sId = collectionEventId + i;
             MatName matName = new MatName(sId, studentImages.get(i));
@@ -187,9 +215,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             new File(wholeFolderPath).mkdirs();
             fh.saveMatToImage(matName, wholeFolderPath + "/");
 
-//            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
-//            StudentImage studentImage = new StudentImage(Id, null, wholeFolderPath, Calendar.getInstance(), null);
-//            studentImageDao.insert(studentImage);
+            Long Id =  Long.parseLong(String.valueOf((int) (Math.random() * 1000000)));
+            String imageUrl = wholeFolderPath + "/" + sId + ".png";
+            StudentImage studentImage = new StudentImage();
+            studentImage.setTimeCollected(Calendar.getInstance());
+            studentImage.setImageFileUrl(imageUrl);
+            studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
+            studentImageDao.insert(studentImage);
         }
     }
 
