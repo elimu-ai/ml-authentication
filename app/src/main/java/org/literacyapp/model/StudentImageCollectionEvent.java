@@ -5,6 +5,7 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
@@ -60,6 +61,17 @@ public class StudentImageCollectionEvent {
     public StudentImageCollectionEvent() {
     }
 
+    @Generated(hash = 708752895)
+    private transient Long device__resolvedKey;
+
+    @Generated(hash = 79695740)
+    private transient Long student__resolvedKey;
+
+    @Keep
+    public void setDevice(Device device) {
+        this.device = device;
+    }
+
     public Long getId() {
         return this.id;
     }
@@ -102,22 +114,6 @@ public class StudentImageCollectionEvent {
         }
         return device;
     }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 733207827)
-    public void setDevice(Device device) {
-        synchronized (this) {
-            this.device = device;
-            id = device == null ? null : device.getId();
-            device__resolvedKey = id;
-        }
-    }
-
-    @Generated(hash = 708752895)
-    private transient Long device__resolvedKey;
-
-    @Generated(hash = 79695740)
-    private transient Long student__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1631318883)

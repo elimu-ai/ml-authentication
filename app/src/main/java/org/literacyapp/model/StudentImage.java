@@ -9,7 +9,6 @@ import org.greenrobot.greendao.annotation.Keep;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.dao.StudentImageFeatureDao;
@@ -27,21 +26,17 @@ public class StudentImage {
     private Long id;
 
     @NotNull
-    @ToOne
-    private Device device;
-
-    @NotNull
     @Convert(converter = CalendarConverter.class, columnType = Long.class)
     private Calendar timeCollected;
 
     @NotNull
     private String imageFileUrl;
 
-    @ToOne
+    @ToOne(joinProperty = "id")
     private StudentImageFeature studentImageFeature;
 
     @NotNull
-    @ToOne
+    @ToOne(joinProperty = "id")
     private StudentImageCollectionEvent studentImageCollectionEvent;
 
     /** Used to resolve relations */
@@ -63,19 +58,11 @@ public class StudentImage {
     public StudentImage() {
     }
 
-    @Generated(hash = 1114998901)
-    private transient boolean device__refreshed;
+    @Generated(hash = 1724262783)
+    private transient Long studentImageFeature__resolvedKey;
 
-    @Generated(hash = 350087450)
-    private transient boolean studentImageFeature__refreshed;
-
-    @Generated(hash = 2145224794)
-    private transient boolean studentImageCollectionEvent__refreshed;
-
-    @Keep
-    public void setDevice(Device device) {
-        this.device = device;
-    }
+    @Generated(hash = 563660621)
+    private transient Long studentImageCollectionEvent__resolvedKey;
 
     @Keep
     public void setStudentImageFeature(StudentImageFeature studentImageFeature) {
@@ -112,62 +99,41 @@ public class StudentImage {
     }
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 952566151)
-    public Device getDevice() {
-        if (device != null || !device__refreshed) {
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            DeviceDao targetDao = daoSession.getDeviceDao();
-            targetDao.refresh(device);
-            device__refreshed = true;
-        }
-        return device;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 400002126)
-    public Device peakDevice() {
-        return device;
-    }
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1683738455)
+    @Generated(hash = 1014901179)
     public StudentImageFeature getStudentImageFeature() {
-        if (studentImageFeature != null || !studentImageFeature__refreshed) {
+        Long __key = this.id;
+        if (studentImageFeature__resolvedKey == null || !studentImageFeature__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             StudentImageFeatureDao targetDao = daoSession.getStudentImageFeatureDao();
-            targetDao.refresh(studentImageFeature);
-            studentImageFeature__refreshed = true;
+            StudentImageFeature studentImageFeatureNew = targetDao.load(__key);
+            synchronized (this) {
+                studentImageFeature = studentImageFeatureNew;
+                studentImageFeature__resolvedKey = __key;
+            }
         }
-        return studentImageFeature;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 537228336)
-    public StudentImageFeature peakStudentImageFeature() {
         return studentImageFeature;
     }
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1433496216)
+    @Generated(hash = 1759679793)
     public StudentImageCollectionEvent getStudentImageCollectionEvent() {
-        if (studentImageCollectionEvent != null || !studentImageCollectionEvent__refreshed) {
+        Long __key = this.id;
+        if (studentImageCollectionEvent__resolvedKey == null
+                || !studentImageCollectionEvent__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             StudentImageCollectionEventDao targetDao = daoSession.getStudentImageCollectionEventDao();
-            targetDao.refresh(studentImageCollectionEvent);
-            studentImageCollectionEvent__refreshed = true;
+            StudentImageCollectionEvent studentImageCollectionEventNew = targetDao.load(__key);
+            synchronized (this) {
+                studentImageCollectionEvent = studentImageCollectionEventNew;
+                studentImageCollectionEvent__resolvedKey = __key;
+            }
         }
-        return studentImageCollectionEvent;
-    }
-
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 476286207)
-    public StudentImageCollectionEvent peakStudentImageCollectionEvent() {
         return studentImageCollectionEvent;
     }
 

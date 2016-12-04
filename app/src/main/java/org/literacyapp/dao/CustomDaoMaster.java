@@ -51,6 +51,13 @@ public class CustomDaoMaster extends DaoMaster {
                 );
             }
 
+            if (oldVersion < 1001026) {
+                DbMigrationHelper.migrate(db,
+                        StudentImageDao.class,
+                        StudentImageCollectionEventDao.class
+                );
+            }
+
             // If tables and/or columns have been renamed, add custom script.
 //            db.execSQL("...");
         }
