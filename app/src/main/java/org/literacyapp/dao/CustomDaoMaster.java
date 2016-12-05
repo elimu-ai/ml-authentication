@@ -58,6 +58,12 @@ public class CustomDaoMaster extends DaoMaster {
                 );
             }
 
+            if (oldVersion < 1001027) {
+                DbMigrationHelper.migrate(db,
+                        WordDao.class
+                );
+            }
+
             // If tables and/or columns have been renamed, add custom script.
 //            db.execSQL("...");
         }

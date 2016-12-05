@@ -42,10 +42,12 @@ public class Word {
     @NotNull
     private String phonetics;
 
-    @Generated(hash = 192315752)
+    private int usageCount;
+
+    @Generated(hash = 1041052912)
     public Word(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
             @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
-            @NotNull String text, @NotNull String phonetics) {
+            @NotNull String text, @NotNull String phonetics, int usageCount) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -53,6 +55,7 @@ public class Word {
         this.contentStatus = contentStatus;
         this.text = text;
         this.phonetics = phonetics;
+        this.usageCount = usageCount;
     }
 
     @Generated(hash = 3342184)
@@ -113,5 +116,13 @@ public class Word {
 
     public void setPhonetics(String phonetics) {
         this.phonetics = phonetics;
+    }
+
+    public int getUsageCount() {
+        return this.usageCount;
+    }
+
+    public void setUsageCount(int usageCount) {
+        this.usageCount = usageCount;
     }
 }
