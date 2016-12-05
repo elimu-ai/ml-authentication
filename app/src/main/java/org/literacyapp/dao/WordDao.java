@@ -41,6 +41,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         public final static Property ContentStatus = new Property(4, String.class, "contentStatus", false, "CONTENT_STATUS");
         public final static Property Text = new Property(5, String.class, "text", false, "TEXT");
         public final static Property Phonetics = new Property(6, String.class, "phonetics", false, "PHONETICS");
+        public final static Property UsageCount = new Property(7, int.class, "usageCount", false, "USAGE_COUNT");
     }
 
     private final LocaleConverter localeConverter = new LocaleConverter();
@@ -68,7 +69,8 @@ public class WordDao extends AbstractDao<Word, Long> {
                 "\"REVISION_NUMBER\" INTEGER NOT NULL ," + // 3: revisionNumber
                 "\"CONTENT_STATUS\" TEXT NOT NULL ," + // 4: contentStatus
                 "\"TEXT\" TEXT NOT NULL ," + // 5: text
-                "\"PHONETICS\" TEXT NOT NULL );"); // 6: phonetics
+                "\"PHONETICS\" TEXT NOT NULL ," + // 6: phonetics
+                "\"USAGE_COUNT\" INTEGER NOT NULL );"); // 7: usageCount
     }
 
     /** Drops the underlying database table. */
@@ -95,6 +97,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(entity.getContentStatus()));
         stmt.bindString(6, entity.getText());
         stmt.bindString(7, entity.getPhonetics());
+        stmt.bindLong(8, entity.getUsageCount());
     }
 
     @Override
@@ -115,6 +118,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(entity.getContentStatus()));
         stmt.bindString(6, entity.getText());
         stmt.bindString(7, entity.getPhonetics());
+        stmt.bindLong(8, entity.getUsageCount());
     }
 
     @Override
@@ -131,7 +135,8 @@ public class WordDao extends AbstractDao<Word, Long> {
             cursor.getInt(offset + 3), // revisionNumber
             contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)), // contentStatus
             cursor.getString(offset + 5), // text
-            cursor.getString(offset + 6) // phonetics
+            cursor.getString(offset + 6), // phonetics
+            cursor.getInt(offset + 7) // usageCount
         );
         return entity;
     }
@@ -145,6 +150,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         entity.setContentStatus(contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)));
         entity.setText(cursor.getString(offset + 5));
         entity.setPhonetics(cursor.getString(offset + 6));
+        entity.setUsageCount(cursor.getInt(offset + 7));
      }
     
     @Override

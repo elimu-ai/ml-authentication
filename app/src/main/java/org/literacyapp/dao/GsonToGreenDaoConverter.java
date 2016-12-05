@@ -103,6 +103,7 @@ public class GsonToGreenDaoConverter {
 
             word.setText(wordGson.getText());
             word.setPhonetics(wordGson.getPhonetics());
+            word.setUsageCount(wordGson.getUsageCount());
 
             return word;
         }
