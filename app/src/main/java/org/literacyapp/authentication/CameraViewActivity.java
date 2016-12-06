@@ -1,8 +1,11 @@
 package org.literacyapp.authentication;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.SurfaceView;
 
 import org.literacyapp.LiteracyApplication;
@@ -10,11 +13,10 @@ import org.literacyapp.R;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
-import org.literacyapp.model.Device;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.model.Device;
+import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
@@ -28,6 +30,10 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -216,8 +222,23 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     }
 
     private void createOverlay() {
+        Log.i(getClass().getName(), "createOverlay");
         // Load overlay mask (to be completed...)
-        imgOverlay = Imgcodecs.imread(MultimediaHelper.getImageDirectory() + "/deer.jpg", Imgcodecs.IMREAD_UNCHANGED);
+        File animalTemplateFile = new File(MultimediaHelper.getImageDirectory(), "deer.jpg");
+        if (!animalTemplateFile.exists()) {
+            Log.i(getClass().getName(), "Copying overlay template to " + animalTemplateFile.getAbsolutePath());
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.deer);
+            try {
+                OutputStream outputStream = new FileOutputStream(animalTemplateFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                outputStream.close();
+            } catch (FileNotFoundException e) {
+                Log.e(getClass().getName(), null, e);
+            } catch (IOException e) {
+                Log.e(getClass().getName(), null, e);
+            }
+        }
+        imgOverlay = Imgcodecs.imread(animalTemplateFile.getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
         Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
 
         // Create a mask of overlay and create its inverse mask also
