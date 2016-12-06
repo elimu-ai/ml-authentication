@@ -61,7 +61,7 @@ public class TrainingHelper {
         List<StudentImage> studentImageList = studentImageDao.queryBuilder()
                 .where(StudentImageDao.Properties.StudentImageFeatureId.eq(0))
                 .list();
-        Log.d(getClass().getName(), "Number of StudentImages, where the features haven't been extracted yet: " + studentImageList.size());
+        Log.i(getClass().getName(), "Number of StudentImages, where the features haven't been extracted yet: " + studentImageList.size());
         TensorFlow tensorFlow = getInitializedTensorFlow();
         for(StudentImage studentImage : studentImageList){
             String svmVector = getSvmVector(tensorFlow, studentImage);
@@ -82,7 +82,7 @@ public class TrainingHelper {
         studentImage.setStudentImageFeature(studentImageFeature);
         studentImageFeatureDao.insert(studentImageFeature);
         studentImageDao.update(studentImage);
-        Log.d(getClass().getName(), "StudentImageFeature with Id " + studentImageFeature.getId() + " for StudentImage with Id " + studentImage.getId() + " has been extracted and stored.");
+        Log.i(getClass().getName(), "StudentImageFeature with Id " + studentImageFeature.getId() + " for StudentImage with Id " + studentImage.getId() + " has been extracted and stored.");
     }
 
     /**
@@ -96,10 +96,10 @@ public class TrainingHelper {
     private String getSvmVector(TensorFlow tensorFlow, StudentImage studentImage){
         // Load image into OpenCV Mat object
         Mat img = Imgcodecs.imread(studentImage.getImageFileUrl());
-        Log.d(getClass().getName(), "StudentImage has been loaded from file " + studentImage.getImageFileUrl());
+        Log.i(getClass().getName(), "StudentImage has been loaded from file " + studentImage.getImageFileUrl());
         // Extract features from TensorFlow model
         Mat featureVector = tensorFlow.getFeatureVector(img);
-        Log.d(getClass().getName(), "Feature vector has been extracted for StudentImage: " + studentImage.getId());
+        Log.i(getClass().getName(), "Feature vector has been extracted for StudentImage: " + studentImage.getId());
         // Convert featureVector to SVM string
         return svm.getSvmString(featureVector);
     }

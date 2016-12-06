@@ -207,10 +207,10 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         Long studentImageCollectionEventId = studentImageCollectionEventDao.insert(studentImageCollectionEvent);
         for(int i=0; i<studentImages.size(); i++){
             MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
-            FileHelper fh = new FileHelper();
+            FileHelper fileHelper = new FileHelper();
             String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
             new File(wholeFolderPath).mkdirs();
-            fh.saveMatToImage(matName, wholeFolderPath + "/");
+            fileHelper.saveMatToImage(matName, wholeFolderPath + "/");
 
             String imageUrl = wholeFolderPath + "/" + Integer.toString(i) + ".png";
             StudentImage studentImage = new StudentImage();
