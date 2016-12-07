@@ -1,12 +1,18 @@
 package org.literacyapp.model.content.multimedia;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
+import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.LetterDao;
+import org.literacyapp.dao.NumberDao;
+import org.literacyapp.dao.VideoDao;
+import org.literacyapp.dao.WordDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
@@ -24,12 +30,6 @@ import org.literacyapp.model.enums.content.VideoFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
-import org.greenrobot.greendao.DaoException;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.WordDao;
-import org.literacyapp.dao.NumberDao;
-import org.literacyapp.dao.LetterDao;
-import org.literacyapp.dao.VideoDao;
 
 /**
  * Based on {@link org.literacyapp.model.gson.content.multimedia.VideoGson}
@@ -63,7 +63,8 @@ public class Video {
     @Convert(converter = StringSetConverter.class, columnType = String.class)
     private Set<NumeracySkill> numeracySkills;
 
-    @ToMany(referencedJoinProperty = "id")
+    @ToMany
+    @JoinEntity(entity = JoinVideosWithLetters.class, sourceProperty = "videoId", targetProperty = "letterId")
     private List<Letter> letters;
 
     @ToMany(referencedJoinProperty = "id")
@@ -88,11 +89,9 @@ public class Video {
     private transient VideoDao myDao;
 
     @Generated(hash = 1068961400)
-    public Video(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
-            @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
-            @NotNull String contentType, Set<LiteracySkill> literacySkills,
-            Set<NumeracySkill> numeracySkills, @NotNull String title,
-            @NotNull VideoFormat videoFormat) {
+    public Video(Long id, @NotNull Locale locale, Calendar timeLastUpdate, @NotNull Integer revisionNumber,
+            @NotNull ContentStatus contentStatus, @NotNull String contentType, Set<LiteracySkill> literacySkills,
+            Set<NumeracySkill> numeracySkills, @NotNull String title, @NotNull VideoFormat videoFormat) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -107,21 +106,6 @@ public class Video {
 
     @Generated(hash = 237528154)
     public Video() {
-    }
-
-    @Keep
-    public void setLetters(List<Letter> letters) {
-        this.letters = letters;
-    }
-
-    @Keep
-    public void setNumbers(List<Number> numbers) {
-        this.numbers = numbers;
-    }
-
-    @Keep
-    public void setWords(List<Word> words) {
-        this.words = words;
     }
 
     public Long getId() {

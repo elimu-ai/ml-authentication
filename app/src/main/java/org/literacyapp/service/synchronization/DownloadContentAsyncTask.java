@@ -16,6 +16,7 @@ import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
 import org.literacyapp.dao.ImageDao;
+import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.VideoDao;
@@ -26,6 +27,7 @@ import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.Word;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
@@ -45,6 +47,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.List;
+
+import static org.literacyapp.dao.GsonToGreenDaoConverter.getLetter;
 
 public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
 
@@ -126,7 +131,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     Type type = new TypeToken<LetterGson>(){}.getType();
                     LetterGson letterGson = new Gson().fromJson(jsonArray.getString(i), type);
-                    Letter letter = GsonToGreenDaoConverter.getLetter(letterGson);
+                    Letter letter = getLetter(letterGson);
                     Letter existingLetter = letterDao.queryBuilder()
                             .where(LetterDao.Properties.Id.eq(letter.getId()))
                             .unique();
@@ -389,6 +394,18 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         if (existingVideo == null) {
                             Log.i(getClass().getName(), "Storing Video. id: " + video.getId() + ", title: \"" + video.getTitle() + "\", revisionNumber: " + video.getRevisionNumber());
                             videoDao.insert(video);
+
+                            if (videoGson.getLetters() != null) {
+                                JoinVideosWithLettersDao joinVideosWithLettersDao = ((LiteracyApplication) context.getApplicationContext()).getDaoSession().getJoinVideosWithLettersDao();
+                                List<Letter> letters = video.getLetters();
+                                for (LetterGson letterGson : videoGson.getLetters()) {
+                                    JoinVideosWithLetters joinVideosWithLetters = new JoinVideosWithLetters();
+                                    joinVideosWithLetters.setVideoId(video.getId());
+                                    joinVideosWithLetters.setLetterId(letterGson.getId());
+                                    joinVideosWithLettersDao.insert(joinVideosWithLetters);
+                                }
+                            }
+
                         } else if (existingVideo.getRevisionNumber() < video.getRevisionNumber()) {
                             Log.i(getClass().getName(), "Updating Video with id " + existingVideo.getId() + " from revisionNumber " + existingVideo.getRevisionNumber() + " to revisionNumber " + video.getRevisionNumber());
                             videoDao.update(video);

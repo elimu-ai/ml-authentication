@@ -12,6 +12,7 @@ import org.literacyapp.model.content.Allophone;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.Word;
@@ -25,6 +26,7 @@ import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.ImageDao;
+import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.VideoDao;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.WordDao;
@@ -47,6 +49,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig letterDaoConfig;
     private final DaoConfig audioDaoConfig;
     private final DaoConfig imageDaoConfig;
+    private final DaoConfig joinVideosWithLettersDaoConfig;
     private final DaoConfig videoDaoConfig;
     private final DaoConfig numberDaoConfig;
     private final DaoConfig wordDaoConfig;
@@ -60,6 +63,7 @@ public class DaoSession extends AbstractDaoSession {
     private final LetterDao letterDao;
     private final AudioDao audioDao;
     private final ImageDao imageDao;
+    private final JoinVideosWithLettersDao joinVideosWithLettersDao;
     private final VideoDao videoDao;
     private final NumberDao numberDao;
     private final WordDao wordDao;
@@ -84,6 +88,9 @@ public class DaoSession extends AbstractDaoSession {
 
         imageDaoConfig = daoConfigMap.get(ImageDao.class).clone();
         imageDaoConfig.initIdentityScope(type);
+
+        joinVideosWithLettersDaoConfig = daoConfigMap.get(JoinVideosWithLettersDao.class).clone();
+        joinVideosWithLettersDaoConfig.initIdentityScope(type);
 
         videoDaoConfig = daoConfigMap.get(VideoDao.class).clone();
         videoDaoConfig.initIdentityScope(type);
@@ -113,6 +120,7 @@ public class DaoSession extends AbstractDaoSession {
         letterDao = new LetterDao(letterDaoConfig, this);
         audioDao = new AudioDao(audioDaoConfig, this);
         imageDao = new ImageDao(imageDaoConfig, this);
+        joinVideosWithLettersDao = new JoinVideosWithLettersDao(joinVideosWithLettersDaoConfig, this);
         videoDao = new VideoDao(videoDaoConfig, this);
         numberDao = new NumberDao(numberDaoConfig, this);
         wordDao = new WordDao(wordDaoConfig, this);
@@ -126,6 +134,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Letter.class, letterDao);
         registerDao(Audio.class, audioDao);
         registerDao(Image.class, imageDao);
+        registerDao(JoinVideosWithLetters.class, joinVideosWithLettersDao);
         registerDao(Video.class, videoDao);
         registerDao(Number.class, numberDao);
         registerDao(Word.class, wordDao);
@@ -141,6 +150,7 @@ public class DaoSession extends AbstractDaoSession {
         letterDaoConfig.clearIdentityScope();
         audioDaoConfig.clearIdentityScope();
         imageDaoConfig.clearIdentityScope();
+        joinVideosWithLettersDaoConfig.clearIdentityScope();
         videoDaoConfig.clearIdentityScope();
         numberDaoConfig.clearIdentityScope();
         wordDaoConfig.clearIdentityScope();
@@ -165,6 +175,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public ImageDao getImageDao() {
         return imageDao;
+    }
+
+    public JoinVideosWithLettersDao getJoinVideosWithLettersDao() {
+        return joinVideosWithLettersDao;
     }
 
     public VideoDao getVideoDao() {
