@@ -15,6 +15,7 @@ import android.widget.TextView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.NumberDao;
+import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.content.Number;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.TtsHelper;
@@ -45,7 +46,7 @@ public class NumbersActivity extends AppCompatActivity {
         numberGridLayout = (GridLayout) findViewById(R.id.numberGridLayout);
 
 
-        List<Number> numbers = numberDao.loadAll();
+        List<Number> numbers = new CurriculumHelper(getApplication()).getAvailableNumbers(null);
         Log.i(getClass().getName(), "numbers.size(): " + numbers.size());
         for (final Number number : numbers) {
             View numberView = LayoutInflater.from(this).inflate(R.layout.content_numbers_number_view, numberGridLayout, false);

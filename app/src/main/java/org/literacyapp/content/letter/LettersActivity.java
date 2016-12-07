@@ -14,6 +14,7 @@ import android.widget.TextView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.LetterDao;
+import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.TtsHelper;
@@ -42,10 +43,8 @@ public class LettersActivity extends AppCompatActivity {
 
         letterGridLayout = (GridLayout) findViewById(R.id.letterGridLayout);
 
-        List<Letter> letters = letterDao.queryBuilder()
-                .orderDesc(LetterDao.Properties.UsageCount)
-                .orderAsc(LetterDao.Properties.Text)
-                .list();
+
+        List<Letter> letters = new CurriculumHelper(getApplication()).getAvailableLetters(null);
         Log.i(getClass().getName(), "letters.size(): " + letters.size());
         for (final Letter letter : letters) {
             View letterView = LayoutInflater.from(this).inflate(R.layout.content_letters_letter_view, letterGridLayout, false);
