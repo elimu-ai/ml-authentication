@@ -68,7 +68,8 @@ public class CustomDaoMaster extends DaoMaster {
                 DbMigrationHelper.migrate(db,
                         LetterDao.class,
                         VideoDao.class,
-                        JoinVideosWithLettersDao.class
+                        JoinVideosWithLettersDao.class,
+                        JoinVideosWithNumbersDao.class
                 );
             }
 
