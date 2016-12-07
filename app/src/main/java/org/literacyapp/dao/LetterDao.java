@@ -40,6 +40,7 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         public final static Property RevisionNumber = new Property(3, Integer.class, "revisionNumber", false, "REVISION_NUMBER");
         public final static Property ContentStatus = new Property(4, String.class, "contentStatus", false, "CONTENT_STATUS");
         public final static Property Text = new Property(5, String.class, "text", false, "TEXT");
+        public final static Property UsageCount = new Property(6, int.class, "usageCount", false, "USAGE_COUNT");
     }
 
     private final LocaleConverter localeConverter = new LocaleConverter();
@@ -66,7 +67,8 @@ public class LetterDao extends AbstractDao<Letter, Long> {
                 "\"TIME_LAST_UPDATE\" INTEGER," + // 2: timeLastUpdate
                 "\"REVISION_NUMBER\" INTEGER NOT NULL ," + // 3: revisionNumber
                 "\"CONTENT_STATUS\" TEXT NOT NULL ," + // 4: contentStatus
-                "\"TEXT\" TEXT NOT NULL );"); // 5: text
+                "\"TEXT\" TEXT NOT NULL ," + // 5: text
+                "\"USAGE_COUNT\" INTEGER NOT NULL );"); // 6: usageCount
     }
 
     /** Drops the underlying database table. */
@@ -92,6 +94,7 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         stmt.bindLong(4, entity.getRevisionNumber());
         stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(entity.getContentStatus()));
         stmt.bindString(6, entity.getText());
+        stmt.bindLong(7, entity.getUsageCount());
     }
 
     @Override
@@ -111,6 +114,7 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         stmt.bindLong(4, entity.getRevisionNumber());
         stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(entity.getContentStatus()));
         stmt.bindString(6, entity.getText());
+        stmt.bindLong(7, entity.getUsageCount());
     }
 
     @Override
@@ -126,7 +130,8 @@ public class LetterDao extends AbstractDao<Letter, Long> {
             cursor.isNull(offset + 2) ? null : timeLastUpdateConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // timeLastUpdate
             cursor.getInt(offset + 3), // revisionNumber
             contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)), // contentStatus
-            cursor.getString(offset + 5) // text
+            cursor.getString(offset + 5), // text
+            cursor.getInt(offset + 6) // usageCount
         );
         return entity;
     }
@@ -139,6 +144,7 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         entity.setRevisionNumber(cursor.getInt(offset + 3));
         entity.setContentStatus(contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)));
         entity.setText(cursor.getString(offset + 5));
+        entity.setUsageCount(cursor.getInt(offset + 6));
      }
     
     @Override

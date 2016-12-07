@@ -39,16 +39,19 @@ public class Letter {
     @NotNull
     private String text;
 
-    @Generated(hash = 2142067220)
+    private int usageCount;
+
+    @Generated(hash = 1689266044)
     public Letter(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
             @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
-            @NotNull String text) {
+            @NotNull String text, int usageCount) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
         this.revisionNumber = revisionNumber;
         this.contentStatus = contentStatus;
         this.text = text;
+        this.usageCount = usageCount;
     }
 
     @Generated(hash = 174375807)
@@ -101,5 +104,13 @@ public class Letter {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public int getUsageCount() {
+        return this.usageCount;
+    }
+
+    public void setUsageCount(int usageCount) {
+        this.usageCount = usageCount;
     }
 }

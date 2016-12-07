@@ -42,8 +42,10 @@ public class LettersActivity extends AppCompatActivity {
 
         letterGridLayout = (GridLayout) findViewById(R.id.letterGridLayout);
 
-
-        List<Letter> letters = letterDao.loadAll();
+        List<Letter> letters = letterDao.queryBuilder()
+                .orderDesc(LetterDao.Properties.UsageCount)
+                .orderAsc(LetterDao.Properties.Text)
+                .list();
         Log.i(getClass().getName(), "letters.size(): " + letters.size());
         for (final Letter letter : letters) {
             View letterView = LayoutInflater.from(this).inflate(R.layout.content_letters_letter_view, letterGridLayout, false);
