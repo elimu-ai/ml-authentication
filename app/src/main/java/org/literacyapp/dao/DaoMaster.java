@@ -26,6 +26,8 @@ public class DaoMaster extends AbstractDaoMaster {
         AudioDao.createTable(db, ifNotExists);
         ImageDao.createTable(db, ifNotExists);
         JoinVideosWithLettersDao.createTable(db, ifNotExists);
+        JoinVideosWithNumbersDao.createTable(db, ifNotExists);
+        JoinVideosWithWordsDao.createTable(db, ifNotExists);
         VideoDao.createTable(db, ifNotExists);
         NumberDao.createTable(db, ifNotExists);
         WordDao.createTable(db, ifNotExists);
@@ -34,8 +36,6 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentImageDao.createTable(db, ifNotExists);
         StudentImageCollectionEventDao.createTable(db, ifNotExists);
         StudentImageFeatureDao.createTable(db, ifNotExists);
-        JoinVideosWithNumbersDao.createTable(db, ifNotExists);
-        JoinVideosWithWordsDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -45,6 +45,8 @@ public class DaoMaster extends AbstractDaoMaster {
         AudioDao.dropTable(db, ifExists);
         ImageDao.dropTable(db, ifExists);
         JoinVideosWithLettersDao.dropTable(db, ifExists);
+        JoinVideosWithNumbersDao.dropTable(db, ifExists);
+        JoinVideosWithWordsDao.dropTable(db, ifExists);
         VideoDao.dropTable(db, ifExists);
         NumberDao.dropTable(db, ifExists);
         WordDao.dropTable(db, ifExists);
@@ -53,8 +55,6 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentImageDao.dropTable(db, ifExists);
         StudentImageCollectionEventDao.dropTable(db, ifExists);
         StudentImageFeatureDao.dropTable(db, ifExists);
-        JoinVideosWithNumbersDao.dropTable(db, ifExists);
-        JoinVideosWithWordsDao.dropTable(db, ifExists);
     }
 
     /**
@@ -78,6 +78,8 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(AudioDao.class);
         registerDaoClass(ImageDao.class);
         registerDaoClass(JoinVideosWithLettersDao.class);
+        registerDaoClass(JoinVideosWithNumbersDao.class);
+        registerDaoClass(JoinVideosWithWordsDao.class);
         registerDaoClass(VideoDao.class);
         registerDaoClass(NumberDao.class);
         registerDaoClass(WordDao.class);
@@ -86,8 +88,6 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(StudentImageDao.class);
         registerDaoClass(StudentImageCollectionEventDao.class);
         registerDaoClass(StudentImageFeatureDao.class);
-        registerDaoClass(JoinVideosWithNumbersDao.class);
-        registerDaoClass(JoinVideosWithWordsDao.class);
     }
 
     public DaoSession newSession() {
