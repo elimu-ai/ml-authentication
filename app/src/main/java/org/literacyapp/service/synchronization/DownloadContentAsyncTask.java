@@ -3,7 +3,6 @@ package org.literacyapp.service.synchronization;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -415,7 +414,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
 
         String progressMessage = values[0];
         Log.i(getClass().getName(), "progressMessage: " + progressMessage);
-        Toast.makeText(context, progressMessage, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, progressMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -424,6 +423,6 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         super.onPostExecute(result);
 
         Log.i(getClass().getName(), "result: " + result);
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+//        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 }
