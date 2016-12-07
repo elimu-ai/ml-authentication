@@ -2,10 +2,8 @@ package org.literacyapp;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,7 +14,6 @@ import android.widget.Toast;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
-import org.literacyapp.authentication.CameraViewActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -68,13 +65,13 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // Assume content has already been downloaded
-            /*Intent categoryIntent = new Intent(this, CategoryActivity.class);
+            Intent categoryIntent = new Intent(this, CategoryActivity.class);
             startActivity(categoryIntent);
-            finish();*/
-
-            Intent cameraViewIntent = new Intent(this, CameraViewActivity.class);
-            startActivity(cameraViewIntent);
             finish();
+
+//            Intent cameraViewIntent = new Intent(this, CameraViewActivity.class);
+//            startActivity(cameraViewIntent);
+//            finish();
         }
     }
 
