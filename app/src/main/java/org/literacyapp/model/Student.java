@@ -21,7 +21,6 @@ public class Student {
     @ToOne
     private StudentImage avatar;
 
-//    @ToMany(referencedJoinProperty = "id")
 //    private List<Device> devices;
 
     /** Used to resolve relations */

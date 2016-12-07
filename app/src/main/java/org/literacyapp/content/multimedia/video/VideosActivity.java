@@ -15,10 +15,14 @@ import android.widget.ImageView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.VideoDao;
+import org.literacyapp.logic.CurriculumHelper;
+import org.literacyapp.model.content.Letter;
+import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 
 public class VideosActivity extends AppCompatActivity {
@@ -45,8 +49,47 @@ public class VideosActivity extends AppCompatActivity {
         videoGridLayout = (GridLayout) findViewById(R.id.videoGridLayout);
 
 
+        List<Letter> availableLetters = new CurriculumHelper(getApplication()).getAvailableLetters(null);
+        List<Number> availableNumbers = new CurriculumHelper(getApplication()).getAvailableNumbers(null);
         List<Video> videos = videoDao.loadAll();
         Log.i(getClass().getName(), "videos.size(): " + videos.size());
+
+        // Remove videos that contain letters and where none of the letters are available to the student
+        Iterator<Video> videoIterator = videos.iterator();
+        while (videoIterator.hasNext()) {
+            Video video = videoIterator.next();
+            List<Letter> lettersInVideo = video.getLetters();
+            if (!lettersInVideo.isEmpty()) {
+                boolean videoContainsAvailableLetter = false;
+                for (Letter letterInVideo : lettersInVideo) {
+                    if (availableLetters.contains(letterInVideo)) {
+                        videoContainsAvailableLetter = true;
+                    }
+                }
+                if (!videoContainsAvailableLetter) {
+                    videoIterator.remove();
+                }
+            }
+        }
+
+        // Remove videos that contain numbers and where none of the numbers are available to the student
+        videoIterator = videos.iterator();
+        while (videoIterator.hasNext()) {
+            Video video = videoIterator.next();
+            List<Number> numbersInVideo = video.getNumbers();
+            if (!numbersInVideo.isEmpty()) {
+                boolean videoContainsAvailableNumber = false;
+                for (Number numberInVideo : numbersInVideo) {
+                    if (availableNumbers.contains(numberInVideo)) {
+                        videoContainsAvailableNumber = true;
+                    }
+                }
+                if (!videoContainsAvailableNumber) {
+                    videoIterator.remove();
+                }
+            }
+        }
+
         for (final Video video : videos) {
             View videoView = LayoutInflater.from(this).inflate(R.layout.content_videos_video_view, videoGridLayout, false);
 

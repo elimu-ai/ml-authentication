@@ -16,6 +16,7 @@ import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
+import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
 
@@ -201,16 +202,17 @@ public class LetterDao extends AbstractDao<Letter, Long> {
     }
 
     /** Internal query to resolve the "letters" to-many relationship of Video. */
-    public List<Letter> _queryVideo_Letters(Long id) {
+    public List<Letter> _queryVideo_Letters(long videoId) {
         synchronized (this) {
             if (video_LettersQuery == null) {
                 QueryBuilder<Letter> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinVideosWithLetters.class, JoinVideosWithLettersDao.Properties.LetterId)
+                    .where(JoinVideosWithLettersDao.Properties.VideoId.eq(videoId));
                 video_LettersQuery = queryBuilder.build();
             }
         }
         Query<Letter> query = video_LettersQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, videoId);
         return query.list();
     }
 

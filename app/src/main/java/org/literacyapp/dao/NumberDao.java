@@ -19,6 +19,7 @@ import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.content.Word;
+import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
 
@@ -221,16 +222,17 @@ public class NumberDao extends AbstractDao<Number, Long> {
     }
 
     /** Internal query to resolve the "numbers" to-many relationship of Video. */
-    public List<Number> _queryVideo_Numbers(Long id) {
+    public List<Number> _queryVideo_Numbers(long videoId) {
         synchronized (this) {
             if (video_NumbersQuery == null) {
                 QueryBuilder<Number> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinVideosWithNumbers.class, JoinVideosWithNumbersDao.Properties.NumberId)
+                    .where(JoinVideosWithNumbersDao.Properties.VideoId.eq(videoId));
                 video_NumbersQuery = queryBuilder.build();
             }
         }
         Query<Number> query = video_NumbersQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, videoId);
         return query.list();
     }
 

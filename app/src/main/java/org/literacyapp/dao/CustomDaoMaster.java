@@ -66,7 +66,11 @@ public class CustomDaoMaster extends DaoMaster {
 
             if (oldVersion < 1001028) {
                 DbMigrationHelper.migrate(db,
-                        LetterDao.class
+                        LetterDao.class,
+                        VideoDao.class,
+                        JoinVideosWithLettersDao.class,
+                        JoinVideosWithNumbersDao.class,
+                        JoinVideosWithWordsDao.class
                 );
             }
 
