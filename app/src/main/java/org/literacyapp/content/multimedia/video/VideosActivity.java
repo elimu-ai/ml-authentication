@@ -72,6 +72,24 @@ public class VideosActivity extends AppCompatActivity {
             }
         }
 
+        // Remove videos that contain numbers and where none of the numbers are available to the student
+        videoIterator = videos.iterator();
+        while (videoIterator.hasNext()) {
+            Video video = videoIterator.next();
+            List<Number> numbersInVideo = video.getNumbers();
+            if (!numbersInVideo.isEmpty()) {
+                boolean videoContainsAvailableNumber = false;
+                for (Number numberInVideo : numbersInVideo) {
+                    if (availableNumbers.contains(numberInVideo)) {
+                        videoContainsAvailableNumber = true;
+                    }
+                }
+                if (!videoContainsAvailableNumber) {
+                    videoIterator.remove();
+                }
+            }
+        }
+
         for (final Video video : videos) {
             View videoView = LayoutInflater.from(this).inflate(R.layout.content_videos_video_view, videoGridLayout, false);
 

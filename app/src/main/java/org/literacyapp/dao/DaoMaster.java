@@ -35,6 +35,7 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentImageCollectionEventDao.createTable(db, ifNotExists);
         StudentImageFeatureDao.createTable(db, ifNotExists);
         JoinVideosWithNumbersDao.createTable(db, ifNotExists);
+        JoinVideosWithWordsDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -53,6 +54,7 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentImageCollectionEventDao.dropTable(db, ifExists);
         StudentImageFeatureDao.dropTable(db, ifExists);
         JoinVideosWithNumbersDao.dropTable(db, ifExists);
+        JoinVideosWithWordsDao.dropTable(db, ifExists);
     }
 
     /**
@@ -85,6 +87,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(StudentImageCollectionEventDao.class);
         registerDaoClass(StudentImageFeatureDao.class);
         registerDaoClass(JoinVideosWithNumbersDao.class);
+        registerDaoClass(JoinVideosWithWordsDao.class);
     }
 
     public DaoSession newSession() {

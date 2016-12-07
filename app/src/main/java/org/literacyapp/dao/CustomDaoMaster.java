@@ -69,7 +69,8 @@ public class CustomDaoMaster extends DaoMaster {
                         LetterDao.class,
                         VideoDao.class,
                         JoinVideosWithLettersDao.class,
-                        JoinVideosWithNumbersDao.class
+                        JoinVideosWithNumbersDao.class,
+                        JoinVideosWithWordsDao.class
                 );
             }
 

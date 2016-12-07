@@ -71,7 +71,8 @@ public class Video {
     @JoinEntity(entity = JoinVideosWithNumbers.class, sourceProperty = "videoId", targetProperty = "numberId")
     private List<Number> numbers;
 
-    @ToMany(referencedJoinProperty = "id")
+    @ToMany
+    @JoinEntity(entity = JoinVideosWithWords.class, sourceProperty = "videoId", targetProperty = "wordId")
     private List<Word> words;
 
     @NotNull
