@@ -54,37 +54,34 @@ public class VideosActivity extends AppCompatActivity {
         List<Video> videos = videoDao.loadAll();
         Log.i(getClass().getName(), "videos.size(): " + videos.size());
 
-        // Remove videos that contain letters and where none of the letters are available to the student
+        // Hide Videos containing material not yet available to the Student
         Iterator<Video> videoIterator = videos.iterator();
         while (videoIterator.hasNext()) {
             Video video = videoIterator.next();
-            List<Letter> lettersInVideo = video.getLetters();
-            if (!lettersInVideo.isEmpty()) {
-                boolean videoContainsAvailableLetter = false;
-                for (Letter letterInVideo : lettersInVideo) {
-                    if (availableLetters.contains(letterInVideo)) {
-                        videoContainsAvailableLetter = true;
-                    }
-                }
-                if (!videoContainsAvailableLetter) {
-                    videoIterator.remove();
-                }
-            }
-        }
 
-        // Remove videos that contain numbers and where none of the numbers are available to the student
-        videoIterator = videos.iterator();
-        while (videoIterator.hasNext()) {
-            Video video = videoIterator.next();
+            List<Letter> lettersInVideo = video.getLetters();
             List<Number> numbersInVideo = video.getNumbers();
-            if (!numbersInVideo.isEmpty()) {
-                boolean videoContainsAvailableNumber = false;
-                for (Number numberInVideo : numbersInVideo) {
-                    if (availableNumbers.contains(numberInVideo)) {
-                        videoContainsAvailableNumber = true;
+
+            if (!lettersInVideo.isEmpty() || !numbersInVideo.isEmpty()) {
+                // Hide the video if it _only_ contains Letters not yet made available to the Student
+                boolean videoContainsAtLeastOneAvailableLetter = false;
+                for (Letter letter : lettersInVideo) {
+                    if (availableLetters.contains(letter)) {
+                        videoContainsAtLeastOneAvailableLetter = true;
+                        break;
                     }
                 }
-                if (!videoContainsAvailableNumber) {
+
+                // Hide the video if it _only_ contains Numbers not yet made available to the Student
+                boolean videoContainsAtLeastOneAvailableNumber = false;
+                for (Number number : numbersInVideo) {
+                    if (availableNumbers.contains(number)) {
+                        videoContainsAtLeastOneAvailableNumber = true;
+                        break;
+                    }
+                }
+
+                if (!videoContainsAtLeastOneAvailableLetter && !videoContainsAtLeastOneAvailableNumber) {
                     videoIterator.remove();
                 }
             }
