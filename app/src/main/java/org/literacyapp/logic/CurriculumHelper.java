@@ -1,6 +1,6 @@
 package org.literacyapp.logic;
 
-import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import org.literacyapp.LiteracyApplication;
@@ -23,10 +23,10 @@ public class CurriculumHelper {
 
     private NumberDao numberDao;
 
-    public CurriculumHelper(Application application) {
+    public CurriculumHelper(Context context) {
         Log.i(getClass().getName(), "CurriculumHelper");
 
-        LiteracyApplication literacyApplication = (LiteracyApplication) application;
+        LiteracyApplication literacyApplication = (LiteracyApplication) context;
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         numberDao = literacyApplication.getDaoSession().getNumberDao();
     }
@@ -78,5 +78,9 @@ public class CurriculumHelper {
 
         return numbers;
     }
+
+    // TODO: getAvailableLiteracySkills
+
+    // TODO: getAvailableNumeracySkills
 }
 

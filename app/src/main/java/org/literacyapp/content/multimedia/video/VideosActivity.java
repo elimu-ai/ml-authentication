@@ -49,8 +49,8 @@ public class VideosActivity extends AppCompatActivity {
         videoGridLayout = (GridLayout) findViewById(R.id.videoGridLayout);
 
 
-        List<Letter> availableLetters = new CurriculumHelper(getApplication()).getAvailableLetters(null);
-        List<Number> availableNumbers = new CurriculumHelper(getApplication()).getAvailableNumbers(null);
+        List<Letter> availableLetters = new CurriculumHelper(getApplicationContext()).getAvailableLetters(null);
+        List<Number> availableNumbers = new CurriculumHelper(getApplicationContext()).getAvailableNumbers(null);
         List<Video> videos = videoDao.loadAll();
         Log.i(getClass().getName(), "videos.size(): " + videos.size());
 
