@@ -35,6 +35,8 @@ import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
 import org.literacyapp.model.content.multimedia.Video;
+import org.literacyapp.model.enums.content.LiteracySkill;
+import org.literacyapp.model.enums.content.NumeracySkill;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -488,13 +490,28 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         }
         Log.i(getClass().getName(), "availableNumbersStringArrayList: " + availableNumbersStringArrayList);
 
+        List<LiteracySkill> availableLiteracySkills = curriculumHelper.getAvailableLiteracySkills(null);
+        ArrayList<String> availableLiteracySkillsStringArrayList = new ArrayList<>();
+        for (LiteracySkill literacySkill : availableLiteracySkills) {
+            availableLiteracySkillsStringArrayList.add(literacySkill.toString());
+        }
+        Log.i(getClass().getName(), "availableLiteracySkillsStringArrayList: " + availableLiteracySkillsStringArrayList);
+
+        List<NumeracySkill> availableNumeracySkills = curriculumHelper.getAvailableNumeracySkills(null);
+        ArrayList<String> availableNumeracySkillsStringArrayList = new ArrayList<>();
+        for (NumeracySkill numeracySkill : availableNumeracySkills) {
+            availableNumeracySkillsStringArrayList.add(numeracySkill.toString());
+        }
+        Log.i(getClass().getName(), "availableNumeracySkillsStringArrayList: " + availableNumeracySkillsStringArrayList);
+
         Intent intent = new Intent();
         intent.setPackage("org.literacyapp.ui");
         intent.setAction("literacyapp.intent.action.STUDENT_UPDATED");
         intent.putExtra("packageName", context.getPackageName());
         intent.putStringArrayListExtra("availableLetters", availableLettersStringArrayList);
         intent.putStringArrayListExtra("availableNumbers", availableNumbersStringArrayList);
-        // TODO: add available EGRA/EGMA skills
+        intent.putStringArrayListExtra("availableLiteracySkills", availableLiteracySkillsStringArrayList);
+        intent.putStringArrayListExtra("availableNumeracySkills", availableNumeracySkillsStringArrayList);
         context.sendBroadcast(intent);
     }
 }

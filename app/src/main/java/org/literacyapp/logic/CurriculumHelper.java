@@ -9,6 +9,8 @@ import org.literacyapp.dao.NumberDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.Number;
+import org.literacyapp.model.enums.content.LiteracySkill;
+import org.literacyapp.model.enums.content.NumeracySkill;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class CurriculumHelper {
         List<Letter> letters = new ArrayList<>();
 
         if (student == null) {
+            // TODO: check for learning events
             // Student not yet identified. Fall back to default list.
             letters = letterDao.queryBuilder()
                     .orderDesc(LetterDao.Properties.UsageCount)
@@ -65,6 +68,7 @@ public class CurriculumHelper {
         List<Number> numbers = new ArrayList<>();
 
         if (student == null) {
+            // TODO: check for learning events
             // Student not yet identified. Fall back to default list.
             numbers = numberDao.queryBuilder()
                     .where(NumberDao.Properties.Value.notEq(0))
@@ -79,8 +83,52 @@ public class CurriculumHelper {
         return numbers;
     }
 
-    // TODO: getAvailableLiteracySkills
+    /**
+     * If the Student has not yet been identified, use {@code null} as parameter to fall back to
+     * default list.
+     */
+    public List<LiteracySkill> getAvailableLiteracySkills(Student student) {
+        Log.i(getClass().getName(), "getAvailableLiteracySkills");
 
-    // TODO: getAvailableNumeracySkills
+        List<LiteracySkill> literacySkills = new ArrayList<>();
+
+        if (student == null) {
+            // TODO: check for learning events
+            // Student not yet identified. Fall back to default list.
+            literacySkills.add(LiteracySkill.ORAL_VOCABULARY);
+            literacySkills.add(LiteracySkill.LISTENING_COMPREHENSION);
+            literacySkills.add(LiteracySkill.CONCEPTS_ABOUT_PRINT);
+            literacySkills.add(LiteracySkill.PHONEMIC_AWARENESS);
+            literacySkills.add(LiteracySkill.LETTER_IDENTIFICATION);
+        } else {
+            // Build list based on Student's current level.
+            // TODO
+        }
+
+        return literacySkills;
+    }
+
+    /**
+     * If the Student has not yet been identified, use {@code null} as parameter to fall back to
+     * default list.
+     */
+    public List<NumeracySkill> getAvailableNumeracySkills(Student student) {
+        Log.i(getClass().getName(), "getAvailableNumeracySkills");
+
+        List<NumeracySkill> numeracySkills = new ArrayList<>();
+
+        if (student == null) {
+            // TODO: check for learning events
+            // Student not yet identified. Fall back to default list.
+            numeracySkills.add(NumeracySkill.ORAL_COUNTING);
+            numeracySkills.add(NumeracySkill.ONE_TO_ONE_CORRESPONDENCE);
+            numeracySkills.add(NumeracySkill.NUMBER_IDENTIFICATION);
+        } else {
+            // Build list based on Student's current level.
+            // TODO
+        }
+
+        return numeracySkills;
+    }
 }
 
