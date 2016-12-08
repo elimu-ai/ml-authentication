@@ -40,7 +40,7 @@ public class LiteracyApplication extends Application {
         }
         if (oldVersionCode < newVersionCode) {
             Log.i(getClass().getName(), "Upgrading application from version " + oldVersionCode + " to " + newVersionCode);
-//            if (newVersionCode == ???) {
+//            if (oldVersionCode < ???) {
 //                // Put relevant tasks required for upgrading here
 //            }
             sharedPreferences.edit().putInt(PREF_APP_VERSION_CODE, newVersionCode).commit();
