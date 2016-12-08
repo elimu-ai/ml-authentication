@@ -62,6 +62,7 @@ public class GsonToGreenDaoConverter {
             letter.setContentStatus(letterGson.getContentStatus());
 
             letter.setText(letterGson.getText());
+            letter.setUsageCount(letterGson.getUsageCount());
 
             return letter;
         }
