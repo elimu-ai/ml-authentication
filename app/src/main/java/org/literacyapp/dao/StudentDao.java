@@ -20,7 +20,7 @@ import org.literacyapp.model.Student;
 /** 
  * DAO for table "STUDENT".
 */
-public class StudentDao extends AbstractDao<Student, Long> {
+public class StudentDao extends AbstractDao<Student, String> {
 
     public static final String TABLENAME = "STUDENT";
 
@@ -29,7 +29,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property Id = new Property(0, String.class, "id", true, "ID");
         public final static Property Avatar = new Property(1, Long.class, "avatar", false, "AVATAR");
     }
 
@@ -49,7 +49,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
                 "\"AVATAR\" INTEGER);"); // 1: avatar
     }
 
@@ -63,9 +63,9 @@ public class StudentDao extends AbstractDao<Student, Long> {
     protected final void bindValues(DatabaseStatement stmt, Student entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
+        String id = entity.getId();
         if (id != null) {
-            stmt.bindLong(1, id);
+            stmt.bindString(1, id);
         }
     }
 
@@ -73,9 +73,9 @@ public class StudentDao extends AbstractDao<Student, Long> {
     protected final void bindValues(SQLiteStatement stmt, Student entity) {
         stmt.clearBindings();
  
-        Long id = entity.getId();
+        String id = entity.getId();
         if (id != null) {
-            stmt.bindLong(1, id);
+            stmt.bindString(1, id);
         }
     }
 
@@ -86,31 +86,30 @@ public class StudentDao extends AbstractDao<Student, Long> {
     }
 
     @Override
-    public Long readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }    
 
     @Override
     public Student readEntity(Cursor cursor, int offset) {
         Student entity = new Student( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0) // id
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0) // id
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, Student entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
      }
     
     @Override
-    protected final Long updateKeyAfterInsert(Student entity, long rowId) {
-        entity.setId(rowId);
-        return rowId;
+    protected final String updateKeyAfterInsert(Student entity, long rowId) {
+        return entity.getId();
     }
     
     @Override
-    public Long getKey(Student entity) {
+    public String getKey(Student entity) {
         if(entity != null) {
             return entity.getId();
         } else {

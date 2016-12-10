@@ -1,13 +1,13 @@
 package org.literacyapp.model;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.DaoException;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.dao.StudentDao;
 
 /**
  * Based on {@link org.literacyapp.model.gson.StudentGson}
@@ -15,13 +15,13 @@ import org.literacyapp.dao.StudentImageDao;
 @Entity
 public class Student {
 
-    @Id(autoincrement = true)
-    private Long id;
+    @Id
+    private String id; // "<deviceId>_<Long>"
+
+//    private List<Device> devices;
 
     @ToOne
     private StudentImage avatar;
-
-//    private List<Device> devices;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -31,11 +31,8 @@ public class Student {
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 926952963)
-    private transient boolean avatar__refreshed;
-
-    @Generated(hash = 327198608)
-    public Student(Long id) {
+    @Generated(hash = 594126488)
+    public Student(String id) {
         this.id = id;
     }
 
@@ -43,13 +40,16 @@ public class Student {
     public Student() {
     }
 
-    public Long getId() {
-        return id;
+    public String getId() {
+        return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
+
+    @Generated(hash = 926952963)
+    private transient boolean avatar__refreshed;
 
     /** To-one relationship, resolved on first access. */
     @Generated(hash = 1061269171)

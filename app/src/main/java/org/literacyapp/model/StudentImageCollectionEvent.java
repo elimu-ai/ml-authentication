@@ -1,19 +1,19 @@
 package org.literacyapp.model;
 
-import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.DeviceDao;
-import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 
 import java.util.Calendar;
+import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.DaoException;
+import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentDao;
+import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 
 /**
  * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}
@@ -37,7 +37,7 @@ public class StudentImageCollectionEvent {
 //    @ToOne
 //    private Application application;
 
-    private long studentId;
+    private String studentId;
 
     @ToOne(joinProperty = "studentId")
     private Student student;
@@ -52,9 +52,9 @@ public class StudentImageCollectionEvent {
     @Generated(hash = 136770604)
     private transient StudentImageCollectionEventDao myDao;
 
-    @Generated(hash = 1512432081)
+    @Generated(hash = 1802599235)
     public StudentImageCollectionEvent(Long id, long deviceId, @NotNull Calendar time,
-            long studentId, boolean svmTrainingExecuted) {
+            String studentId, boolean svmTrainingExecuted) {
         this.id = id;
         this.deviceId = deviceId;
         this.time = time;
@@ -90,11 +90,11 @@ public class StudentImageCollectionEvent {
         this.time = time;
     }
 
-    public long getStudentId() {
+    public String getStudentId() {
         return this.studentId;
     }
 
-    public void setStudentId(long studentId) {
+    public void setStudentId(String studentId) {
         this.studentId = studentId;
     }
 
@@ -142,14 +142,14 @@ public class StudentImageCollectionEvent {
         }
     }
 
-    @Generated(hash = 79695740)
-    private transient Long student__resolvedKey;
+    @Generated(hash = 635690445)
+    private transient String student__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1299365531)
+    @Generated(hash = 1107348382)
     public Student getStudent() {
-        long __key = this.studentId;
-        if (student__resolvedKey == null || !student__resolvedKey.equals(__key)) {
+        String __key = this.studentId;
+        if (student__resolvedKey == null || student__resolvedKey != __key) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -165,15 +165,11 @@ public class StudentImageCollectionEvent {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1384923540)
-    public void setStudent(@NotNull Student student) {
-        if (student == null) {
-            throw new DaoException(
-                    "To-one property 'studentId' has not-null constraint; cannot set to-one to null");
-        }
+    @Generated(hash = 490304967)
+    public void setStudent(Student student) {
         synchronized (this) {
             this.student = student;
-            studentId = student.getId();
+            studentId = student == null ? null : student.getId();
             student__resolvedKey = studentId;
         }
     }
