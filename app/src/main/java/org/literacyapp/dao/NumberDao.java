@@ -19,6 +19,7 @@ import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.content.Word;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
@@ -194,16 +195,17 @@ public class NumberDao extends AbstractDao<Number, Long> {
     }
     
     /** Internal query to resolve the "numbers" to-many relationship of Audio. */
-    public List<Number> _queryAudio_Numbers(Long id) {
+    public List<Number> _queryAudio_Numbers(long audioId) {
         synchronized (this) {
             if (audio_NumbersQuery == null) {
                 QueryBuilder<Number> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinAudiosWithNumbers.class, JoinAudiosWithNumbersDao.Properties.NumberId)
+                    .where(JoinAudiosWithNumbersDao.Properties.AudioId.eq(audioId));
                 audio_NumbersQuery = queryBuilder.build();
             }
         }
         Query<Number> query = audio_NumbersQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, audioId);
         return query.list();
     }
 

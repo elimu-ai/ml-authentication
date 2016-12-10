@@ -16,6 +16,7 @@ import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
@@ -174,16 +175,17 @@ public class LetterDao extends AbstractDao<Letter, Long> {
     }
     
     /** Internal query to resolve the "letters" to-many relationship of Audio. */
-    public List<Letter> _queryAudio_Letters(Long id) {
+    public List<Letter> _queryAudio_Letters(long audioId) {
         synchronized (this) {
             if (audio_LettersQuery == null) {
                 QueryBuilder<Letter> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinAudiosWithLetters.class, JoinAudiosWithLettersDao.Properties.LetterId)
+                    .where(JoinAudiosWithLettersDao.Properties.AudioId.eq(audioId));
                 audio_LettersQuery = queryBuilder.build();
             }
         }
         Query<Letter> query = audio_LettersQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, audioId);
         return query.list();
     }
 

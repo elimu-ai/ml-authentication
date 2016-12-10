@@ -5,7 +5,7 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
-import org.greenrobot.greendao.annotation.Keep;
+import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
 import org.literacyapp.dao.AudioDao;
@@ -63,13 +63,16 @@ public class Audio {
     @Convert(converter = StringSetConverter.class, columnType = String.class)
     private Set<NumeracySkill> numeracySkills;
 
-    @ToMany(referencedJoinProperty = "id")
+    @ToMany
+    @JoinEntity(entity = JoinAudiosWithLetters.class, sourceProperty = "audioId", targetProperty = "letterId")
     private List<Letter> letters;
 
-    @ToMany(referencedJoinProperty = "id")
+    @ToMany
+    @JoinEntity(entity = JoinAudiosWithNumbers.class, sourceProperty = "audioId", targetProperty = "numberId")
     private List<Number> numbers;
 
-    @ToMany(referencedJoinProperty = "id")
+    @ToMany
+    @JoinEntity(entity = JoinAudiosWithWords.class, sourceProperty = "audioId", targetProperty = "wordId")
     private List<Word> words;
 
     @NotNull
@@ -88,11 +91,9 @@ public class Audio {
     private transient AudioDao myDao;
 
     @Generated(hash = 1550087614)
-    public Audio(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
-            @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
-            @NotNull String contentType, Set<LiteracySkill> literacySkills,
-            Set<NumeracySkill> numeracySkills, @NotNull String transcription,
-            @NotNull AudioFormat audioFormat) {
+    public Audio(Long id, @NotNull Locale locale, Calendar timeLastUpdate, @NotNull Integer revisionNumber,
+            @NotNull ContentStatus contentStatus, @NotNull String contentType, Set<LiteracySkill> literacySkills,
+            Set<NumeracySkill> numeracySkills, @NotNull String transcription, @NotNull AudioFormat audioFormat) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -107,21 +108,6 @@ public class Audio {
 
     @Generated(hash = 1642629471)
     public Audio() {
-    }
-
-    @Keep
-    public void setLetters(List<Letter> letters) {
-        this.letters = letters;
-    }
-
-    @Keep
-    public void setNumbers(List<Number> numbers) {
-        this.numbers = numbers;
-    }
-
-    @Keep
-    public void setWords(List<Word> words) {
-        this.words = words;
     }
 
     public Long getId() {

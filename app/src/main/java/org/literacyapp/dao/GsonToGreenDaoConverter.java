@@ -131,32 +131,7 @@ public class GsonToGreenDaoConverter {
             audio.setLiteracySkills(audioGson.getLiteracySkills());
             audio.setNumeracySkills(audioGson.getNumeracySkills());
 
-            if (audioGson.getLetters() != null) {
-                List<Letter> letters = new ArrayList<>();
-                for (LetterGson letterGson : audioGson.getLetters()) {
-                    Letter letter = getLetter(letterGson);
-                    letters.add(letter);
-                }
-                audio.setLetters(letters);
-            }
-
-            if (audioGson.getNumbers() != null) {
-                List<Number> numbers = new ArrayList<>();
-                for (NumberGson numberGson : audioGson.getNumbers()) {
-                    Number number = getNumber(numberGson);
-                    numbers.add(number);
-                }
-                audio.setNumbers(numbers);
-            }
-
-            if (audioGson.getWords() != null) {
-                List<Word> words = new ArrayList<>();
-                for (WordGson wordGson : audioGson.getWords()) {
-                    Word word = getWord(wordGson);
-                    words.add(word);
-                }
-                audio.setWords(words);
-            }
+            // Letters, Numbers and Words are set during download from server
 
             audio.setTranscription(audioGson.getTranscription());
             audio.setAudioFormat(audioGson.getAudioFormat());

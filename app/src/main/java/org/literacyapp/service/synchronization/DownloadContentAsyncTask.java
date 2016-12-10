@@ -17,6 +17,9 @@ import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.GsonToGreenDaoConverter;
 import org.literacyapp.dao.ImageDao;
+import org.literacyapp.dao.JoinAudiosWithLettersDao;
+import org.literacyapp.dao.JoinAudiosWithNumbersDao;
+import org.literacyapp.dao.JoinAudiosWithWordsDao;
 import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.dao.JoinVideosWithWordsDao;
@@ -31,6 +34,9 @@ import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.Word;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithLetters;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithNumbers;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithWords;
 import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
@@ -71,9 +77,14 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
     private AudioDao audioDao;
     private ImageDao imageDao;
     private VideoDao videoDao;
+    
     private JoinVideosWithLettersDao joinVideosWithLettersDao;
     private JoinVideosWithNumbersDao joinVideosWithNumbersDao;
     private JoinVideosWithWordsDao joinVideosWithWordsDao;
+
+    private JoinAudiosWithLettersDao joinAudiosWithLettersDao;
+    private JoinAudiosWithNumbersDao joinAudiosWithNumbersDao;
+    private JoinAudiosWithWordsDao joinAudiosWithWordsDao;
 
     public DownloadContentAsyncTask(Context context) {
         this.context = context;
@@ -86,9 +97,14 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         audioDao = literacyApplication.getDaoSession().getAudioDao();
         imageDao = literacyApplication.getDaoSession().getImageDao();
         videoDao = literacyApplication.getDaoSession().getVideoDao();
+        
         joinVideosWithLettersDao = literacyApplication.getDaoSession().getJoinVideosWithLettersDao();
         joinVideosWithNumbersDao = literacyApplication.getDaoSession().getJoinVideosWithNumbersDao();
         joinVideosWithWordsDao = literacyApplication.getDaoSession().getJoinVideosWithWordsDao();
+
+        joinAudiosWithLettersDao = literacyApplication.getDaoSession().getJoinAudiosWithLettersDao();
+        joinAudiosWithNumbersDao = literacyApplication.getDaoSession().getJoinAudiosWithNumbersDao();
+        joinAudiosWithWordsDao = literacyApplication.getDaoSession().getJoinAudiosWithWordsDao();
     }
 
     @Override
@@ -279,6 +295,36 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         if (existingAudio == null) {
                             Log.i(getClass().getName(), "Storing Audio. id: " + audio.getId() + ", transcription: \"" + audio.getTranscription() + "\", revisionNumber: " + audio.getRevisionNumber());
                             audioDao.insert(audio);
+
+                            // Store Letters
+                            if (audioGson.getLetters() != null) {
+                                for (LetterGson letterGson : audioGson.getLetters()) {
+                                    JoinAudiosWithLetters joinAudiosWithLetters = new JoinAudiosWithLetters();
+                                    joinAudiosWithLetters.setAudioId(audio.getId());
+                                    joinAudiosWithLetters.setLetterId(letterGson.getId());
+                                    joinAudiosWithLettersDao.insert(joinAudiosWithLetters);
+                                }
+                            }
+
+                            // Store Numbers
+                            if (audioGson.getNumbers() != null) {
+                                for (NumberGson numberGson : audioGson.getNumbers()) {
+                                    JoinAudiosWithNumbers joinAudiosWithNumbers = new JoinAudiosWithNumbers();
+                                    joinAudiosWithNumbers.setAudioId(audio.getId());
+                                    joinAudiosWithNumbers.setNumberId(numberGson.getId());
+                                    joinAudiosWithNumbersDao.insert(joinAudiosWithNumbers);
+                                }
+                            }
+
+                            // Store Words
+                            if (audioGson.getWords() != null) {
+                                for (WordGson wordGson : audioGson.getWords()) {
+                                    JoinAudiosWithWords joinAudiosWithWords = new JoinAudiosWithWords();
+                                    joinAudiosWithWords.setAudioId(audio.getId());
+                                    joinAudiosWithWords.setWordId(wordGson.getId());
+                                    joinAudiosWithWordsDao.insert(joinAudiosWithWords);
+                                }
+                            }
                         } else if (existingAudio.getRevisionNumber() < audio.getRevisionNumber()) {
                             Log.i(getClass().getName(), "Updating Audio with id " + existingAudio.getId() + " from revisionNumber " + existingAudio.getRevisionNumber() + " to revisionNumber " + audio.getRevisionNumber());
                             audioDao.update(audio);
@@ -401,7 +447,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                             Log.e(getClass().getName(), null, e);
                         }
                     }
-
+                    
                     if (videoFile.exists() && thumbnailFile.exists()) {
                         Video existingVideo = videoDao.queryBuilder()
                                 .where(VideoDao.Properties.Id.eq(video.getId()))
@@ -410,6 +456,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                             Log.i(getClass().getName(), "Storing Video. id: " + video.getId() + ", title: \"" + video.getTitle() + "\", revisionNumber: " + video.getRevisionNumber());
                             videoDao.insert(video);
 
+                            // Store Letters
                             if (videoGson.getLetters() != null) {
                                 for (LetterGson letterGson : videoGson.getLetters()) {
                                     JoinVideosWithLetters joinVideosWithLetters = new JoinVideosWithLetters();
@@ -419,6 +466,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                                 }
                             }
 
+                            // Store Numbers
                             if (videoGson.getNumbers() != null) {
                                 for (NumberGson numberGson : videoGson.getNumbers()) {
                                     JoinVideosWithNumbers joinVideosWithNumbers = new JoinVideosWithNumbers();
@@ -428,6 +476,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                                 }
                             }
 
+                            // Store Words
                             if (videoGson.getWords() != null) {
                                 for (WordGson wordGson : videoGson.getWords()) {
                                     JoinVideosWithWords joinVideosWithWords = new JoinVideosWithWords();

@@ -25,6 +25,9 @@ public class DaoMaster extends AbstractDaoMaster {
         LetterDao.createTable(db, ifNotExists);
         AudioDao.createTable(db, ifNotExists);
         ImageDao.createTable(db, ifNotExists);
+        JoinAudiosWithLettersDao.createTable(db, ifNotExists);
+        JoinAudiosWithNumbersDao.createTable(db, ifNotExists);
+        JoinAudiosWithWordsDao.createTable(db, ifNotExists);
         JoinVideosWithLettersDao.createTable(db, ifNotExists);
         JoinVideosWithNumbersDao.createTable(db, ifNotExists);
         JoinVideosWithWordsDao.createTable(db, ifNotExists);
@@ -32,11 +35,11 @@ public class DaoMaster extends AbstractDaoMaster {
         NumberDao.createTable(db, ifNotExists);
         WordDao.createTable(db, ifNotExists);
         DeviceDao.createTable(db, ifNotExists);
+        JoinStudentsWithDevicesDao.createTable(db, ifNotExists);
         StudentDao.createTable(db, ifNotExists);
         StudentImageDao.createTable(db, ifNotExists);
         StudentImageCollectionEventDao.createTable(db, ifNotExists);
         StudentImageFeatureDao.createTable(db, ifNotExists);
-        JoinStudentsWithDevicesDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -45,6 +48,9 @@ public class DaoMaster extends AbstractDaoMaster {
         LetterDao.dropTable(db, ifExists);
         AudioDao.dropTable(db, ifExists);
         ImageDao.dropTable(db, ifExists);
+        JoinAudiosWithLettersDao.dropTable(db, ifExists);
+        JoinAudiosWithNumbersDao.dropTable(db, ifExists);
+        JoinAudiosWithWordsDao.dropTable(db, ifExists);
         JoinVideosWithLettersDao.dropTable(db, ifExists);
         JoinVideosWithNumbersDao.dropTable(db, ifExists);
         JoinVideosWithWordsDao.dropTable(db, ifExists);
@@ -52,11 +58,11 @@ public class DaoMaster extends AbstractDaoMaster {
         NumberDao.dropTable(db, ifExists);
         WordDao.dropTable(db, ifExists);
         DeviceDao.dropTable(db, ifExists);
+        JoinStudentsWithDevicesDao.dropTable(db, ifExists);
         StudentDao.dropTable(db, ifExists);
         StudentImageDao.dropTable(db, ifExists);
         StudentImageCollectionEventDao.dropTable(db, ifExists);
         StudentImageFeatureDao.dropTable(db, ifExists);
-        JoinStudentsWithDevicesDao.dropTable(db, ifExists);
     }
 
     /**
@@ -79,6 +85,9 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(LetterDao.class);
         registerDaoClass(AudioDao.class);
         registerDaoClass(ImageDao.class);
+        registerDaoClass(JoinAudiosWithLettersDao.class);
+        registerDaoClass(JoinAudiosWithNumbersDao.class);
+        registerDaoClass(JoinAudiosWithWordsDao.class);
         registerDaoClass(JoinVideosWithLettersDao.class);
         registerDaoClass(JoinVideosWithNumbersDao.class);
         registerDaoClass(JoinVideosWithWordsDao.class);
@@ -86,11 +95,11 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(NumberDao.class);
         registerDaoClass(WordDao.class);
         registerDaoClass(DeviceDao.class);
+        registerDaoClass(JoinStudentsWithDevicesDao.class);
         registerDaoClass(StudentDao.class);
         registerDaoClass(StudentImageDao.class);
         registerDaoClass(StudentImageCollectionEventDao.class);
         registerDaoClass(StudentImageFeatureDao.class);
-        registerDaoClass(JoinStudentsWithDevicesDao.class);
     }
 
     public DaoSession newSession() {
