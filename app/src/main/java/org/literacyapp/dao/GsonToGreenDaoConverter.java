@@ -1,12 +1,16 @@
 package org.literacyapp.dao;
 
+import org.literacyapp.model.Device;
+import org.literacyapp.model.Student;
 import org.literacyapp.model.content.Allophone;
-import org.literacyapp.model.content.multimedia.Audio;
-import org.literacyapp.model.content.multimedia.Image;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.Number;
-import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.content.Word;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.Video;
+import org.literacyapp.model.gson.DeviceGson;
+import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -14,9 +18,6 @@ import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.ImageGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GsonToGreenDaoConverter {
 
@@ -127,32 +128,7 @@ public class GsonToGreenDaoConverter {
             audio.setLiteracySkills(audioGson.getLiteracySkills());
             audio.setNumeracySkills(audioGson.getNumeracySkills());
 
-            if (audioGson.getLetters() != null) {
-                List<Letter> letters = new ArrayList<>();
-                for (LetterGson letterGson : audioGson.getLetters()) {
-                    Letter letter = getLetter(letterGson);
-                    letters.add(letter);
-                }
-                audio.setLetters(letters);
-            }
-
-            if (audioGson.getNumbers() != null) {
-                List<Number> numbers = new ArrayList<>();
-                for (NumberGson numberGson : audioGson.getNumbers()) {
-                    Number number = getNumber(numberGson);
-                    numbers.add(number);
-                }
-                audio.setNumbers(numbers);
-            }
-
-            if (audioGson.getWords() != null) {
-                List<Word> words = new ArrayList<>();
-                for (WordGson wordGson : audioGson.getWords()) {
-                    Word word = getWord(wordGson);
-                    words.add(word);
-                }
-                audio.setWords(words);
-            }
+            // Letters, Numbers and Words are set during download from server
 
             audio.setTranscription(audioGson.getTranscription());
             audio.setAudioFormat(audioGson.getAudioFormat());
@@ -178,32 +154,7 @@ public class GsonToGreenDaoConverter {
             image.setLiteracySkills(imageGson.getLiteracySkills());
             image.setNumeracySkills(imageGson.getNumeracySkills());
 
-            if (imageGson.getLetters() != null) {
-                List<Letter> letters = new ArrayList<>();
-                for (LetterGson letterGson : imageGson.getLetters()) {
-                    Letter letter = getLetter(letterGson);
-                    letters.add(letter);
-                }
-                image.setLetters(letters);
-            }
-
-            if (imageGson.getNumbers() != null) {
-                List<Number> numbers = new ArrayList<>();
-                for (NumberGson numberGson : imageGson.getNumbers()) {
-                    Number number = getNumber(numberGson);
-                    numbers.add(number);
-                }
-                image.setNumbers(numbers);
-            }
-
-            if (imageGson.getWords() != null) {
-                List<Word> words = new ArrayList<>();
-                for (WordGson wordGson : imageGson.getWords()) {
-                    Word word = getWord(wordGson);
-                    words.add(word);
-                }
-                image.setWords(words);
-            }
+            // Letters, Numbers and Words are set during download from server
 
             image.setTitle(imageGson.getTitle());
             image.setImageFormat(imageGson.getImageFormat());
@@ -230,12 +181,42 @@ public class GsonToGreenDaoConverter {
             video.setLiteracySkills(videoGson.getLiteracySkills());
             video.setNumeracySkills(videoGson.getNumeracySkills());
 
-            // Letters, Numbers and Words are set in DownloadContentAsyncTask
+            // Letters, Numbers and Words are set during download from server
 
             video.setTitle(videoGson.getTitle());
             video.setVideoFormat(videoGson.getVideoFormat());
 
             return video;
+        }
+    }
+
+    public static Device getDevice(DeviceGson deviceGson) {
+        if (deviceGson == null) {
+            return null;
+        } else {
+            Device device = new Device();
+
+            device.setDeviceId(deviceGson.getDeviceId());
+
+            // Nearby Devices are set during download from server
+
+            return device;
+        }
+    }
+
+    public static Student getStudent(StudentGson studentGson) {
+        if (studentGson == null) {
+            return null;
+        } else {
+            Student student = new Student();
+
+            student.setUniqueId(studentGson.getUniqueId());
+
+            // Devices are set during download from server
+
+//            student.setAvatar(...);
+
+            return student;
         }
     }
 }

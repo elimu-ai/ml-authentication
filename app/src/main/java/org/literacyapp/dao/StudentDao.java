@@ -30,7 +30,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Avatar = new Property(1, Long.class, "avatar", false, "AVATAR");
+        public final static Property UniqueId = new Property(1, String.class, "uniqueId", false, "UNIQUE_ID");
+        public final static Property Avatar = new Property(2, Long.class, "avatar", false, "AVATAR");
     }
 
     private DaoSession daoSession;
@@ -50,7 +51,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"AVATAR\" INTEGER);"); // 1: avatar
+                "\"UNIQUE_ID\" TEXT NOT NULL UNIQUE ," + // 1: uniqueId
+                "\"AVATAR\" INTEGER);"); // 2: avatar
     }
 
     /** Drops the underlying database table. */
@@ -67,6 +69,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
+        stmt.bindString(2, entity.getUniqueId());
     }
 
     @Override
@@ -77,6 +80,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
+        stmt.bindString(2, entity.getUniqueId());
     }
 
     @Override
@@ -93,7 +97,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
     @Override
     public Student readEntity(Cursor cursor, int offset) {
         Student entity = new Student( //
-            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0) // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getString(offset + 1) // uniqueId
         );
         return entity;
     }
@@ -101,6 +106,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
     @Override
     public void readEntity(Cursor cursor, Student entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setUniqueId(cursor.getString(offset + 1));
      }
     
     @Override

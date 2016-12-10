@@ -12,6 +12,12 @@ import org.literacyapp.model.content.Allophone;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithLetters;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithNumbers;
+import org.literacyapp.model.content.multimedia.JoinAudiosWithWords;
+import org.literacyapp.model.content.multimedia.JoinImagesWithLetters;
+import org.literacyapp.model.content.multimedia.JoinImagesWithNumbers;
+import org.literacyapp.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
@@ -19,6 +25,7 @@ import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.Word;
 import org.literacyapp.model.Device;
+import org.literacyapp.model.JoinStudentsWithDevices;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
@@ -28,6 +35,12 @@ import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.ImageDao;
+import org.literacyapp.dao.JoinAudiosWithLettersDao;
+import org.literacyapp.dao.JoinAudiosWithNumbersDao;
+import org.literacyapp.dao.JoinAudiosWithWordsDao;
+import org.literacyapp.dao.JoinImagesWithLettersDao;
+import org.literacyapp.dao.JoinImagesWithNumbersDao;
+import org.literacyapp.dao.JoinImagesWithWordsDao;
 import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.dao.JoinVideosWithWordsDao;
@@ -35,6 +48,7 @@ import org.literacyapp.dao.VideoDao;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.WordDao;
 import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.JoinStudentsWithDevicesDao;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
@@ -53,6 +67,12 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig letterDaoConfig;
     private final DaoConfig audioDaoConfig;
     private final DaoConfig imageDaoConfig;
+    private final DaoConfig joinAudiosWithLettersDaoConfig;
+    private final DaoConfig joinAudiosWithNumbersDaoConfig;
+    private final DaoConfig joinAudiosWithWordsDaoConfig;
+    private final DaoConfig joinImagesWithLettersDaoConfig;
+    private final DaoConfig joinImagesWithNumbersDaoConfig;
+    private final DaoConfig joinImagesWithWordsDaoConfig;
     private final DaoConfig joinVideosWithLettersDaoConfig;
     private final DaoConfig joinVideosWithNumbersDaoConfig;
     private final DaoConfig joinVideosWithWordsDaoConfig;
@@ -60,6 +80,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig numberDaoConfig;
     private final DaoConfig wordDaoConfig;
     private final DaoConfig deviceDaoConfig;
+    private final DaoConfig joinStudentsWithDevicesDaoConfig;
     private final DaoConfig studentDaoConfig;
     private final DaoConfig studentImageDaoConfig;
     private final DaoConfig studentImageCollectionEventDaoConfig;
@@ -69,6 +90,12 @@ public class DaoSession extends AbstractDaoSession {
     private final LetterDao letterDao;
     private final AudioDao audioDao;
     private final ImageDao imageDao;
+    private final JoinAudiosWithLettersDao joinAudiosWithLettersDao;
+    private final JoinAudiosWithNumbersDao joinAudiosWithNumbersDao;
+    private final JoinAudiosWithWordsDao joinAudiosWithWordsDao;
+    private final JoinImagesWithLettersDao joinImagesWithLettersDao;
+    private final JoinImagesWithNumbersDao joinImagesWithNumbersDao;
+    private final JoinImagesWithWordsDao joinImagesWithWordsDao;
     private final JoinVideosWithLettersDao joinVideosWithLettersDao;
     private final JoinVideosWithNumbersDao joinVideosWithNumbersDao;
     private final JoinVideosWithWordsDao joinVideosWithWordsDao;
@@ -76,6 +103,7 @@ public class DaoSession extends AbstractDaoSession {
     private final NumberDao numberDao;
     private final WordDao wordDao;
     private final DeviceDao deviceDao;
+    private final JoinStudentsWithDevicesDao joinStudentsWithDevicesDao;
     private final StudentDao studentDao;
     private final StudentImageDao studentImageDao;
     private final StudentImageCollectionEventDao studentImageCollectionEventDao;
@@ -96,6 +124,24 @@ public class DaoSession extends AbstractDaoSession {
 
         imageDaoConfig = daoConfigMap.get(ImageDao.class).clone();
         imageDaoConfig.initIdentityScope(type);
+
+        joinAudiosWithLettersDaoConfig = daoConfigMap.get(JoinAudiosWithLettersDao.class).clone();
+        joinAudiosWithLettersDaoConfig.initIdentityScope(type);
+
+        joinAudiosWithNumbersDaoConfig = daoConfigMap.get(JoinAudiosWithNumbersDao.class).clone();
+        joinAudiosWithNumbersDaoConfig.initIdentityScope(type);
+
+        joinAudiosWithWordsDaoConfig = daoConfigMap.get(JoinAudiosWithWordsDao.class).clone();
+        joinAudiosWithWordsDaoConfig.initIdentityScope(type);
+
+        joinImagesWithLettersDaoConfig = daoConfigMap.get(JoinImagesWithLettersDao.class).clone();
+        joinImagesWithLettersDaoConfig.initIdentityScope(type);
+
+        joinImagesWithNumbersDaoConfig = daoConfigMap.get(JoinImagesWithNumbersDao.class).clone();
+        joinImagesWithNumbersDaoConfig.initIdentityScope(type);
+
+        joinImagesWithWordsDaoConfig = daoConfigMap.get(JoinImagesWithWordsDao.class).clone();
+        joinImagesWithWordsDaoConfig.initIdentityScope(type);
 
         joinVideosWithLettersDaoConfig = daoConfigMap.get(JoinVideosWithLettersDao.class).clone();
         joinVideosWithLettersDaoConfig.initIdentityScope(type);
@@ -118,6 +164,9 @@ public class DaoSession extends AbstractDaoSession {
         deviceDaoConfig = daoConfigMap.get(DeviceDao.class).clone();
         deviceDaoConfig.initIdentityScope(type);
 
+        joinStudentsWithDevicesDaoConfig = daoConfigMap.get(JoinStudentsWithDevicesDao.class).clone();
+        joinStudentsWithDevicesDaoConfig.initIdentityScope(type);
+
         studentDaoConfig = daoConfigMap.get(StudentDao.class).clone();
         studentDaoConfig.initIdentityScope(type);
 
@@ -134,6 +183,12 @@ public class DaoSession extends AbstractDaoSession {
         letterDao = new LetterDao(letterDaoConfig, this);
         audioDao = new AudioDao(audioDaoConfig, this);
         imageDao = new ImageDao(imageDaoConfig, this);
+        joinAudiosWithLettersDao = new JoinAudiosWithLettersDao(joinAudiosWithLettersDaoConfig, this);
+        joinAudiosWithNumbersDao = new JoinAudiosWithNumbersDao(joinAudiosWithNumbersDaoConfig, this);
+        joinAudiosWithWordsDao = new JoinAudiosWithWordsDao(joinAudiosWithWordsDaoConfig, this);
+        joinImagesWithLettersDao = new JoinImagesWithLettersDao(joinImagesWithLettersDaoConfig, this);
+        joinImagesWithNumbersDao = new JoinImagesWithNumbersDao(joinImagesWithNumbersDaoConfig, this);
+        joinImagesWithWordsDao = new JoinImagesWithWordsDao(joinImagesWithWordsDaoConfig, this);
         joinVideosWithLettersDao = new JoinVideosWithLettersDao(joinVideosWithLettersDaoConfig, this);
         joinVideosWithNumbersDao = new JoinVideosWithNumbersDao(joinVideosWithNumbersDaoConfig, this);
         joinVideosWithWordsDao = new JoinVideosWithWordsDao(joinVideosWithWordsDaoConfig, this);
@@ -141,6 +196,7 @@ public class DaoSession extends AbstractDaoSession {
         numberDao = new NumberDao(numberDaoConfig, this);
         wordDao = new WordDao(wordDaoConfig, this);
         deviceDao = new DeviceDao(deviceDaoConfig, this);
+        joinStudentsWithDevicesDao = new JoinStudentsWithDevicesDao(joinStudentsWithDevicesDaoConfig, this);
         studentDao = new StudentDao(studentDaoConfig, this);
         studentImageDao = new StudentImageDao(studentImageDaoConfig, this);
         studentImageCollectionEventDao = new StudentImageCollectionEventDao(studentImageCollectionEventDaoConfig, this);
@@ -150,6 +206,12 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Letter.class, letterDao);
         registerDao(Audio.class, audioDao);
         registerDao(Image.class, imageDao);
+        registerDao(JoinAudiosWithLetters.class, joinAudiosWithLettersDao);
+        registerDao(JoinAudiosWithNumbers.class, joinAudiosWithNumbersDao);
+        registerDao(JoinAudiosWithWords.class, joinAudiosWithWordsDao);
+        registerDao(JoinImagesWithLetters.class, joinImagesWithLettersDao);
+        registerDao(JoinImagesWithNumbers.class, joinImagesWithNumbersDao);
+        registerDao(JoinImagesWithWords.class, joinImagesWithWordsDao);
         registerDao(JoinVideosWithLetters.class, joinVideosWithLettersDao);
         registerDao(JoinVideosWithNumbers.class, joinVideosWithNumbersDao);
         registerDao(JoinVideosWithWords.class, joinVideosWithWordsDao);
@@ -157,6 +219,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Number.class, numberDao);
         registerDao(Word.class, wordDao);
         registerDao(Device.class, deviceDao);
+        registerDao(JoinStudentsWithDevices.class, joinStudentsWithDevicesDao);
         registerDao(Student.class, studentDao);
         registerDao(StudentImage.class, studentImageDao);
         registerDao(StudentImageCollectionEvent.class, studentImageCollectionEventDao);
@@ -168,6 +231,12 @@ public class DaoSession extends AbstractDaoSession {
         letterDaoConfig.clearIdentityScope();
         audioDaoConfig.clearIdentityScope();
         imageDaoConfig.clearIdentityScope();
+        joinAudiosWithLettersDaoConfig.clearIdentityScope();
+        joinAudiosWithNumbersDaoConfig.clearIdentityScope();
+        joinAudiosWithWordsDaoConfig.clearIdentityScope();
+        joinImagesWithLettersDaoConfig.clearIdentityScope();
+        joinImagesWithNumbersDaoConfig.clearIdentityScope();
+        joinImagesWithWordsDaoConfig.clearIdentityScope();
         joinVideosWithLettersDaoConfig.clearIdentityScope();
         joinVideosWithNumbersDaoConfig.clearIdentityScope();
         joinVideosWithWordsDaoConfig.clearIdentityScope();
@@ -175,6 +244,7 @@ public class DaoSession extends AbstractDaoSession {
         numberDaoConfig.clearIdentityScope();
         wordDaoConfig.clearIdentityScope();
         deviceDaoConfig.clearIdentityScope();
+        joinStudentsWithDevicesDaoConfig.clearIdentityScope();
         studentDaoConfig.clearIdentityScope();
         studentImageDaoConfig.clearIdentityScope();
         studentImageCollectionEventDaoConfig.clearIdentityScope();
@@ -195,6 +265,30 @@ public class DaoSession extends AbstractDaoSession {
 
     public ImageDao getImageDao() {
         return imageDao;
+    }
+
+    public JoinAudiosWithLettersDao getJoinAudiosWithLettersDao() {
+        return joinAudiosWithLettersDao;
+    }
+
+    public JoinAudiosWithNumbersDao getJoinAudiosWithNumbersDao() {
+        return joinAudiosWithNumbersDao;
+    }
+
+    public JoinAudiosWithWordsDao getJoinAudiosWithWordsDao() {
+        return joinAudiosWithWordsDao;
+    }
+
+    public JoinImagesWithLettersDao getJoinImagesWithLettersDao() {
+        return joinImagesWithLettersDao;
+    }
+
+    public JoinImagesWithNumbersDao getJoinImagesWithNumbersDao() {
+        return joinImagesWithNumbersDao;
+    }
+
+    public JoinImagesWithWordsDao getJoinImagesWithWordsDao() {
+        return joinImagesWithWordsDao;
     }
 
     public JoinVideosWithLettersDao getJoinVideosWithLettersDao() {
@@ -223,6 +317,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public DeviceDao getDeviceDao() {
         return deviceDao;
+    }
+
+    public JoinStudentsWithDevicesDao getJoinStudentsWithDevicesDao() {
+        return joinStudentsWithDevicesDao;
     }
 
     public StudentDao getStudentDao() {
