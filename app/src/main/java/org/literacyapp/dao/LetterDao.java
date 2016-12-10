@@ -17,6 +17,7 @@ import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithLetters;
+import org.literacyapp.model.content.multimedia.JoinImagesWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
@@ -190,16 +191,17 @@ public class LetterDao extends AbstractDao<Letter, Long> {
     }
 
     /** Internal query to resolve the "letters" to-many relationship of Image. */
-    public List<Letter> _queryImage_Letters(Long id) {
+    public List<Letter> _queryImage_Letters(long imageId) {
         synchronized (this) {
             if (image_LettersQuery == null) {
                 QueryBuilder<Letter> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinImagesWithLetters.class, JoinImagesWithLettersDao.Properties.LetterId)
+                    .where(JoinImagesWithLettersDao.Properties.ImageId.eq(imageId));
                 image_LettersQuery = queryBuilder.build();
             }
         }
         Query<Letter> query = image_LettersQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, imageId);
         return query.list();
     }
 

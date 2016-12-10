@@ -28,6 +28,9 @@ public class DaoMaster extends AbstractDaoMaster {
         JoinAudiosWithLettersDao.createTable(db, ifNotExists);
         JoinAudiosWithNumbersDao.createTable(db, ifNotExists);
         JoinAudiosWithWordsDao.createTable(db, ifNotExists);
+        JoinImagesWithLettersDao.createTable(db, ifNotExists);
+        JoinImagesWithNumbersDao.createTable(db, ifNotExists);
+        JoinImagesWithWordsDao.createTable(db, ifNotExists);
         JoinVideosWithLettersDao.createTable(db, ifNotExists);
         JoinVideosWithNumbersDao.createTable(db, ifNotExists);
         JoinVideosWithWordsDao.createTable(db, ifNotExists);
@@ -51,6 +54,9 @@ public class DaoMaster extends AbstractDaoMaster {
         JoinAudiosWithLettersDao.dropTable(db, ifExists);
         JoinAudiosWithNumbersDao.dropTable(db, ifExists);
         JoinAudiosWithWordsDao.dropTable(db, ifExists);
+        JoinImagesWithLettersDao.dropTable(db, ifExists);
+        JoinImagesWithNumbersDao.dropTable(db, ifExists);
+        JoinImagesWithWordsDao.dropTable(db, ifExists);
         JoinVideosWithLettersDao.dropTable(db, ifExists);
         JoinVideosWithNumbersDao.dropTable(db, ifExists);
         JoinVideosWithWordsDao.dropTable(db, ifExists);
@@ -88,6 +94,9 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(JoinAudiosWithLettersDao.class);
         registerDaoClass(JoinAudiosWithNumbersDao.class);
         registerDaoClass(JoinAudiosWithWordsDao.class);
+        registerDaoClass(JoinImagesWithLettersDao.class);
+        registerDaoClass(JoinImagesWithNumbersDao.class);
+        registerDaoClass(JoinImagesWithWordsDao.class);
         registerDaoClass(JoinVideosWithLettersDao.class);
         registerDaoClass(JoinVideosWithNumbersDao.class);
         registerDaoClass(JoinVideosWithWordsDao.class);

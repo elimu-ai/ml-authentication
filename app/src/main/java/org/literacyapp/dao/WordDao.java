@@ -17,6 +17,7 @@ import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithWords;
+import org.literacyapp.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
@@ -196,16 +197,17 @@ public class WordDao extends AbstractDao<Word, Long> {
     }
 
     /** Internal query to resolve the "words" to-many relationship of Image. */
-    public List<Word> _queryImage_Words(Long id) {
+    public List<Word> _queryImage_Words(long imageId) {
         synchronized (this) {
             if (image_WordsQuery == null) {
                 QueryBuilder<Word> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinImagesWithWords.class, JoinImagesWithWordsDao.Properties.WordId)
+                    .where(JoinImagesWithWordsDao.Properties.ImageId.eq(imageId));
                 image_WordsQuery = queryBuilder.build();
             }
         }
         Query<Word> query = image_WordsQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, imageId);
         return query.list();
     }
 

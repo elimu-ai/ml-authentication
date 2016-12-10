@@ -20,6 +20,9 @@ import org.literacyapp.dao.ImageDao;
 import org.literacyapp.dao.JoinAudiosWithLettersDao;
 import org.literacyapp.dao.JoinAudiosWithNumbersDao;
 import org.literacyapp.dao.JoinAudiosWithWordsDao;
+import org.literacyapp.dao.JoinImagesWithLettersDao;
+import org.literacyapp.dao.JoinImagesWithNumbersDao;
+import org.literacyapp.dao.JoinImagesWithWordsDao;
 import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.dao.JoinVideosWithWordsDao;
@@ -37,6 +40,9 @@ import org.literacyapp.model.content.multimedia.Image;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithWords;
+import org.literacyapp.model.content.multimedia.JoinImagesWithLetters;
+import org.literacyapp.model.content.multimedia.JoinImagesWithNumbers;
+import org.literacyapp.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
@@ -86,6 +92,10 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
     private JoinAudiosWithNumbersDao joinAudiosWithNumbersDao;
     private JoinAudiosWithWordsDao joinAudiosWithWordsDao;
 
+    private JoinImagesWithLettersDao joinImagesWithLettersDao;
+    private JoinImagesWithNumbersDao joinImagesWithNumbersDao;
+    private JoinImagesWithWordsDao joinImagesWithWordsDao;
+
     public DownloadContentAsyncTask(Context context) {
         this.context = context;
 
@@ -105,6 +115,10 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         joinAudiosWithLettersDao = literacyApplication.getDaoSession().getJoinAudiosWithLettersDao();
         joinAudiosWithNumbersDao = literacyApplication.getDaoSession().getJoinAudiosWithNumbersDao();
         joinAudiosWithWordsDao = literacyApplication.getDaoSession().getJoinAudiosWithWordsDao();
+
+        joinImagesWithLettersDao = literacyApplication.getDaoSession().getJoinImagesWithLettersDao();
+        joinImagesWithNumbersDao = literacyApplication.getDaoSession().getJoinImagesWithNumbersDao();
+        joinImagesWithWordsDao = literacyApplication.getDaoSession().getJoinImagesWithWordsDao();
     }
 
     @Override
@@ -381,6 +395,36 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         if (existingImage == null) {
                             Log.i(getClass().getName(), "Storing Image. id: " + image.getId() + ", title: \"" + image.getTitle() + "\", revisionNumber: " + image.getRevisionNumber());
                             imageDao.insert(image);
+
+                            // Store Letters
+                            if (imageGson.getLetters() != null) {
+                                for (LetterGson letterGson : imageGson.getLetters()) {
+                                    JoinImagesWithLetters joinImagesWithLetters = new JoinImagesWithLetters();
+                                    joinImagesWithLetters.setImageId(image.getId());
+                                    joinImagesWithLetters.setLetterId(letterGson.getId());
+                                    joinImagesWithLettersDao.insert(joinImagesWithLetters);
+                                }
+                            }
+
+                            // Store Numbers
+                            if (imageGson.getNumbers() != null) {
+                                for (NumberGson numberGson : imageGson.getNumbers()) {
+                                    JoinImagesWithNumbers joinImagesWithNumbers = new JoinImagesWithNumbers();
+                                    joinImagesWithNumbers.setImageId(image.getId());
+                                    joinImagesWithNumbers.setNumberId(numberGson.getId());
+                                    joinImagesWithNumbersDao.insert(joinImagesWithNumbers);
+                                }
+                            }
+
+                            // Store Words
+                            if (imageGson.getWords() != null) {
+                                for (WordGson wordGson : imageGson.getWords()) {
+                                    JoinImagesWithWords joinImagesWithWords = new JoinImagesWithWords();
+                                    joinImagesWithWords.setImageId(image.getId());
+                                    joinImagesWithWords.setWordId(wordGson.getId());
+                                    joinImagesWithWordsDao.insert(joinImagesWithWords);
+                                }
+                            }
                         } else if (existingImage.getRevisionNumber() < image.getRevisionNumber()) {
                             Log.i(getClass().getName(), "Updating Image with id " + existingImage.getId() + " from revisionNumber " + existingImage.getRevisionNumber() + " to revisionNumber " + image.getRevisionNumber());
                             imageDao.update(image);

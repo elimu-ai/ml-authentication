@@ -15,6 +15,9 @@ import org.literacyapp.model.content.multimedia.Image;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithWords;
+import org.literacyapp.model.content.multimedia.JoinImagesWithLetters;
+import org.literacyapp.model.content.multimedia.JoinImagesWithNumbers;
+import org.literacyapp.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
@@ -35,6 +38,9 @@ import org.literacyapp.dao.ImageDao;
 import org.literacyapp.dao.JoinAudiosWithLettersDao;
 import org.literacyapp.dao.JoinAudiosWithNumbersDao;
 import org.literacyapp.dao.JoinAudiosWithWordsDao;
+import org.literacyapp.dao.JoinImagesWithLettersDao;
+import org.literacyapp.dao.JoinImagesWithNumbersDao;
+import org.literacyapp.dao.JoinImagesWithWordsDao;
 import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.dao.JoinVideosWithWordsDao;
@@ -64,6 +70,9 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig joinAudiosWithLettersDaoConfig;
     private final DaoConfig joinAudiosWithNumbersDaoConfig;
     private final DaoConfig joinAudiosWithWordsDaoConfig;
+    private final DaoConfig joinImagesWithLettersDaoConfig;
+    private final DaoConfig joinImagesWithNumbersDaoConfig;
+    private final DaoConfig joinImagesWithWordsDaoConfig;
     private final DaoConfig joinVideosWithLettersDaoConfig;
     private final DaoConfig joinVideosWithNumbersDaoConfig;
     private final DaoConfig joinVideosWithWordsDaoConfig;
@@ -84,6 +93,9 @@ public class DaoSession extends AbstractDaoSession {
     private final JoinAudiosWithLettersDao joinAudiosWithLettersDao;
     private final JoinAudiosWithNumbersDao joinAudiosWithNumbersDao;
     private final JoinAudiosWithWordsDao joinAudiosWithWordsDao;
+    private final JoinImagesWithLettersDao joinImagesWithLettersDao;
+    private final JoinImagesWithNumbersDao joinImagesWithNumbersDao;
+    private final JoinImagesWithWordsDao joinImagesWithWordsDao;
     private final JoinVideosWithLettersDao joinVideosWithLettersDao;
     private final JoinVideosWithNumbersDao joinVideosWithNumbersDao;
     private final JoinVideosWithWordsDao joinVideosWithWordsDao;
@@ -121,6 +133,15 @@ public class DaoSession extends AbstractDaoSession {
 
         joinAudiosWithWordsDaoConfig = daoConfigMap.get(JoinAudiosWithWordsDao.class).clone();
         joinAudiosWithWordsDaoConfig.initIdentityScope(type);
+
+        joinImagesWithLettersDaoConfig = daoConfigMap.get(JoinImagesWithLettersDao.class).clone();
+        joinImagesWithLettersDaoConfig.initIdentityScope(type);
+
+        joinImagesWithNumbersDaoConfig = daoConfigMap.get(JoinImagesWithNumbersDao.class).clone();
+        joinImagesWithNumbersDaoConfig.initIdentityScope(type);
+
+        joinImagesWithWordsDaoConfig = daoConfigMap.get(JoinImagesWithWordsDao.class).clone();
+        joinImagesWithWordsDaoConfig.initIdentityScope(type);
 
         joinVideosWithLettersDaoConfig = daoConfigMap.get(JoinVideosWithLettersDao.class).clone();
         joinVideosWithLettersDaoConfig.initIdentityScope(type);
@@ -165,6 +186,9 @@ public class DaoSession extends AbstractDaoSession {
         joinAudiosWithLettersDao = new JoinAudiosWithLettersDao(joinAudiosWithLettersDaoConfig, this);
         joinAudiosWithNumbersDao = new JoinAudiosWithNumbersDao(joinAudiosWithNumbersDaoConfig, this);
         joinAudiosWithWordsDao = new JoinAudiosWithWordsDao(joinAudiosWithWordsDaoConfig, this);
+        joinImagesWithLettersDao = new JoinImagesWithLettersDao(joinImagesWithLettersDaoConfig, this);
+        joinImagesWithNumbersDao = new JoinImagesWithNumbersDao(joinImagesWithNumbersDaoConfig, this);
+        joinImagesWithWordsDao = new JoinImagesWithWordsDao(joinImagesWithWordsDaoConfig, this);
         joinVideosWithLettersDao = new JoinVideosWithLettersDao(joinVideosWithLettersDaoConfig, this);
         joinVideosWithNumbersDao = new JoinVideosWithNumbersDao(joinVideosWithNumbersDaoConfig, this);
         joinVideosWithWordsDao = new JoinVideosWithWordsDao(joinVideosWithWordsDaoConfig, this);
@@ -185,6 +209,9 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(JoinAudiosWithLetters.class, joinAudiosWithLettersDao);
         registerDao(JoinAudiosWithNumbers.class, joinAudiosWithNumbersDao);
         registerDao(JoinAudiosWithWords.class, joinAudiosWithWordsDao);
+        registerDao(JoinImagesWithLetters.class, joinImagesWithLettersDao);
+        registerDao(JoinImagesWithNumbers.class, joinImagesWithNumbersDao);
+        registerDao(JoinImagesWithWords.class, joinImagesWithWordsDao);
         registerDao(JoinVideosWithLetters.class, joinVideosWithLettersDao);
         registerDao(JoinVideosWithNumbers.class, joinVideosWithNumbersDao);
         registerDao(JoinVideosWithWords.class, joinVideosWithWordsDao);
@@ -207,6 +234,9 @@ public class DaoSession extends AbstractDaoSession {
         joinAudiosWithLettersDaoConfig.clearIdentityScope();
         joinAudiosWithNumbersDaoConfig.clearIdentityScope();
         joinAudiosWithWordsDaoConfig.clearIdentityScope();
+        joinImagesWithLettersDaoConfig.clearIdentityScope();
+        joinImagesWithNumbersDaoConfig.clearIdentityScope();
+        joinImagesWithWordsDaoConfig.clearIdentityScope();
         joinVideosWithLettersDaoConfig.clearIdentityScope();
         joinVideosWithNumbersDaoConfig.clearIdentityScope();
         joinVideosWithWordsDaoConfig.clearIdentityScope();
@@ -247,6 +277,18 @@ public class DaoSession extends AbstractDaoSession {
 
     public JoinAudiosWithWordsDao getJoinAudiosWithWordsDao() {
         return joinAudiosWithWordsDao;
+    }
+
+    public JoinImagesWithLettersDao getJoinImagesWithLettersDao() {
+        return joinImagesWithLettersDao;
+    }
+
+    public JoinImagesWithNumbersDao getJoinImagesWithNumbersDao() {
+        return joinImagesWithNumbersDao;
+    }
+
+    public JoinImagesWithWordsDao getJoinImagesWithWordsDao() {
+        return joinImagesWithWordsDao;
     }
 
     public JoinVideosWithLettersDao getJoinVideosWithLettersDao() {

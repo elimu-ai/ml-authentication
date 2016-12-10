@@ -20,6 +20,7 @@ import org.literacyapp.dao.converter.ContentStatusConverter;
 import org.literacyapp.dao.converter.LocaleConverter;
 import org.literacyapp.model.content.Word;
 import org.literacyapp.model.content.multimedia.JoinAudiosWithNumbers;
+import org.literacyapp.model.content.multimedia.JoinImagesWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
@@ -210,16 +211,17 @@ public class NumberDao extends AbstractDao<Number, Long> {
     }
 
     /** Internal query to resolve the "numbers" to-many relationship of Image. */
-    public List<Number> _queryImage_Numbers(Long id) {
+    public List<Number> _queryImage_Numbers(long imageId) {
         synchronized (this) {
             if (image_NumbersQuery == null) {
                 QueryBuilder<Number> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
+                queryBuilder.join(JoinImagesWithNumbers.class, JoinImagesWithNumbersDao.Properties.NumberId)
+                    .where(JoinImagesWithNumbersDao.Properties.ImageId.eq(imageId));
                 image_NumbersQuery = queryBuilder.build();
             }
         }
         Query<Number> query = image_NumbersQuery.forCurrentThread();
-        query.setParameter(0, id);
+        query.setParameter(0, imageId);
         return query.list();
     }
 

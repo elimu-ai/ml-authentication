@@ -3,12 +3,12 @@ package org.literacyapp.dao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.content.Allophone;
-import org.literacyapp.model.content.multimedia.Audio;
-import org.literacyapp.model.content.multimedia.Image;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.Number;
-import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.content.Word;
+import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.multimedia.Image;
+import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
@@ -18,9 +18,6 @@ import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.ImageGson;
 import org.literacyapp.model.gson.content.multimedia.VideoGson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GsonToGreenDaoConverter {
 
@@ -157,32 +154,7 @@ public class GsonToGreenDaoConverter {
             image.setLiteracySkills(imageGson.getLiteracySkills());
             image.setNumeracySkills(imageGson.getNumeracySkills());
 
-            if (imageGson.getLetters() != null) {
-                List<Letter> letters = new ArrayList<>();
-                for (LetterGson letterGson : imageGson.getLetters()) {
-                    Letter letter = getLetter(letterGson);
-                    letters.add(letter);
-                }
-                image.setLetters(letters);
-            }
-
-            if (imageGson.getNumbers() != null) {
-                List<Number> numbers = new ArrayList<>();
-                for (NumberGson numberGson : imageGson.getNumbers()) {
-                    Number number = getNumber(numberGson);
-                    numbers.add(number);
-                }
-                image.setNumbers(numbers);
-            }
-
-            if (imageGson.getWords() != null) {
-                List<Word> words = new ArrayList<>();
-                for (WordGson wordGson : imageGson.getWords()) {
-                    Word word = getWord(wordGson);
-                    words.add(word);
-                }
-                image.setWords(words);
-            }
+            // Letters, Numbers and Words are set during download from server
 
             image.setTitle(imageGson.getTitle());
             image.setImageFormat(imageGson.getImageFormat());
