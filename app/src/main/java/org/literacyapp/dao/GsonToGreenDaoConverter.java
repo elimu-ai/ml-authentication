@@ -1,6 +1,7 @@
 package org.literacyapp.dao;
 
 import org.literacyapp.model.Device;
+import org.literacyapp.model.Student;
 import org.literacyapp.model.content.Allophone;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
@@ -9,6 +10,7 @@ import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.content.Word;
 import org.literacyapp.model.gson.DeviceGson;
+import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -232,7 +234,7 @@ public class GsonToGreenDaoConverter {
             video.setLiteracySkills(videoGson.getLiteracySkills());
             video.setNumeracySkills(videoGson.getNumeracySkills());
 
-            // Letters, Numbers and Words are set in DownloadContentAsyncTask
+            // Letters, Numbers and Words are set during download from server
 
             video.setTitle(videoGson.getTitle());
             video.setVideoFormat(videoGson.getVideoFormat());
@@ -249,7 +251,25 @@ public class GsonToGreenDaoConverter {
 
             device.setDeviceId(deviceGson.getDeviceId());
 
+            // Nearby Devices are set during download from server
+
             return device;
+        }
+    }
+
+    public static Student getStudent(StudentGson studentGson) {
+        if (studentGson == null) {
+            return null;
+        } else {
+            Student student = new Student();
+
+            student.setUniqueId(studentGson.getUniqueId());
+
+            // Devices are set during download from server
+
+//            student.setAvatar(...);
+
+            return student;
         }
     }
 }

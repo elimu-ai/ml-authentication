@@ -1,5 +1,6 @@
 package org.literacyapp.dao;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;
 
@@ -8,6 +9,10 @@ import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
+
+import org.literacyapp.model.JoinStudentsWithDevices;
 
 import org.literacyapp.model.Device;
 
@@ -28,6 +33,7 @@ public class DeviceDao extends AbstractDao<Device, Long> {
         public final static Property DeviceId = new Property(1, String.class, "deviceId", false, "DEVICE_ID");
     }
 
+    private Query<Device> student_DevicesQuery;
 
     public DeviceDao(DaoConfig config) {
         super(config);
@@ -118,4 +124,19 @@ public class DeviceDao extends AbstractDao<Device, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "devices" to-many relationship of Student. */
+    public List<Device> _queryStudent_Devices(long studentId) {
+        synchronized (this) {
+            if (student_DevicesQuery == null) {
+                QueryBuilder<Device> queryBuilder = queryBuilder();
+                queryBuilder.join(JoinStudentsWithDevices.class, JoinStudentsWithDevicesDao.Properties.DeviceId)
+                    .where(JoinStudentsWithDevicesDao.Properties.StudentId.eq(studentId));
+                student_DevicesQuery = queryBuilder.build();
+            }
+        }
+        Query<Device> query = student_DevicesQuery.forCurrentThread();
+        query.setParameter(0, studentId);
+        return query.list();
+    }
+
 }

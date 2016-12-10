@@ -1,15 +1,20 @@
 package org.literacyapp.model;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.annotation.Unique;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
+import org.literacyapp.dao.StudentImageDao;
+
+import java.util.List;
 
 /**
  * Based on {@link org.literacyapp.model.gson.StudentGson}
@@ -24,7 +29,9 @@ public class Student {
     @Unique
     private String uniqueId; // "<deviceId>_<Long>"
 
-//    private List<Device> devices;
+    @ToMany
+    @JoinEntity(entity = JoinStudentsWithDevices.class, sourceProperty = "studentId", targetProperty = "deviceId")
+    private List<Device> devices;
 
     @ToOne
     private StudentImage avatar;
@@ -93,6 +100,34 @@ public class Student {
             this.avatar = avatar;
             avatar__refreshed = true;
         }
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 58270754)
+    public List<Device> getDevices() {
+        if (devices == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            DeviceDao targetDao = daoSession.getDeviceDao();
+            List<Device> devicesNew = targetDao._queryStudent_Devices(id);
+            synchronized (this) {
+                if (devices == null) {
+                    devices = devicesNew;
+                }
+            }
+        }
+        return devices;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1428662284)
+    public synchronized void resetDevices() {
+        devices = null;
     }
 
     /**
