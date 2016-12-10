@@ -53,6 +53,7 @@ public class CurriculumHelper {
         } else {
             // Build list based on Student's current level.
             // TODO
+            throw new UnsupportedOperationException("Not yet implemented");
         }
 
         return letters;
@@ -78,6 +79,7 @@ public class CurriculumHelper {
         } else {
             // Build list based on Student's current level.
             // TODO
+            throw new UnsupportedOperationException("Not yet implemented");
         }
 
         return numbers;
@@ -103,6 +105,7 @@ public class CurriculumHelper {
         } else {
             // Build list based on Student's current level.
             // TODO
+            throw new UnsupportedOperationException("Not yet implemented");
         }
 
         return literacySkills;
@@ -126,6 +129,7 @@ public class CurriculumHelper {
         } else {
             // Build list based on Student's current level.
             // TODO
+            throw new UnsupportedOperationException("Not yet implemented");
         }
 
         return numeracySkills;

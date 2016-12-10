@@ -473,7 +473,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
 //        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 
 
-        Log.i(getClass().getName(), "Notifying external applications about updated content");
+        Log.i(getClass().getName(), "Notifying external applications about updated content via broadcast");
         CurriculumHelper curriculumHelper = new CurriculumHelper(context);
 
         List<Letter> availableLetters = curriculumHelper.getAvailableLetters(null);
@@ -512,6 +512,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         intent.putStringArrayListExtra("availableNumbers", availableNumbersStringArrayList);
         intent.putStringArrayListExtra("availableLiteracySkills", availableLiteracySkillsStringArrayList);
         intent.putStringArrayListExtra("availableNumeracySkills", availableNumeracySkillsStringArrayList);
+        Log.i(getClass().getName(), "Sending broadcast to " + intent.getPackage());
         context.sendBroadcast(intent);
     }
 }
