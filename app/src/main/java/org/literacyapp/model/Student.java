@@ -2,7 +2,9 @@ package org.literacyapp.model;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
+import org.greenrobot.greendao.annotation.Unique;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.DaoException;
 import org.literacyapp.dao.DaoSession;
@@ -15,8 +17,12 @@ import org.literacyapp.dao.StudentDao;
 @Entity
 public class Student {
 
-    @Id
-    private String id; // "<deviceId>_<Long>"
+    @Id(autoincrement = true)
+    private Long id;
+
+    @NotNull
+    @Unique
+    private String uniqueId; // "<deviceId>_<Long>"
 
 //    private List<Device> devices;
 
@@ -31,21 +37,30 @@ public class Student {
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 594126488)
-    public Student(String id) {
+    @Generated(hash = 876177859)
+    public Student(Long id, @NotNull String uniqueId) {
         this.id = id;
+        this.uniqueId = uniqueId;
     }
 
     @Generated(hash = 1556870573)
     public Student() {
     }
 
-    public String getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getUniqueId() {
+        return this.uniqueId;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     @Generated(hash = 926952963)

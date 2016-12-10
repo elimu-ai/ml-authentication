@@ -1,5 +1,6 @@
 package org.literacyapp.dao;
 
+import org.literacyapp.model.Device;
 import org.literacyapp.model.content.Allophone;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
@@ -7,6 +8,7 @@ import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.model.content.Word;
+import org.literacyapp.model.gson.DeviceGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -236,6 +238,18 @@ public class GsonToGreenDaoConverter {
             video.setVideoFormat(videoGson.getVideoFormat());
 
             return video;
+        }
+    }
+
+    public static Device getDevice(DeviceGson deviceGson) {
+        if (deviceGson == null) {
+            return null;
+        } else {
+            Device device = new Device();
+
+            device.setDeviceId(deviceGson.getDeviceId());
+
+            return device;
         }
     }
 }

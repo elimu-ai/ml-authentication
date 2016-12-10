@@ -37,7 +37,7 @@ public class StudentImageCollectionEvent {
 //    @ToOne
 //    private Application application;
 
-    private String studentId;
+    private long studentId;
 
     @ToOne(joinProperty = "studentId")
     private Student student;
@@ -52,9 +52,9 @@ public class StudentImageCollectionEvent {
     @Generated(hash = 136770604)
     private transient StudentImageCollectionEventDao myDao;
 
-    @Generated(hash = 1802599235)
+    @Generated(hash = 1512432081)
     public StudentImageCollectionEvent(Long id, long deviceId, @NotNull Calendar time,
-            String studentId, boolean svmTrainingExecuted) {
+            long studentId, boolean svmTrainingExecuted) {
         this.id = id;
         this.deviceId = deviceId;
         this.time = time;
@@ -90,11 +90,11 @@ public class StudentImageCollectionEvent {
         this.time = time;
     }
 
-    public String getStudentId() {
+    public long getStudentId() {
         return this.studentId;
     }
 
-    public void setStudentId(String studentId) {
+    public void setStudentId(long studentId) {
         this.studentId = studentId;
     }
 
@@ -142,14 +142,14 @@ public class StudentImageCollectionEvent {
         }
     }
 
-    @Generated(hash = 635690445)
-    private transient String student__resolvedKey;
+    @Generated(hash = 79695740)
+    private transient Long student__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1107348382)
+    @Generated(hash = 1299365531)
     public Student getStudent() {
-        String __key = this.studentId;
-        if (student__resolvedKey == null || student__resolvedKey != __key) {
+        long __key = this.studentId;
+        if (student__resolvedKey == null || !student__resolvedKey.equals(__key)) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -165,11 +165,15 @@ public class StudentImageCollectionEvent {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 490304967)
-    public void setStudent(Student student) {
+    @Generated(hash = 1384923540)
+    public void setStudent(@NotNull Student student) {
+        if (student == null) {
+            throw new DaoException(
+                    "To-one property 'studentId' has not-null constraint; cannot set to-one to null");
+        }
         synchronized (this) {
             this.student = student;
-            studentId = student == null ? null : student.getId();
+            studentId = student.getId();
             student__resolvedKey = studentId;
         }
     }

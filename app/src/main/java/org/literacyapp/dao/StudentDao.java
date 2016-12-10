@@ -20,7 +20,7 @@ import org.literacyapp.model.Student;
 /** 
  * DAO for table "STUDENT".
 */
-public class StudentDao extends AbstractDao<Student, String> {
+public class StudentDao extends AbstractDao<Student, Long> {
 
     public static final String TABLENAME = "STUDENT";
 
@@ -29,8 +29,9 @@ public class StudentDao extends AbstractDao<Student, String> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Id = new Property(0, String.class, "id", true, "ID");
-        public final static Property Avatar = new Property(1, Long.class, "avatar", false, "AVATAR");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property UniqueId = new Property(1, String.class, "uniqueId", false, "UNIQUE_ID");
+        public final static Property Avatar = new Property(2, Long.class, "avatar", false, "AVATAR");
     }
 
     private DaoSession daoSession;
@@ -49,8 +50,9 @@ public class StudentDao extends AbstractDao<Student, String> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT\" (" + //
-                "\"ID\" TEXT PRIMARY KEY NOT NULL ," + // 0: id
-                "\"AVATAR\" INTEGER);"); // 1: avatar
+                "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
+                "\"UNIQUE_ID\" TEXT NOT NULL UNIQUE ," + // 1: uniqueId
+                "\"AVATAR\" INTEGER);"); // 2: avatar
     }
 
     /** Drops the underlying database table. */
@@ -63,20 +65,22 @@ public class StudentDao extends AbstractDao<Student, String> {
     protected final void bindValues(DatabaseStatement stmt, Student entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
-            stmt.bindString(1, id);
+            stmt.bindLong(1, id);
         }
+        stmt.bindString(2, entity.getUniqueId());
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, Student entity) {
         stmt.clearBindings();
  
-        String id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
-            stmt.bindString(1, id);
+            stmt.bindLong(1, id);
         }
+        stmt.bindString(2, entity.getUniqueId());
     }
 
     @Override
@@ -86,30 +90,33 @@ public class StudentDao extends AbstractDao<Student, String> {
     }
 
     @Override
-    public String readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public Student readEntity(Cursor cursor, int offset) {
         Student entity = new Student( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0) // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.getString(offset + 1) // uniqueId
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, Student entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setUniqueId(cursor.getString(offset + 1));
      }
     
     @Override
-    protected final String updateKeyAfterInsert(Student entity, long rowId) {
-        return entity.getId();
+    protected final Long updateKeyAfterInsert(Student entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public String getKey(Student entity) {
+    public Long getKey(Student entity) {
         if(entity != null) {
             return entity.getId();
         } else {
