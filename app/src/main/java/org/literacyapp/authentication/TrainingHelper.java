@@ -6,8 +6,10 @@ import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
@@ -36,6 +38,7 @@ public class TrainingHelper {
     private DaoSession daoSession;
     private StudentImageDao studentImageDao;
     private StudentImageFeatureDao studentImageFeatureDao;
+    private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private SupportVectorMachine svm;
 
     static {
@@ -50,6 +53,7 @@ public class TrainingHelper {
         daoSession = literacyApplication.getDaoSession();
         studentImageDao = daoSession.getStudentImageDao();
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
+        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         svm = new SupportVectorMachine(context, Recognition.TRAINING);
     }
 
@@ -97,6 +101,32 @@ public class TrainingHelper {
      * @return
      */
     private String getSvmVector(TensorFlow tensorFlow, StudentImage studentImage){
+        File studentImageFile = new File(studentImage.getImageFileUrl());
+        // Delete StudentImageCollectionEvent and all StudentImages if a file doesn't exist anymore
+        if (studentImage.getStudentImageCollectionEvent() == null){
+            studentImageDao.delete(studentImage);
+            Log.i(getClass().getName(), "StudentImage with the id " + studentImage.getId() + " has been deleted because the StudentImageCollectionEvent doesn't exist.");
+            return null;
+        } else if (!studentImageFile.exists()){
+            // Delete all StudentImages and StudentImageFeatures which have already been extracted for this StudentImageCollectionEvent
+            List<StudentImage> studentImagesToDelete = studentImageDao.queryBuilder()
+                    .where(StudentImageDao.Properties.StudentImageCollectionEventId.eq(studentImage.getStudentImageCollectionEventId()))
+                    .where(StudentImageDao.Properties.StudentImageFeatureId.notEq(0))
+                    .list();
+            for (StudentImage studentImageToDelete : studentImagesToDelete){
+                studentImageDao.delete(studentImageToDelete);
+                Log.i(getClass().getName(), "StudentImage with the id " + studentImageToDelete.getId() + " has been deleted because the file " + studentImage.getImageFileUrl() + " doesn't exist.");
+                studentImageFeatureDao.delete(studentImageToDelete.getStudentImageFeature());
+                Log.i(getClass().getName(), "StudentImageFeature with the id " + studentImageToDelete.getStudentImageFeatureId() + " has been deleted because the file " + studentImage.getImageFileUrl() + " doesn't exist.");
+            }
+            // Delete the StudentImageCollectionEvent
+            studentImageCollectionEventDao.delete(studentImage.getStudentImageCollectionEvent());
+            Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted because the file " + studentImage.getImageFileUrl() + " doesn't exist.");
+            // Delete the StudentImage, where the file doesn't exist anymore
+            studentImageDao.delete(studentImage);
+            Log.i(getClass().getName(), "StudentImage with the id " + studentImage.getId() + " has been deleted because the file " + studentImage.getImageFileUrl() + " doesn't exist.");
+            return null;
+        }
         // Load image into OpenCV Mat object
         Mat img = Imgcodecs.imread(studentImage.getImageFileUrl());
         Log.i(getClass().getName(), "StudentImage has been loaded from file " + studentImage.getImageFileUrl());
