@@ -7,7 +7,9 @@ import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
+import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.StudentImageCollectionEvent;
@@ -15,6 +17,7 @@ import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -44,6 +47,7 @@ public class TrainingHelper {
     private StudentImageDao studentImageDao;
     private StudentImageFeatureDao studentImageFeatureDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
+    private StudentDao studentDao;
     private SupportVectorMachine svm;
     File svmTrainingFile;
     File svmTrainingModelFile;
@@ -62,6 +66,7 @@ public class TrainingHelper {
         studentImageDao = daoSession.getStudentImageDao();
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+        studentDao = daoSession.getStudentDao();
         svmTrainingFile = new File(AiHelper.getSvmDirectory(), "training");
         svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
         File svmPredictionFile = new File(AiHelper.getSvmDirectory(), "prediction");
@@ -202,6 +207,23 @@ public class TrainingHelper {
             Log.i(getClass().getName(), "Classifier training has started.");
             svm.train("-t 0 ");
             if (checkClassifierTrainingResult()){
+                for (StudentImage studentImage : studentImages){
+                    StudentImageCollectionEvent studentImageCollectionEvent = studentImage.getStudentImageCollectionEvent();
+                    if (!studentImageCollectionEvent.getSvmTrainingExecuted()){
+                        // Create new Student
+                        Student student = new Student();
+                        student.setUniqueId(StudentHelper.generateNextUniqueId(context, studentDao));
+                        student.setAvatar(studentImage);
+                        student.setTimeCreated(Calendar.getInstance());
+                        studentDao.insert(student);
+                        Log.i(getClass().getName(), "Student with Id " + student.getId() + " and uniqueId " + student.getUniqueId() + " has been created.");
+                        // Add Student to StudentImageCollectionEvent
+                        studentImageCollectionEvent.setStudent(student);
+                        studentImageCollectionEvent.setSvmTrainingExecuted(true);
+                        studentImageCollectionEventDao.update(studentImageCollectionEvent);
+                        Log.i(getClass().getName(), "StudentImageCollectionEvent with Id " + studentImageCollectionEvent.getId() + " has been trained in classifier");
+                    }
+                }
                 Log.i(getClass().getName(), "Classifier training has finished succuessfully.");
             } else {
                 Log.e(getClass().getName(), "Classifier training has failed.");
