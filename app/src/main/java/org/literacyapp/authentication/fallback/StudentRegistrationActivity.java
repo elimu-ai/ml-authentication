@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,8 +18,19 @@ import android.widget.ImageView;
 
 import com.skyfishjy.library.RippleBackground;
 
+import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.model.StudentImage;
+import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
+import org.literacyapp.util.MultimediaHelper;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Calendar;
 
 public class StudentRegistrationActivity extends AppCompatActivity {
 
@@ -33,6 +45,8 @@ public class StudentRegistrationActivity extends AppCompatActivity {
     private Bitmap imageBitmap;
 
     private ImageView checkmarkImageView;
+
+    private StudentImageDao studentImageDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +72,9 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 }
             }
         });
+
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
+        studentImageDao = literacyApplication.getDaoSession().getStudentImageDao();
     }
 
     @Override
@@ -66,8 +83,12 @@ public class StudentRegistrationActivity extends AppCompatActivity {
         super.onStart();
 
         if (imageBitmap == null) {
-
-            MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_registration);
+            cameraButton.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_registration);
+                }
+            }, 1000);
 
             // Play an animation to indicate that the cameraButton should be pressed
             cameraButton.postDelayed(new Runnable() {
@@ -98,7 +119,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                         }
                     }, 600);
                 }
-            }, 4000);
+            }, 5000);
         } else {
             // Replace camera button with image thumbnail
             cameraButton.setVisibility(View.GONE);
@@ -147,11 +168,40 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
         if ((requestCode == REQUEST_IMAGE_CAPTURE) && (resultCode == RESULT_OK)) {
             Bundle extras = data.getExtras();
+            // 180x135px
             imageBitmap = (Bitmap) extras.get("data");
             // TODO: detect face(s) in image
             thumbnailImageView.setImageBitmap(imageBitmap);
 
-            // TODO: store image on SD card
+            // Store image on SD card
+            String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
+            String imageFilePath = MultimediaHelper.getStudentThumbnailDirectory() + "/" + DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".png";
+            Log.i(getClass().getName(), "Storing image at " + imageFilePath);
+            File scaledScreenshotFile = new File(imageFilePath);
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(scaledScreenshotFile);
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                fileOutputStream.close();
+
+                // Store Student in database
+                // TODO
+
+                // Store StudentImageCollection event in database
+                // TODO
+
+                // Store StudentImage in database
+                StudentImage studentImage = new StudentImage();
+                studentImage.setImageFileUrl(imageFilePath);
+                studentImage.setTimeCollected(Calendar.getInstance());
+//                studentImage.setStudentImageCollectionEvent();
+                Log.i(getClass().getName(), "Storing StudentImage in database");
+                studentImageDao.insert(studentImage);
+                Log.i(getClass().getName(), "StudentImage stored in database with id " + studentImage.getId());
+            } catch (FileNotFoundException e) {
+                Log.e(getClass().getName(), null, e);
+            } catch (IOException e) {
+                Log.e(getClass().getName(), null, e);
+            }
         }
     }
 }

@@ -90,7 +90,7 @@ public class VideosActivity extends AppCompatActivity {
         for (final Video video : videos) {
             View videoView = LayoutInflater.from(this).inflate(R.layout.content_videos_video_view, videoGridLayout, false);
 
-            File videoThumbnailFile = MultimediaHelper.getThumbnail(video);
+            File videoThumbnailFile = MultimediaHelper.getVideoThumbnail(video);
             if (videoThumbnailFile.exists()) {
                 ImageView videoImageView = (ImageView) videoView.findViewById(R.id.videoImageView);
                 Bitmap bitmap = BitmapFactory.decodeFile(videoThumbnailFile.getAbsolutePath());

@@ -8,6 +8,9 @@ import org.literacyapp.model.content.multimedia.Video;
 
 import java.io.File;
 
+/**
+ * Helper class for determining folder paths of multimedia content.
+ */
 public class MultimediaHelper {
 
     public static File getMultimediaDirectory() {
@@ -42,6 +45,8 @@ public class MultimediaHelper {
         return videoDirectory;
     }
 
+    // TODO: move to separate class
+    @Deprecated
     public static File getStudentImageDirectory() {
         File studentImageDirectory = new File(getMultimediaDirectory(), "studentImage");
         if (!studentImageDirectory.exists()) {
@@ -50,6 +55,18 @@ public class MultimediaHelper {
         return studentImageDirectory;
     }
 
+    // TODO: move to separate class
+    @Deprecated
+    public static File getStudentThumbnailDirectory() {
+        File studentThumbnailDirectory = new File(getMultimediaDirectory(), "studentThumbnail");
+        if (!studentThumbnailDirectory.exists()) {
+            studentThumbnailDirectory.mkdir();
+        }
+        return studentThumbnailDirectory;
+    }
+
+    // TODO: move to separate class
+    @Deprecated
     public static File getTestImageDirectory() {
         File testImageDirectory = new File(getMultimediaDirectory(), "testImage");
         if (!testImageDirectory.exists()) {
@@ -97,7 +114,7 @@ public class MultimediaHelper {
         return file;
     }
 
-    public static File getThumbnail(Video video) {
+    public static File getVideoThumbnail(Video video) {
         File file = null;
 
         if (video == null) {
