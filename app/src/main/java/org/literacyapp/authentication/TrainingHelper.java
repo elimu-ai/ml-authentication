@@ -213,7 +213,6 @@ public class TrainingHelper {
         boolean success = true;
         svmArchiveFolderWithTimestamp = new File(AiHelper.getSvmArchiveDirectory().getAbsolutePath(), Long.toString(new Date().getTime()));
         Log.i(getClass().getName(), "Create archive directory " + svmArchiveFolderWithTimestamp.getAbsolutePath());
-        Debug.waitForDebugger();
         svmArchiveFolderWithTimestamp.mkdir();
         success = success && svmTrainingFile.renameTo(new File(svmArchiveFolderWithTimestamp, svmTrainingFile.getName()));
         success = success && svmTrainingModelFile.renameTo(new File(svmArchiveFolderWithTimestamp, svmTrainingModelFile.getName()));
