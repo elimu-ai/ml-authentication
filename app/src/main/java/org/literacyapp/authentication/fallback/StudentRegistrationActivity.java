@@ -76,6 +76,13 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+                    cameraButton.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_registration_take_a_picture);
+                        }
+                    }, 1000);
                 }
             }
         });
@@ -149,7 +156,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                     Drawable drawable = checkmarkImageView.getDrawable();
                     ((Animatable) drawable).start();
 
-                    MediaPlayerHelper.play(getApplicationContext(), R.raw.tada);
+                    MediaPlayerHelper.play(getApplicationContext(), R.raw.level_up);
 
                     new Handler().postDelayed(new Runnable() {
                         @Override

@@ -1,5 +1,7 @@
 package org.literacyapp.authentication.fallback;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +18,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.model.Student;
+import org.literacyapp.util.MediaPlayerHelper;
 
 import java.io.File;
 import java.util.List;
@@ -37,18 +40,6 @@ public class StudentSelectionActivity extends AppCompatActivity {
         studentDao = literacyApplication.getDaoSession().getStudentDao();
 
         studentSelectionGridLayout = (GridLayout) findViewById(R.id.studentSelectionGridLayout);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(getClass().getName(), "fab onClick");
-
-                Intent intent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
     }
 
     @Override
@@ -82,5 +73,55 @@ public class StudentSelectionActivity extends AppCompatActivity {
 
             studentSelectionGridLayout.addView(studentView);
         }
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(getClass().getName(), "fab onClick");
+
+                Intent intent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        fab.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_selection_can_you_find_yourself);
+
+                fab.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_selection_cannot);
+
+                        fab.setVisibility(View.VISIBLE);
+                        fab.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Animate button to indicate that it can be pressed
+                                final long duration = 300;
+
+                                final ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(fab, View.SCALE_X, 1f, 1.2f, 1f);
+                                scaleXAnimator.setDuration(duration);
+                                scaleXAnimator.setRepeatCount(1);
+
+                                final ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(fab, View.SCALE_Y, 1f, 1.2f, 1f);
+                                scaleYAnimator.setDuration(duration);
+                                scaleYAnimator.setRepeatCount(1);
+
+                                scaleXAnimator.start();
+                                scaleYAnimator.start();
+
+                                final AnimatorSet animatorSet = new AnimatorSet();
+                                animatorSet.play(scaleXAnimator).with(scaleYAnimator);
+                                animatorSet.start();
+                            }
+                        }, 4000);
+                    }
+                }, 5000);
+            }
+        }, 2000);
     }
 }
