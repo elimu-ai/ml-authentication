@@ -2,6 +2,7 @@ package org.literacyapp.authentication;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
@@ -63,12 +64,14 @@ public class TrainingHelper {
                 .list();
         Log.i(getClass().getName(), "Number of StudentImages, where the features haven't been extracted yet: " + studentImageList.size());
         TensorFlow tensorFlow = getInitializedTensorFlow();
-        for(StudentImage studentImage : studentImageList){
-            String svmVector = getSvmVector(tensorFlow, studentImage);
-            if (svmVector != null){
-                storeStudentImageFeature(studentImage, svmVector);
+        if (tensorFlow != null){
+            for(StudentImage studentImage : studentImageList){
+                String svmVector = getSvmVector(tensorFlow, studentImage);
+                if (svmVector != null){
+                    storeStudentImageFeature(studentImage, svmVector);
+                }
+                // TODO housekeeping job #226
             }
-            // TODO housekeeping job #226
         }
     }
 
@@ -109,13 +112,19 @@ public class TrainingHelper {
      * @return
      */
     private TensorFlow getInitializedTensorFlow(){
-        String model = AiHelper.getModelDirectory() + "/vgg_faces.pb";
+        File modelFile = new File(AiHelper.getModelDirectory(), "vgg_faces.pb");
+        if (!modelFile.exists()){
+            String logMessage = "Model file: " + modelFile.getAbsolutePath() + " doesn't exist. Please copy it manually";
+            Log.e(getClass().getName(), logMessage);
+            Toast.makeText(context, logMessage, Toast.LENGTH_LONG).show();
+            return null;
+        }
         int inputSize = 224;
         int outputSize = 4096;
         int imageMean = 128;
         String inputLayer = "Placeholder";
         String outputLayer = "fc7/fc7";
-        TensorFlow tensorFlow = new TensorFlow(context, inputSize, imageMean, outputSize, inputLayer, outputLayer, model);
+        TensorFlow tensorFlow = new TensorFlow(context, inputSize, imageMean, outputSize, inputLayer, outputLayer, modelFile.getAbsolutePath());
         return tensorFlow;
     }
 }
