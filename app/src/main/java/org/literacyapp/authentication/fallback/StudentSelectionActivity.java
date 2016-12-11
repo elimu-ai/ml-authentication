@@ -19,6 +19,7 @@ import org.literacyapp.R;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.util.MediaPlayerHelper;
+import org.literacyapp.util.StudentUpdateHelper;
 
 import java.io.File;
 import java.util.List;
@@ -65,7 +66,8 @@ public class StudentSelectionActivity extends AppCompatActivity {
                     Log.i(getClass().getName(), "onClick");
 
                     Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
-                    // TODO: personalize apps/content according to Student's level
+                    // Personalize apps/content according to Student's level
+                    new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
 
                     finish();
                 }

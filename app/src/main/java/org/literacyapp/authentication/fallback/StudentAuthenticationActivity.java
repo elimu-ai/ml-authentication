@@ -74,6 +74,7 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
                 Student student = new Student();
                 student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + i);
                 Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
+                student.setTimeCreated(Calendar.getInstance());
                 student.setAvatar(studentImage);
                 studentDao.insert(student);
                 Log.i(getClass().getName(), "Student stored in database with id " + student.getId());

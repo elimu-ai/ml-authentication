@@ -211,6 +211,7 @@ public class GsonToGreenDaoConverter {
             Student student = new Student();
 
             student.setUniqueId(studentGson.getUniqueId());
+            student.setTimeCreated(studentGson.getTimeCreated());
 
             // Devices are set during download from server
 
