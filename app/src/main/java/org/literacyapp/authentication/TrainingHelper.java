@@ -6,8 +6,10 @@ import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
@@ -36,6 +38,7 @@ public class TrainingHelper {
     private DaoSession daoSession;
     private StudentImageDao studentImageDao;
     private StudentImageFeatureDao studentImageFeatureDao;
+    private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private SupportVectorMachine svm;
 
     static {
@@ -50,6 +53,7 @@ public class TrainingHelper {
         daoSession = literacyApplication.getDaoSession();
         studentImageDao = daoSession.getStudentImageDao();
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
+        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         svm = new SupportVectorMachine(context, Recognition.TRAINING);
     }
 
@@ -66,11 +70,15 @@ public class TrainingHelper {
         TensorFlow tensorFlow = getInitializedTensorFlow();
         if (tensorFlow != null){
             for(StudentImage studentImage : studentImageList){
-                String svmVector = getSvmVector(tensorFlow, studentImage);
-                if (svmVector != null){
-                    storeStudentImageFeature(studentImage, svmVector);
+                if (isStudentImageValid(studentImage)){
+                    String svmVector = getSvmVector(tensorFlow, studentImage);
+                    if (svmVector != null){
+                        storeStudentImageFeature(studentImage, svmVector);
+                    } else {
+                        Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted recursively because the feature extraction failed.");
+                        deleteStudentImagesRecursive(studentImage, "the feature extraction failed.");
+                    }
                 }
-                // TODO housekeeping job #226
             }
         }
     }
@@ -126,5 +134,41 @@ public class TrainingHelper {
         String outputLayer = "fc7/fc7";
         TensorFlow tensorFlow = new TensorFlow(context, inputSize, imageMean, outputSize, inputLayer, outputLayer, modelFile.getAbsolutePath());
         return tensorFlow;
+    }
+
+    private boolean isStudentImageValid(StudentImage studentImage){
+        boolean valid = true;
+        File studentImageFile = new File(studentImage.getImageFileUrl());
+        if (studentImage.getStudentImageCollectionEvent() == null){
+            studentImageDao.delete(studentImage);
+            Log.i(getClass().getName(), "StudentImage with the id " + studentImage.getId() + " has been deleted.");
+            valid = false;
+        } else if (!studentImageFile.exists()){
+            Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted recursively because the file " + studentImage.getImageFileUrl() + " doesn't exist.");
+            deleteStudentImagesRecursive(studentImage, "the file " + studentImage.getImageFileUrl() + " doesn't exist.");
+            valid = false;
+        }
+        return valid;
+    }
+
+    // Delete StudentImageCollectionEvent and all StudentImages if a file doesn't exist anymore or the feature extraction failed for another reason
+    private void deleteStudentImagesRecursive(StudentImage studentImage, String reason){
+        // Delete all StudentImages and StudentImageFeatures which have already been extracted for this StudentImageCollectionEvent
+        List<StudentImage> studentImagesToDelete = studentImageDao.queryBuilder()
+                .where(StudentImageDao.Properties.StudentImageCollectionEventId.eq(studentImage.getStudentImageCollectionEventId()))
+                .where(StudentImageDao.Properties.StudentImageFeatureId.notEq(0))
+                .list();
+        for (StudentImage studentImageToDelete : studentImagesToDelete){
+            studentImageDao.delete(studentImageToDelete);
+            Log.i(getClass().getName(), "StudentImage with the id " + studentImageToDelete.getId() + " has been deleted because " + reason);
+            studentImageFeatureDao.delete(studentImageToDelete.getStudentImageFeature());
+            Log.i(getClass().getName(), "StudentImageFeature with the id " + studentImageToDelete.getStudentImageFeatureId() + " has been deleted because " + reason);
+        }
+        // Delete the StudentImageCollectionEvent
+        studentImageCollectionEventDao.delete(studentImage.getStudentImageCollectionEvent());
+        Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted " + reason);
+        // Delete the StudentImage, where the file doesn't exist anymore
+        studentImageDao.delete(studentImage);
+        Log.i(getClass().getName(), "StudentImage with the id " + studentImage.getId() + " has been deleted because " + reason);
     }
 }
