@@ -13,6 +13,7 @@ import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
+import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -22,7 +23,9 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ch.zhaw.facerecognitionlibrary.PreProcessor.StandardPostprocessing.Resize;
@@ -41,8 +44,9 @@ public class TrainingHelper {
     private StudentImageFeatureDao studentImageFeatureDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private SupportVectorMachine svm;
-    private File svmTrainingFile;
-    private File svmPredictionFile;
+    File svmTrainingFile;
+    File svmTrainingModelFile;
+    File svmArchiveFolderWithTimestamp;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -58,7 +62,8 @@ public class TrainingHelper {
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         svmTrainingFile = new File(AiHelper.getSvmDirectory(), "training");
-        svmPredictionFile = new File(AiHelper.getSvmDirectory(), "prediction");
+        svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
+        File svmPredictionFile = new File(AiHelper.getSvmDirectory(), "prediction");
         svm = new SupportVectorMachine(svmTrainingFile, svmPredictionFile);
     }
 
@@ -72,16 +77,18 @@ public class TrainingHelper {
                 .where(StudentImageDao.Properties.StudentImageFeatureId.eq(0))
                 .list();
         Log.i(getClass().getName(), "Number of StudentImages, where the features haven't been extracted yet: " + studentImageList.size());
-        TensorFlow tensorFlow = getInitializedTensorFlow();
-        if (tensorFlow != null){
-            for(StudentImage studentImage : studentImageList){
-                if (isStudentImageValid(studentImage)){
-                    String svmVector = getSvmVector(tensorFlow, studentImage);
-                    if (svmVector != null){
-                        storeStudentImageFeature(studentImage, svmVector);
-                    } else {
-                        Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted recursively because the feature extraction failed.");
-                        deleteStudentImagesRecursive(studentImage, "the feature extraction failed.");
+        if (studentImageList.size() > 0){
+            TensorFlow tensorFlow = getInitializedTensorFlow();
+            if (tensorFlow != null){
+                for(StudentImage studentImage : studentImageList){
+                    if (isStudentImageValid(studentImage)){
+                        String svmVector = getSvmVector(tensorFlow, studentImage);
+                        if (svmVector != null){
+                            storeStudentImageFeature(studentImage, svmVector);
+                        } else {
+                            Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted recursively because the feature extraction failed.");
+                            deleteStudentImagesRecursive(studentImage, "the feature extraction failed.");
+                        }
                     }
                 }
             }
@@ -186,10 +193,38 @@ public class TrainingHelper {
             for (StudentImage studentImage : studentImages){
                 svm.addImage(studentImage.getStudentImageFeature().getSvmVector(), Long.toString(studentImage.getStudentImageCollectionEventId()));
             }
+            if (archiveClassifierFiles()){
+                Log.i(getClass().getName(), "Classifier files have been archived.");
+            } else {
+                Log.e(getClass().getName(), "Failed to archive classifier files.");
+            }
             Log.i(getClass().getName(), "Classifier training has started.");
             svm.train("-t 0 ");
-            File svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
-            Log.i(getClass().getName(), "Classifier training has finished successfully.");
+            if (checkClassifierTrainingResult()){
+                Log.i(getClass().getName(), "Classifier training has finished succuessfully.");
+            } else {
+                Log.e(getClass().getName(), "Classifier training has failed.");
+            }
+        }
+    }
+
+    private boolean archiveClassifierFiles(){
+        boolean success = true;
+        svmArchiveFolderWithTimestamp = new File(AiHelper.getSvmDirectory().getAbsolutePath(), Long.toString(new Date().getTime()));
+        success = success && svmTrainingFile.renameTo(new File(svmArchiveFolderWithTimestamp, svmTrainingFile.getName()));
+        success = success && svmTrainingModelFile.renameTo(new File(svmArchiveFolderWithTimestamp, svmTrainingModelFile.getName()));
+        return success;
+    }
+
+    private boolean checkClassifierTrainingResult(){
+        if (svmTrainingFile.exists() && svmTrainingModelFile.exists()){
+            return true;
+        } else {
+            // Move the newest archive files back to the main folder
+            svmTrainingFile.renameTo(new File(AiHelper.getSvmDirectory(),svmTrainingFile.getName()));
+            svmTrainingModelFile.renameTo(new File(AiHelper.getSvmDirectory(),svmTrainingModelFile.getName()));
+            svmArchiveFolderWithTimestamp.delete();
+            return false;
         }
     }
 }
