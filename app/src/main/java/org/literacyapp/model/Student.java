@@ -35,6 +35,7 @@ public class Student {
 
     private long studentImageId;
 
+    @NotNull
     @ToOne(joinProperty = "studentImageId")
     private StudentImage avatar;
 
