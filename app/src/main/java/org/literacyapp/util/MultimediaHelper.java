@@ -7,6 +7,9 @@ import org.literacyapp.model.content.multimedia.Image;
 import org.literacyapp.model.content.multimedia.Video;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class MultimediaHelper {
 
@@ -108,5 +111,13 @@ public class MultimediaHelper {
         file = new File(videoDirectory, video.getId() + "_r" + video.getRevisionNumber() + ".png");
 
         return file;
+    }
+
+    public static void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
     }
 }
