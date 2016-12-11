@@ -216,8 +216,8 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
                 // Store Student in database
                 Student student = new Student();
-                long longValue = studentDao.loadAll().size() + 1; // TODO: improve
-                student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + longValue);
+                String uniqueId = StudentHelper.generateNextUniqueId(getApplicationContext(), studentDao);
+                student.setUniqueId(uniqueId);
                 Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                 student.setTimeCreated(Calendar.getInstance());
                 student.setAvatar(studentImage);

@@ -1,6 +1,10 @@
 package org.literacyapp.util;
 
+import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
+
+import org.literacyapp.dao.StudentDao;
 
 import java.io.File;
 
@@ -16,6 +20,20 @@ public class StudentHelper {
         String[] uniqueIdArray = uniqueId.split("_");
         Long longId = Long.valueOf(uniqueIdArray[1]);
         return longId;
+    }
+
+    public static String generateNextUniqueId(Context context, StudentDao studentDao) {
+        Log.i(StudentHelper.class.getName(), "generateNextUniqueId");
+
+        String deviceId = DeviceInfoHelper.getDeviceId(context);
+        Log.i(StudentHelper.class.getName(), "Looking up the number of Students registered on device " + deviceId);
+        long count = studentDao.queryBuilder()
+                .where(StudentDao.Properties.UniqueId.like(deviceId + "%"))
+                .count();
+        Log.i(StudentHelper.class.getName(), "count: " + count);
+        String uniqueId = deviceId + "_" + (count + 1);
+        Log.i(StudentHelper.class.getName(), "uniqueId: " + uniqueId);
+        return uniqueId;
     }
 
     public static File getStudentDirectory() {
