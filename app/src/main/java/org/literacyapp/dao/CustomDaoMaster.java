@@ -106,6 +106,12 @@ public class CustomDaoMaster extends DaoMaster {
                 );
             }
 
+            if (oldVersion < 1003000) {
+                Log.w("greenDAO", "Dropping all tables");
+                dropAllTables(db, true);
+                onCreate(db);
+            }
+
             // If tables and/or columns have been renamed, add custom script.
 //            db.execSQL("...");
         }
