@@ -12,6 +12,8 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 
+import java.util.Calendar;
+import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.model.StudentImage;
 
 import org.literacyapp.model.Student;
@@ -31,11 +33,13 @@ public class StudentDao extends AbstractDao<Student, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property UniqueId = new Property(1, String.class, "uniqueId", false, "UNIQUE_ID");
-        public final static Property StudentImageId = new Property(2, long.class, "studentImageId", false, "STUDENT_IMAGE_ID");
+        public final static Property TimeCreated = new Property(2, long.class, "timeCreated", false, "TIME_CREATED");
+        public final static Property StudentImageId = new Property(3, long.class, "studentImageId", false, "STUDENT_IMAGE_ID");
     }
 
     private DaoSession daoSession;
 
+    private final CalendarConverter timeCreatedConverter = new CalendarConverter();
 
     public StudentDao(DaoConfig config) {
         super(config);
@@ -52,7 +56,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"UNIQUE_ID\" TEXT NOT NULL UNIQUE ," + // 1: uniqueId
-                "\"STUDENT_IMAGE_ID\" INTEGER NOT NULL );"); // 2: studentImageId
+                "\"TIME_CREATED\" INTEGER NOT NULL ," + // 2: timeCreated
+                "\"STUDENT_IMAGE_ID\" INTEGER NOT NULL );"); // 3: studentImageId
     }
 
     /** Drops the underlying database table. */
@@ -70,7 +75,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getUniqueId());
-        stmt.bindLong(3, entity.getStudentImageId());
+        stmt.bindLong(3, timeCreatedConverter.convertToDatabaseValue(entity.getTimeCreated()));
+        stmt.bindLong(4, entity.getStudentImageId());
     }
 
     @Override
@@ -82,7 +88,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getUniqueId());
-        stmt.bindLong(3, entity.getStudentImageId());
+        stmt.bindLong(3, timeCreatedConverter.convertToDatabaseValue(entity.getTimeCreated()));
+        stmt.bindLong(4, entity.getStudentImageId());
     }
 
     @Override
@@ -101,7 +108,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
         Student entity = new Student( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.getString(offset + 1), // uniqueId
-            cursor.getLong(offset + 2) // studentImageId
+            timeCreatedConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // timeCreated
+            cursor.getLong(offset + 3) // studentImageId
         );
         return entity;
     }
@@ -110,7 +118,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
     public void readEntity(Cursor cursor, Student entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUniqueId(cursor.getString(offset + 1));
-        entity.setStudentImageId(cursor.getLong(offset + 2));
+        entity.setTimeCreated(timeCreatedConverter.convertToEntityProperty(cursor.getLong(offset + 2)));
+        entity.setStudentImageId(cursor.getLong(offset + 3));
      }
     
     @Override

@@ -1,6 +1,7 @@
 package org.literacyapp.model;
 
 import org.greenrobot.greendao.DaoException;
+import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -13,7 +14,9 @@ import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.dao.converter.CalendarConverter;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -33,6 +36,10 @@ public class Student {
     @JoinEntity(entity = JoinStudentsWithDevices.class, sourceProperty = "studentId", targetProperty = "deviceId")
     private List<Device> devices;
 
+    @NotNull
+    @Convert(converter = CalendarConverter.class, columnType = Long.class)
+    private Calendar timeCreated;
+
     private long studentImageId;
 
     @NotNull
@@ -47,10 +54,11 @@ public class Student {
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 969166306)
-    public Student(Long id, @NotNull String uniqueId, long studentImageId) {
+    @Generated(hash = 228789159)
+    public Student(Long id, @NotNull String uniqueId, @NotNull Calendar timeCreated, long studentImageId) {
         this.id = id;
         this.uniqueId = uniqueId;
+        this.timeCreated = timeCreated;
         this.studentImageId = studentImageId;
     }
 
@@ -72,6 +80,22 @@ public class Student {
 
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    public Calendar getTimeCreated() {
+        return this.timeCreated;
+    }
+
+    public void setTimeCreated(Calendar timeCreated) {
+        this.timeCreated = timeCreated;
+    }
+
+    public long getStudentImageId() {
+        return this.studentImageId;
+    }
+
+    public void setStudentImageId(long studentImageId) {
+        this.studentImageId = studentImageId;
     }
 
     @Generated(hash = 1907406681)
@@ -179,13 +203,5 @@ public class Student {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getStudentDao() : null;
-    }
-
-    public long getStudentImageId() {
-        return this.studentImageId;
-    }
-
-    public void setStudentImageId(long studentImageId) {
-        this.studentImageId = studentImageId;
     }
 }

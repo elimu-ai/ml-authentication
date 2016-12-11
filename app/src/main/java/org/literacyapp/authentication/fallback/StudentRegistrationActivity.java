@@ -219,6 +219,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 long longValue = studentDao.loadAll().size() + 1; // TODO: improve
                 student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + longValue);
                 Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
+                student.setTimeCreated(Calendar.getInstance());
                 student.setAvatar(studentImage);
                 Log.i(getClass().getName(), "Storing Student in database");
                 studentDao.insert(student);
