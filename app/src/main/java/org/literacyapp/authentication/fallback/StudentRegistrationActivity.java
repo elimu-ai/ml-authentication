@@ -32,6 +32,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
 
+/**
+ * Handles creation of a new student (image + storage in database).
+ */
 public class StudentRegistrationActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -168,8 +171,8 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
         if ((requestCode == REQUEST_IMAGE_CAPTURE) && (resultCode == RESULT_OK)) {
             Bundle extras = data.getExtras();
-            // 180x135px
-            imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = (Bitmap) extras.get("data"); // 180x135px
+            // TODO: get full-size image
             // TODO: detect face(s) in image
             thumbnailImageView.setImageBitmap(imageBitmap);
 
