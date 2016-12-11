@@ -11,7 +11,6 @@ import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
-import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.StudentHelper;
 
 import java.io.File;
@@ -72,7 +71,8 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
 
                 Log.i(getClass().getName(), "Storing test Student in database");
                 Student student = new Student();
-                student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + i);
+                String uniqueId = StudentHelper.generateNextUniqueId(getApplicationContext(), studentDao);
+                student.setUniqueId(uniqueId);
                 Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                 student.setTimeCreated(Calendar.getInstance());
                 student.setAvatar(studentImage);
