@@ -1,0 +1,3 @@
+[submodule "facerecognitionlibrary"]
+	path = facerecognitionlibrary
+	url = https://github.com/Qualeams/Android-Face-Recognition-with-Deep-Learning-Library.git
