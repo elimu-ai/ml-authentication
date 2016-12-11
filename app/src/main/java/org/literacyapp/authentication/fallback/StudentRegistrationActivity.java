@@ -20,7 +20,9 @@ import com.skyfishjy.library.RippleBackground;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
@@ -51,6 +53,8 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
     private StudentImageDao studentImageDao;
 
+    private StudentDao studentDao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreate");
@@ -78,6 +82,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
         studentImageDao = literacyApplication.getDaoSession().getStudentImageDao();
+        studentDao = literacyApplication.getDaoSession().getStudentDao();
     }
 
     @Override
@@ -186,9 +191,6 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                 fileOutputStream.close();
 
-                // Store Student in database
-                // TODO
-
                 // Store StudentImageCollection event in database
                 // TODO
 
@@ -200,6 +202,18 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 Log.i(getClass().getName(), "Storing StudentImage in database");
                 studentImageDao.insert(studentImage);
                 Log.i(getClass().getName(), "StudentImage stored in database with id " + studentImage.getId());
+
+                // Store Student in database
+                Student student = new Student();
+                long longValue = studentDao.loadAll().size() + 1; // TODO: improve
+                student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + longValue);
+                Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
+                student.setAvatar(studentImage);
+                Log.i(getClass().getName(), "Storing Student in database");
+                studentDao.insert(student);
+                Log.i(getClass().getName(), "Student stored in database with id " + student.getId());
+
+                // TODO: personalize apps/content according to Student's level
             } catch (FileNotFoundException e) {
                 Log.e(getClass().getName(), null, e);
             } catch (IOException e) {

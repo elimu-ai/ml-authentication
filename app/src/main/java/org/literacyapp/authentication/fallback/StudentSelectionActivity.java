@@ -60,11 +60,6 @@ public class StudentSelectionActivity extends AppCompatActivity {
         List<Student> students = studentDao.loadAll();
         Log.i(getClass().getName(), "students.size(): " + students.size());
         for (final Student student : students) {
-            Log.i(getClass().getName(), "student.getId(): " + student.getId());
-            Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
-            Log.i(getClass().getName(), "student.getAvatar(): " + student.getAvatar());
-            Log.i(getClass().getName(), "student.getDevices(): " + student.getDevices());
-
             View studentView = LayoutInflater.from(this).inflate(R.layout.content_student_selection_view, studentSelectionGridLayout, false);
 
             File studentAvatar = new File(student.getAvatar().getImageFileUrl());
@@ -77,7 +72,10 @@ public class StudentSelectionActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Log.i(getClass().getName(), "onClick");
 
-                    // TODO
+                    Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
+                    // TODO: personalize apps/content according to Student's level
+
+                    finish();
                 }
             });
 

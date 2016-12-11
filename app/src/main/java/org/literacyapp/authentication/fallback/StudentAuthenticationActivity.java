@@ -72,7 +72,8 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
 
                 Log.i(getClass().getName(), "Storing test Student in database");
                 Student student = new Student();
-                student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + " " + i);
+                student.setUniqueId(DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + i);
+                Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                 student.setAvatar(studentImage);
                 studentDao.insert(student);
                 Log.i(getClass().getName(), "Student stored in database with id " + student.getId());
