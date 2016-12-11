@@ -231,7 +231,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                 InputStream inputStream = assetManager.open("animal_template/deer.jpg");
                 OutputStream outputStream = new FileOutputStream(animalTemplateFile);
                 Log.i(getClass().getName(), "Copying overlay template to " + AiHelper.getAnimalTemplateDirectory() + "/deer.jpg");
-                copyFile(inputStream, outputStream);
+                MultimediaHelper.copyFile(inputStream, outputStream);
                 Log.i(getClass().getName(), "Overlay template has been copied successfully to " + AiHelper.getAnimalTemplateDirectory() + "/deer.jpg");
             } catch (IOException e) {
                 Log.i(getClass().getName(), "Overlay template has failed to be copied to  " + AiHelper.getAnimalTemplateDirectory() + "/deer.jpg");
@@ -263,14 +263,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         // Add overlay to frame
         Core.add(imgForeGround,imgBackGround,imgRgba);
 
-    }
-
-    private void copyFile(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int read;
-        while((read = in.read(buffer)) != -1){
-            out.write(buffer, 0, read);
-        }
     }
 
 }
