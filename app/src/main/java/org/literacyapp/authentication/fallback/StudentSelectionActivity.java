@@ -59,6 +59,7 @@ public class StudentSelectionActivity extends AppCompatActivity {
         // List existing Students
         List<Student> students = studentDao.loadAll();
         Log.i(getClass().getName(), "students.size(): " + students.size());
+        studentSelectionGridLayout.removeAllViews();
         for (final Student student : students) {
             View studentView = LayoutInflater.from(this).inflate(R.layout.content_student_selection_view, studentSelectionGridLayout, false);
 
