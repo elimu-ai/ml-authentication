@@ -224,7 +224,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
         // Create a mask of overlay and create its inverse mask also
         Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
-        Imgproc.threshold(imgMask, imgMask, 224, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(imgMask, imgMask, 250, 255, Imgproc.THRESH_BINARY_INV);
         Core.bitwise_not(imgMask,imgMask);
         Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
 
