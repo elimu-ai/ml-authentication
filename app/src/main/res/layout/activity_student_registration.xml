@@ -4,15 +4,45 @@
     android:id="@+id/activity_student_registration"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     tools:context="org.literacyapp.authentication.fallback.StudentRegistrationActivity">
 
-    <Button
-        android:id="@+id/studentRegistrationButton"
-        android:layout_width="256dp"
-        android:layout_height="256dp"
-        android:background="@drawable/button_custom"
-        android:paddingTop="64dp"
-        android:drawableTop="@drawable/ic_camera_alt_black_128dp"
-        android:drawableTint="#CCFFFFFF" />
+    <!-- RippleBackground extends RelativeLayout -->
+    <com.skyfishjy.library.RippleBackground
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/studentRegistrationRippleBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        app:rb_color="#DDD"
+        app:rb_radius="128dp"
+        app:rb_rippleAmount="1"
+        app:rb_duration="600"
+        app:rb_scale="2">
+
+        <Button
+            android:id="@+id/studentRegistrationButton"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/button_custom"
+            android:paddingTop="64dp"
+            android:drawableTop="@drawable/ic_camera_alt_black_128dp"
+            android:drawableTint="#CCFFFFFF" />
+
+        <ImageView
+            android:id="@+id/studentRegistrationImageView"
+            android:layout_width="512dp"
+            android:layout_height="512dp"
+            android:layout_centerInParent="true" />
+
+        <ImageView
+            android:id="@+id/studentRegistrationCheckmark"
+            android:visibility="gone"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/animated_checkmark"/>
+    </com.skyfishjy.library.RippleBackground>
 </RelativeLayout>
