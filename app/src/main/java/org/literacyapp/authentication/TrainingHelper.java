@@ -2,6 +2,7 @@ package org.literacyapp.authentication;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
@@ -113,7 +114,9 @@ public class TrainingHelper {
     private TensorFlow getInitializedTensorFlow(){
         File modelFile = new File(AiHelper.getModelDirectory(), "vgg_faces.pb");
         if (!modelFile.exists()){
-            Log.i(getClass().getName(), "Model file: " + modelFile.getAbsolutePath() + " doesn't exist. Please copy it manually");
+            String logMessage = "Model file: " + modelFile.getAbsolutePath() + " doesn't exist. Please copy it manually";
+            Log.e(getClass().getName(), logMessage);
+            Toast.makeText(context, logMessage, Toast.LENGTH_LONG).show();
             return null;
         }
         int inputSize = 224;
