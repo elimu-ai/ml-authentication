@@ -21,6 +21,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Calendar;
 import java.util.List;
 
@@ -40,6 +41,8 @@ public class TrainingHelper {
     private StudentImageFeatureDao studentImageFeatureDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private SupportVectorMachine svm;
+    private File svmTrainingFile;
+    private File svmPredictionFile;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -54,7 +57,9 @@ public class TrainingHelper {
         studentImageDao = daoSession.getStudentImageDao();
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
-        svm = new SupportVectorMachine(context, Recognition.TRAINING);
+        svmTrainingFile = new File(AiHelper.getSvmDirectory(), "training");
+        svmPredictionFile = new File(AiHelper.getSvmDirectory(), "prediction");
+        svm = new SupportVectorMachine(svmTrainingFile, svmPredictionFile);
     }
 
 
@@ -170,5 +175,21 @@ public class TrainingHelper {
         // Delete the StudentImage, where the file doesn't exist anymore
         studentImageDao.delete(studentImage);
         Log.i(getClass().getName(), "StudentImage with the id " + studentImage.getId() + " has been deleted because " + reason);
+    }
+
+    public void trainClassifier(){
+        // Initiate training if a StudentImageCollectionEvent has not been trained yet
+        if (studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(false)).count() > 0){
+            List<StudentImage> studentImages = studentImageDao.queryBuilder()
+                    .where(StudentImageDao.Properties.StudentImageFeatureId.notEq(0))
+                    .list();
+            for (StudentImage studentImage : studentImages){
+                svm.addImage(studentImage.getStudentImageFeature().getSvmVector(), Long.toString(studentImage.getStudentImageCollectionEventId()));
+            }
+            Log.i(getClass().getName(), "Classifier training has started.");
+            svm.train("-t 0 ");
+            File svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
+            Log.i(getClass().getName(), "Classifier training has finished successfully.");
+        }
     }
 }
