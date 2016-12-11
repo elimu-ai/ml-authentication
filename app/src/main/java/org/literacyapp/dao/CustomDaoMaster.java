@@ -107,9 +107,9 @@ public class CustomDaoMaster extends DaoMaster {
             }
 
             if (oldVersion < 1003000) {
-                DbMigrationHelper.migrate(db,
-                        StudentDao.class
-                );
+                Log.w("greenDAO", "Dropping all tables");
+                dropAllTables(db, true);
+                onCreate(db);
             }
 
             // If tables and/or columns have been renamed, add custom script.
