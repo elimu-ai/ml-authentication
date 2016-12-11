@@ -1,7 +1,5 @@
 package org.literacyapp.authentication;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +16,7 @@ import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.CameraBridgeViewBase;
@@ -30,10 +29,6 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,7 +49,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private long lastTime;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
-    private StudentDao studentDao;
     private Device device;
     private DeviceDao deviceDao;
     private Mat imgOverlay;
@@ -62,11 +56,10 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private List<Mat> studentImages;
     private List<Mat> testImages;
 
-
     // Image collection parameters
-    private static final boolean diagnoseMode = true;
-    private static final long timerDiff = 100;
-    private static final int numberOfImages = 20;
+    private static final boolean DIAGNOSE_MODE = true;
+    private static final long TIMER_DIFF = 200;
+    private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
 
     // Mat objects for overlay
@@ -106,7 +99,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
 
         // Create required DB Objects
-        studentDao = daoSession.getStudentDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
         deviceDao = daoSession.getDeviceDao();
@@ -151,7 +143,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         // Face detection
         long time = new Date().getTime();
 
-        if(lastTime + timerDiff < time){
+        if(lastTime + TIMER_DIFF < time){
 //            if (literacyApplication.TEST_MODE){
 //                testImages.add(imgCopy);
 //            }
@@ -166,12 +158,12 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                         // Name = DeviceId_CollectionEventId_ImageNumber
                         studentImages.add(img);
 
-                        if(diagnoseMode) {
+                        if(DIAGNOSE_MODE) {
                             MatOperation.drawRectangleAndLabelOnPreview(imgRgba, faces[0], "Face detected", true);
                         }
 
-                        // Stop after numberOfImages (settings option)
-                        if(imagesProcessed > numberOfImages){
+                        // Stop after NUMBER_OF_IMAGES (settings option)
+                        if(imagesProcessed > NUMBER_OF_IMAGES){
                             storeStudentImages();
 //                        if (literacyApplication.TEST_MODE){
 //                            storeTestImages();
@@ -223,27 +215,16 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     private void createOverlay() {
         Log.i(getClass().getName(), "createOverlay");
-        // Load overlay mask (to be completed...)
-        File animalTemplateFile = new File(MultimediaHelper.getImageDirectory(), "deer.jpg");
-        if (!animalTemplateFile.exists()) {
-            Log.i(getClass().getName(), "Copying overlay template to " + animalTemplateFile.getAbsolutePath());
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.deer);
-            try {
-                OutputStream outputStream = new FileOutputStream(animalTemplateFile);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                outputStream.close();
-            } catch (FileNotFoundException e) {
-                Log.e(getClass().getName(), null, e);
-            } catch (IOException e) {
-                Log.e(getClass().getName(), null, e);
-            }
-        }
-        imgOverlay = Imgcodecs.imread(animalTemplateFile.getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
+        File[] animalTemplateFiles = AiHelper.getAnimalTemplateDirectory(getApplicationContext()).listFiles();
+
+        int randomNumber = (int) (Math.random() * animalTemplateFiles.length);
+
+        imgOverlay = Imgcodecs.imread(animalTemplateFiles[randomNumber].getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
         Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
 
         // Create a mask of overlay and create its inverse mask also
         Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
-        Imgproc.threshold(imgMask, imgMask, 224, 255, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(imgMask, imgMask, 250, 255, Imgproc.THRESH_BINARY_INV);
         Core.bitwise_not(imgMask,imgMask);
         Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
 
