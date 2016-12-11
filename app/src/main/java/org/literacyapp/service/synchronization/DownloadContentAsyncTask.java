@@ -474,7 +474,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         }
                     }
 
-                    File thumbnailFile = MultimediaHelper.getThumbnail(video);
+                    File thumbnailFile = MultimediaHelper.getVideoThumbnail(video);
                     Log.i(getClass().getName(), "thumbnailFile: " + thumbnailFile);
                     if (!thumbnailFile.exists()) {
                         // Download bytes

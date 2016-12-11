@@ -25,7 +25,7 @@ public class ScreenOnReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.i(getClass().getName(), "onReceive");
 
-        // For some reason, this receiver triggers when the screen is turned _off_ directly after booting the device.
+        // For some reason, this receiver triggers when the screen is turned _off_ for the first time after booting the device.
         // Detect if screen is active
         DisplayManager displayManager = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
         for (Display display : displayManager.getDisplays()) {

@@ -10,7 +10,6 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
-import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
@@ -18,7 +17,7 @@ import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.DeviceInfoHelper;
-import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
@@ -200,7 +199,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         for(int i=0; i<studentImages.size(); i++){
             MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
             FileHelper fileHelper = new FileHelper();
-            String wholeFolderPath = MultimediaHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
+            String wholeFolderPath = StudentHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
             new File(wholeFolderPath).mkdirs();
             fileHelper.saveMatToImage(matName, wholeFolderPath + "/");
 
