@@ -1,7 +1,6 @@
 package org.literacyapp.service.synchronization;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -30,7 +29,6 @@ import org.literacyapp.dao.LetterDao;
 import org.literacyapp.dao.NumberDao;
 import org.literacyapp.dao.VideoDao;
 import org.literacyapp.dao.WordDao;
-import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.content.Allophone;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.Number;
@@ -47,8 +45,6 @@ import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
 import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.model.content.multimedia.JoinVideosWithWords;
 import org.literacyapp.model.content.multimedia.Video;
-import org.literacyapp.model.enums.content.LiteracySkill;
-import org.literacyapp.model.enums.content.NumeracySkill;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
@@ -67,8 +63,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.literacyapp.dao.GsonToGreenDaoConverter.getLetter;
 
@@ -564,48 +558,5 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
 
         Log.i(getClass().getName(), "result: " + result);
 //        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
-
-
-        Log.i(getClass().getName(), "Notifying external applications about updated content via broadcast");
-        CurriculumHelper curriculumHelper = new CurriculumHelper(context);
-
-        List<Letter> availableLetters = curriculumHelper.getAvailableLetters(null);
-        ArrayList<String> availableLettersStringArrayList = new ArrayList<>();
-        for (Letter letter : availableLetters) {
-            availableLettersStringArrayList.add(letter.getText());
-        }
-        Log.i(getClass().getName(), "availableLettersStringArrayList: " + availableLettersStringArrayList);
-
-        List<Number> availableNumbers = curriculumHelper.getAvailableNumbers(null);
-        ArrayList<String> availableNumbersStringArrayList = new ArrayList<>();
-        for (Number number : availableNumbers) {
-            availableNumbersStringArrayList.add(number.getValue().toString());
-        }
-        Log.i(getClass().getName(), "availableNumbersStringArrayList: " + availableNumbersStringArrayList);
-
-        List<LiteracySkill> availableLiteracySkills = curriculumHelper.getAvailableLiteracySkills(null);
-        ArrayList<String> availableLiteracySkillsStringArrayList = new ArrayList<>();
-        for (LiteracySkill literacySkill : availableLiteracySkills) {
-            availableLiteracySkillsStringArrayList.add(literacySkill.toString());
-        }
-        Log.i(getClass().getName(), "availableLiteracySkillsStringArrayList: " + availableLiteracySkillsStringArrayList);
-
-        List<NumeracySkill> availableNumeracySkills = curriculumHelper.getAvailableNumeracySkills(null);
-        ArrayList<String> availableNumeracySkillsStringArrayList = new ArrayList<>();
-        for (NumeracySkill numeracySkill : availableNumeracySkills) {
-            availableNumeracySkillsStringArrayList.add(numeracySkill.toString());
-        }
-        Log.i(getClass().getName(), "availableNumeracySkillsStringArrayList: " + availableNumeracySkillsStringArrayList);
-
-        Intent intent = new Intent();
-        intent.setPackage("org.literacyapp.ui");
-        intent.setAction("literacyapp.intent.action.STUDENT_UPDATED");
-        intent.putExtra("packageName", context.getPackageName());
-        intent.putStringArrayListExtra("availableLetters", availableLettersStringArrayList);
-        intent.putStringArrayListExtra("availableNumbers", availableNumbersStringArrayList);
-        intent.putStringArrayListExtra("availableLiteracySkills", availableLiteracySkillsStringArrayList);
-        intent.putStringArrayListExtra("availableNumeracySkills", availableNumeracySkillsStringArrayList);
-        Log.i(getClass().getName(), "Sending broadcast to " + intent.getPackage());
-        context.sendBroadcast(intent);
     }
 }

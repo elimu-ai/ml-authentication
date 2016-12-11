@@ -27,6 +27,7 @@ import org.literacyapp.model.StudentImage;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.StudentHelper;
+import org.literacyapp.util.StudentUpdateHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -210,6 +211,9 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 studentImageDao.insert(studentImage);
                 Log.i(getClass().getName(), "StudentImage stored in database with id " + studentImage.getId());
 
+                // Set Student skill level
+                // TODO: if this is the first Student being registered on the device, set skill level to match previous learning progress on Device, and assign all events to Student.
+
                 // Store Student in database
                 Student student = new Student();
                 long longValue = studentDao.loadAll().size() + 1; // TODO: improve
@@ -220,7 +224,8 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 studentDao.insert(student);
                 Log.i(getClass().getName(), "Student stored in database with id " + student.getId());
 
-                // TODO: personalize apps/content according to Student's level
+                // Personalize apps/content according to Student's level
+                new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
             } catch (FileNotFoundException e) {
                 Log.e(getClass().getName(), null, e);
             } catch (IOException e) {
