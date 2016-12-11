@@ -22,7 +22,7 @@
             android:id="@+id/studentSelectionGridLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:columnCount="3"
+            app:columnCount="@integer/gridlayout_column_count"
             app:useDefaultMargins="true">
 
             <!-- Programmatically add content_student_selection_view.xml -->
