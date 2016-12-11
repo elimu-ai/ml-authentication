@@ -16,6 +16,10 @@ import java.util.List;
 
 /**
  * Personalize apps/content according to Student's level.
+ * <p />
+ * This class will be used in 2 different scenarios:
+ *    1. During Student level change (same Student as before, but with updated literacy/numeracy skills).
+ *    2. During Student change (another Student than before).
  */
 public class StudentUpdateHelper {
 

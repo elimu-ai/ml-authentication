@@ -43,17 +43,25 @@ public class CurriculumHelper {
         List<Letter> letters = new ArrayList<>();
 
         if (student == null) {
-            // TODO: check for learning events
-            // Student not yet identified. Fall back to default list.
+            // Student not yet identified
+            
+            // Fetch default list
             letters = letterDao.queryBuilder()
                     .orderDesc(LetterDao.Properties.UsageCount)
                     .orderAsc(LetterDao.Properties.Text)
                     .limit(INITIAL_LETTER_COUNT)
                     .list();
+
+            // TODO: check for Letter learning events matching Device
         } else {
-            // Build list based on Student's current level.
-            // TODO
-            throw new UnsupportedOperationException("Not yet implemented");
+            // Fetch default list
+            letters = letterDao.queryBuilder()
+                    .orderDesc(LetterDao.Properties.UsageCount)
+                    .orderAsc(LetterDao.Properties.Text)
+                    .limit(INITIAL_LETTER_COUNT)
+                    .list();
+
+            // TODO: check for Letter learning events matching Student
         }
 
         return letters;
@@ -69,21 +77,31 @@ public class CurriculumHelper {
         List<Number> numbers = new ArrayList<>();
 
         if (student == null) {
-            // TODO: check for learning events
-            // Student not yet identified. Fall back to default list.
+            // Student not yet identified
+
+            // Fetch default list
             numbers = numberDao.queryBuilder()
                     .where(NumberDao.Properties.Value.notEq(0))
                     .orderAsc(NumberDao.Properties.Value)
                     .limit(INITIAL_NUMBER_COUNT)
                     .list();
+
+            // TODO: check for Number learning events matching Device
         } else {
-            // Build list based on Student's current level.
-            // TODO
-            throw new UnsupportedOperationException("Not yet implemented");
+            // Fetch default list
+            numbers = numberDao.queryBuilder()
+                    .where(NumberDao.Properties.Value.notEq(0))
+                    .orderAsc(NumberDao.Properties.Value)
+                    .limit(INITIAL_NUMBER_COUNT)
+                    .list();
+
+            // TODO: check for Number learning events matching Student
         }
 
         return numbers;
     }
+
+//    TODO: getAvailableWords
 
     /**
      * If the Student has not yet been identified, use {@code null} as parameter to fall back to
@@ -95,17 +113,25 @@ public class CurriculumHelper {
         List<LiteracySkill> literacySkills = new ArrayList<>();
 
         if (student == null) {
-            // TODO: check for learning events
-            // Student not yet identified. Fall back to default list.
+            // Student not yet identified
+
+            // Fall back to default list
             literacySkills.add(LiteracySkill.ORAL_VOCABULARY);
             literacySkills.add(LiteracySkill.LISTENING_COMPREHENSION);
             literacySkills.add(LiteracySkill.CONCEPTS_ABOUT_PRINT);
             literacySkills.add(LiteracySkill.PHONEMIC_AWARENESS);
             literacySkills.add(LiteracySkill.LETTER_IDENTIFICATION);
+
+            // TODO: check for LiteracySkill learning events matching Device
         } else {
-            // Build list based on Student's current level.
-            // TODO
-            throw new UnsupportedOperationException("Not yet implemented");
+            // Fall back to default list
+            literacySkills.add(LiteracySkill.ORAL_VOCABULARY);
+            literacySkills.add(LiteracySkill.LISTENING_COMPREHENSION);
+            literacySkills.add(LiteracySkill.CONCEPTS_ABOUT_PRINT);
+            literacySkills.add(LiteracySkill.PHONEMIC_AWARENESS);
+            literacySkills.add(LiteracySkill.LETTER_IDENTIFICATION);
+
+            // TODO: check for LiteracySkill learning events matching Student
         }
 
         return literacySkills;
@@ -121,15 +147,21 @@ public class CurriculumHelper {
         List<NumeracySkill> numeracySkills = new ArrayList<>();
 
         if (student == null) {
-            // TODO: check for learning events
-            // Student not yet identified. Fall back to default list.
+            // Student not yet identified
+
+            // Fall back to default list
             numeracySkills.add(NumeracySkill.ORAL_COUNTING);
             numeracySkills.add(NumeracySkill.ONE_TO_ONE_CORRESPONDENCE);
             numeracySkills.add(NumeracySkill.NUMBER_IDENTIFICATION);
+
+            // TODO: check for NumeracySkill learning events matching Device
         } else {
-            // Build list based on Student's current level.
-            // TODO
-            throw new UnsupportedOperationException("Not yet implemented");
+            // Fall back to default list
+            numeracySkills.add(NumeracySkill.ORAL_COUNTING);
+            numeracySkills.add(NumeracySkill.ONE_TO_ONE_CORRESPONDENCE);
+            numeracySkills.add(NumeracySkill.NUMBER_IDENTIFICATION);
+
+            // TODO: check for NumeracySkill learning events matching Student
         }
 
         return numeracySkills;
