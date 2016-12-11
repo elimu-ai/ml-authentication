@@ -48,36 +48,6 @@ public class MultimediaHelper {
         return videoDirectory;
     }
 
-    // TODO: move to separate class
-    @Deprecated
-    public static File getStudentImageDirectory() {
-        File studentImageDirectory = new File(getMultimediaDirectory(), "studentImage");
-        if (!studentImageDirectory.exists()) {
-            studentImageDirectory.mkdir();
-        }
-        return studentImageDirectory;
-    }
-
-    // TODO: move to separate class
-    @Deprecated
-    public static File getStudentThumbnailDirectory() {
-        File studentThumbnailDirectory = new File(getMultimediaDirectory(), "studentThumbnail");
-        if (!studentThumbnailDirectory.exists()) {
-            studentThumbnailDirectory.mkdir();
-        }
-        return studentThumbnailDirectory;
-    }
-
-    // TODO: move to separate class
-    @Deprecated
-    public static File getTestImageDirectory() {
-        File testImageDirectory = new File(getMultimediaDirectory(), "testImage");
-        if (!testImageDirectory.exists()) {
-            testImageDirectory.mkdir();
-        }
-        return testImageDirectory;
-    }
-
     public static File getFile(Audio audio) {
         File file = null;
 

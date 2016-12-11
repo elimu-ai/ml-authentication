@@ -24,7 +24,7 @@ import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
-import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.util.StudentHelper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -178,7 +178,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
             // Store image on SD card
             String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
-            String imageFilePath = MultimediaHelper.getStudentThumbnailDirectory() + "/" + DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".png";
+            String imageFilePath = StudentHelper.getStudentThumbnailDirectory() + "/" + DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".png";
             Log.i(getClass().getName(), "Storing image at " + imageFilePath);
             File scaledScreenshotFile = new File(imageFilePath);
             try {

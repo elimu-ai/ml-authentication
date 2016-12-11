@@ -87,13 +87,17 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity android:name=".authentication.fallback.StudentRegistrationActivity" />
-        <activity android:name=".authentication.fallback.AuthenticationActivity">
+        <activity android:name=".authentication.fallback.StudentAuthenticationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".authentication.fallback.StudentSelectionActivity"
+            android:label="@string/title_activity_student_selection"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

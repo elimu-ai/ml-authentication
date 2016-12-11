@@ -33,7 +33,9 @@ public class Student {
     @JoinEntity(entity = JoinStudentsWithDevices.class, sourceProperty = "studentId", targetProperty = "deviceId")
     private List<Device> devices;
 
-    @ToOne
+    private long studentImageId;
+
+    @ToOne(joinProperty = "studentImageId")
     private StudentImage avatar;
 
     /** Used to resolve relations */
@@ -44,10 +46,11 @@ public class Student {
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 876177859)
-    public Student(Long id, @NotNull String uniqueId) {
+    @Generated(hash = 969166306)
+    public Student(Long id, @NotNull String uniqueId, long studentImageId) {
         this.id = id;
         this.uniqueId = uniqueId;
+        this.studentImageId = studentImageId;
     }
 
     @Generated(hash = 1556870573)
@@ -70,35 +73,39 @@ public class Student {
         this.uniqueId = uniqueId;
     }
 
-    @Generated(hash = 926952963)
-    private transient boolean avatar__refreshed;
+    @Generated(hash = 1907406681)
+    private transient Long avatar__resolvedKey;
 
     /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1061269171)
+    @Generated(hash = 2064991221)
     public StudentImage getAvatar() {
-        if (avatar != null || !avatar__refreshed) {
+        long __key = this.studentImageId;
+        if (avatar__resolvedKey == null || !avatar__resolvedKey.equals(__key)) {
+            final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             StudentImageDao targetDao = daoSession.getStudentImageDao();
-            targetDao.refresh(avatar);
-            avatar__refreshed = true;
+            StudentImage avatarNew = targetDao.load(__key);
+            synchronized (this) {
+                avatar = avatarNew;
+                avatar__resolvedKey = __key;
+            }
         }
         return avatar;
     }
 
-    /** To-one relationship, returned entity is not refreshed and may carry only the PK property. */
-    @Generated(hash = 1380169256)
-    public StudentImage peakAvatar() {
-        return avatar;
-    }
-
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 1646104004)
-    public void setAvatar(StudentImage avatar) {
+    @Generated(hash = 822529931)
+    public void setAvatar(@NotNull StudentImage avatar) {
+        if (avatar == null) {
+            throw new DaoException(
+                    "To-one property 'studentImageId' has not-null constraint; cannot set to-one to null");
+        }
         synchronized (this) {
             this.avatar = avatar;
-            avatar__refreshed = true;
+            studentImageId = avatar.getId();
+            avatar__resolvedKey = studentImageId;
         }
     }
 
@@ -171,5 +178,13 @@ public class Student {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getStudentDao() : null;
+    }
+
+    public long getStudentImageId() {
+        return this.studentImageId;
+    }
+
+    public void setStudentImageId(long studentImageId) {
+        this.studentImageId = studentImageId;
     }
 }

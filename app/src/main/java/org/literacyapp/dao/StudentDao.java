@@ -31,7 +31,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property UniqueId = new Property(1, String.class, "uniqueId", false, "UNIQUE_ID");
-        public final static Property Avatar = new Property(2, Long.class, "avatar", false, "AVATAR");
+        public final static Property StudentImageId = new Property(2, long.class, "studentImageId", false, "STUDENT_IMAGE_ID");
     }
 
     private DaoSession daoSession;
@@ -52,7 +52,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"UNIQUE_ID\" TEXT NOT NULL UNIQUE ," + // 1: uniqueId
-                "\"AVATAR\" INTEGER);"); // 2: avatar
+                "\"STUDENT_IMAGE_ID\" INTEGER NOT NULL );"); // 2: studentImageId
     }
 
     /** Drops the underlying database table. */
@@ -70,6 +70,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getUniqueId());
+        stmt.bindLong(3, entity.getStudentImageId());
     }
 
     @Override
@@ -81,6 +82,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
             stmt.bindLong(1, id);
         }
         stmt.bindString(2, entity.getUniqueId());
+        stmt.bindLong(3, entity.getStudentImageId());
     }
 
     @Override
@@ -98,7 +100,8 @@ public class StudentDao extends AbstractDao<Student, Long> {
     public Student readEntity(Cursor cursor, int offset) {
         Student entity = new Student( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getString(offset + 1) // uniqueId
+            cursor.getString(offset + 1), // uniqueId
+            cursor.getLong(offset + 2) // studentImageId
         );
         return entity;
     }
@@ -107,6 +110,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
     public void readEntity(Cursor cursor, Student entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setUniqueId(cursor.getString(offset + 1));
+        entity.setStudentImageId(cursor.getLong(offset + 2));
      }
     
     @Override
@@ -143,7 +147,7 @@ public class StudentDao extends AbstractDao<Student, Long> {
             builder.append(',');
             SqlUtils.appendColumns(builder, "T0", daoSession.getStudentImageDao().getAllColumns());
             builder.append(" FROM STUDENT T");
-            builder.append(" LEFT JOIN STUDENT_IMAGE T0 ON T.\"AVATAR\"=T0.\"_id\"");
+            builder.append(" LEFT JOIN STUDENT_IMAGE T0 ON T.\"STUDENT_IMAGE_ID\"=T0.\"_id\"");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -155,7 +159,9 @@ public class StudentDao extends AbstractDao<Student, Long> {
         int offset = getAllColumns().length;
 
         StudentImage avatar = loadCurrentOther(daoSession.getStudentImageDao(), cursor, offset);
-        entity.setAvatar(avatar);
+         if(avatar != null) {
+            entity.setAvatar(avatar);
+        }
 
         return entity;    
     }

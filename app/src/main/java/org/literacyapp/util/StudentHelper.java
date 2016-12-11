@@ -33,4 +33,20 @@ public class StudentHelper {
         }
         return testStudentsDirectory;
     }
+
+    public static File getStudentImageDirectory() {
+        File studentImageDirectory = new File(getStudentDirectory(), "student_image");
+        if (!studentImageDirectory.exists()) {
+            studentImageDirectory.mkdir();
+        }
+        return studentImageDirectory;
+    }
+
+    public static File getStudentThumbnailDirectory() {
+        File studentThumbnailDirectory = new File(getStudentDirectory(), "student_thumbnail");
+        if (!studentThumbnailDirectory.exists()) {
+            studentThumbnailDirectory.mkdir();
+        }
+        return studentThumbnailDirectory;
+    }
 }
