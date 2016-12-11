@@ -24,4 +24,12 @@ public class AiHelper {
         }
         return modelDirectory;
     }
+
+    public static File getAnimalTemplateDirectory() {
+        File modelDirectory = new File(getAiDirectory(), "animalTemplate");
+        if (!modelDirectory.exists()) {
+            modelDirectory.mkdir();
+        }
+        return modelDirectory;
+    }
 }

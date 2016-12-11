@@ -1,7 +1,6 @@
 package org.literacyapp.authentication;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.res.AssetManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +17,7 @@ import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.CameraBridgeViewBase;
@@ -30,9 +30,9 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -223,19 +223,19 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
 
     private void createOverlay() {
         Log.i(getClass().getName(), "createOverlay");
-        // Load overlay mask (to be completed...)
-        File animalTemplateFile = new File(MultimediaHelper.getImageDirectory(), "deer.jpg");
-        if (!animalTemplateFile.exists()) {
-            Log.i(getClass().getName(), "Copying overlay template to " + animalTemplateFile.getAbsolutePath());
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.deer);
+        // Load overlay mask (TODO to be completed...)
+        File animalTemplateFile = new File(AiHelper.getAnimalTemplateDirectory(), "deer.jpg");
+        if (!animalTemplateFile.exists()){
+            AssetManager assetManager = getAssets();
             try {
+                InputStream inputStream = assetManager.open("animal_template/deer.jpg");
                 OutputStream outputStream = new FileOutputStream(animalTemplateFile);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                outputStream.close();
-            } catch (FileNotFoundException e) {
-                Log.e(getClass().getName(), null, e);
+                Log.i(getClass().getName(), "Copying overlay template to " + AiHelper.getAnimalTemplateDirectory() + "/deer.jpg");
+                copyFile(inputStream, outputStream);
+                Log.i(getClass().getName(), "Overlay template has been copied successfully to " + AiHelper.getAnimalTemplateDirectory() + "/deer.jpg");
             } catch (IOException e) {
-                Log.e(getClass().getName(), null, e);
+                Log.i(getClass().getName(), "Overlay template has failed to be copied to  " + AiHelper.getAnimalTemplateDirectory() + "/deer.jpg");
+                e.printStackTrace();
             }
         }
         imgOverlay = Imgcodecs.imread(animalTemplateFile.getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
@@ -263,6 +263,14 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         // Add overlay to frame
         Core.add(imgForeGround,imgBackGround,imgRgba);
 
+    }
+
+    private void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
     }
 
 }
