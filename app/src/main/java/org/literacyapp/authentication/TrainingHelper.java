@@ -27,6 +27,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,6 +43,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
  */
 
 public class TrainingHelper {
+    private static final String MODEL_DOWNLOAD_LINK = "https://drive.google.com/open?id=0B3jQsJcchixPek9lU3BaOHpCUGc";
     private Context context;
     private DaoSession daoSession;
     private StudentImageDao studentImageDao;
@@ -49,9 +51,9 @@ public class TrainingHelper {
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private StudentDao studentDao;
     private SupportVectorMachine svm;
-    File svmTrainingFile;
-    File svmTrainingModelFile;
-    File svmArchiveFolderWithTimestamp;
+    private File svmTrainingFile;
+    private File svmTrainingModelFile;
+    private File svmArchiveFolderWithTimestamp;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -92,7 +94,7 @@ public class TrainingHelper {
                         if (svmVector != null){
                             storeStudentImageFeature(studentImage, svmVector);
                         } else {
-                            Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted recursively because the feature extraction failed.");
+                            Log.w(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " will be deleted recursively because the feature extraction failed.");
                             deleteStudentImagesRecursive(studentImage, "the feature extraction failed.");
                         }
                     }
@@ -140,9 +142,17 @@ public class TrainingHelper {
     private synchronized TensorFlow getInitializedTensorFlow(){
         File modelFile = new File(AiHelper.getModelDirectory(), "vgg_faces.pb");
         if (!modelFile.exists()){
+            File modelDownloadFile = createModelDownloadFile();
             String logMessage = "Model file: " + modelFile.getAbsolutePath() + " doesn't exist. Please copy it manually";
+            if (modelDownloadFile != null){
+                logMessage = logMessage + ". Find the download link in the file " + modelDownloadFile.getAbsolutePath();
+
+            } else {
+                logMessage = logMessage + " from " + MODEL_DOWNLOAD_LINK;
+            }
             Log.e(getClass().getName(), logMessage);
             Toast.makeText(context, logMessage, Toast.LENGTH_LONG).show();
+
             return null;
         }
         int inputSize = 224;
@@ -154,6 +164,14 @@ public class TrainingHelper {
         return tensorFlow;
     }
 
+    /**
+     * Check if StudentImage is valid
+     * The StudentImage is invalid if
+     *      a) no StudentImageCollectionEvent is assigned --> in this case the StudentImage gets deleted from the db
+     *      b) the StudentImage file on the sdcard doesn't exist --> in this case all related StudentImages, StudentImageFeatures and the StudentImageCollectionEvent get deleted recursively from the db
+     * @param studentImage
+     * @return
+     */
     private synchronized boolean isStudentImageValid(StudentImage studentImage){
         boolean valid = true;
         File studentImageFile = new File(studentImage.getImageFileUrl());
@@ -191,8 +209,11 @@ public class TrainingHelper {
     }
 
     public synchronized void trainClassifier(){
+        Log.i(getClass().getName(), "trainClassifier");
         // Initiate training if a StudentImageCollectionEvent has not been trained yet
-        if (studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(false)).count() > 0){
+        long count = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(false)).count();
+        Log.i(getClass().getName(), "Count of StudentImageCollectionEvents where SvmTrainingExecuted is false: " + count);
+        if (count > 0){
             List<StudentImage> studentImages = studentImageDao.queryBuilder()
                     .where(StudentImageDao.Properties.StudentImageFeatureId.notEq(0))
                     .list();
@@ -204,7 +225,7 @@ public class TrainingHelper {
             } else {
                 Log.e(getClass().getName(), "Failed to archive classifier files.");
             }
-            Log.i(getClass().getName(), "Classifier training has started.");
+            Log.i(getClass().getName(), "Classifier training has started with linear kernel (LIBSVM -t 0).");
             svm.train("-t 0 ");
             if (checkClassifierTrainingResult()){
                 for (StudentImage studentImage : studentImages){
@@ -231,6 +252,12 @@ public class TrainingHelper {
         }
     }
 
+    /**
+     * Archive the existing classifier files before training
+     *      a) for debugging purposes
+     *      b) for a backup if training fails --> so the last training files can be restored
+     * @return
+     */
     private synchronized boolean archiveClassifierFiles(){
         boolean success = true;
         svmArchiveFolderWithTimestamp = new File(AiHelper.getSvmArchiveDirectory().getAbsolutePath(), Long.toString(new Date().getTime()));
@@ -244,6 +271,10 @@ public class TrainingHelper {
         return success;
     }
 
+    /**
+     * Checks whether the 2 training files exist. If not, restore the backup files.
+     * @return
+     */
     private synchronized boolean checkClassifierTrainingResult(){
         if (svmTrainingFile.exists() && svmTrainingModelFile.exists()){
             return true;
@@ -254,5 +285,19 @@ public class TrainingHelper {
             svmArchiveFolderWithTimestamp.delete();
             return false;
         }
+    }
+
+    private File createModelDownloadFile(){
+        File modelDownloadFile = new File(AiHelper.getModelDirectory(), "download_link.txt");
+        try {
+            FileWriter fileWriter = new FileWriter(modelDownloadFile, false);
+            fileWriter.append(MODEL_DOWNLOAD_LINK);
+            fileWriter.close();
+            Log.i(getClass().getName(), "Model download file has been created at " + modelDownloadFile.getAbsolutePath() + " with the link " + MODEL_DOWNLOAD_LINK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return modelDownloadFile;
     }
 }
