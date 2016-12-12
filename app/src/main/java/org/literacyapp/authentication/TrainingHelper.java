@@ -142,7 +142,7 @@ public class TrainingHelper {
     private synchronized TensorFlow getInitializedTensorFlow(){
         File modelFile = new File(AiHelper.getModelDirectory(), "vgg_faces.pb");
         if (!modelFile.exists()){
-            File modelDownloadFile = createModelDownloadFile();
+            File modelDownloadFile = createModelDownloadFile(modelFile);
             String logMessage = "Model file: " + modelFile.getAbsolutePath() + " doesn't exist. Please copy it manually";
             if (modelDownloadFile != null){
                 logMessage = logMessage + ". Find the download link in the file " + modelDownloadFile.getAbsolutePath();
@@ -287,11 +287,12 @@ public class TrainingHelper {
         }
     }
 
-    private File createModelDownloadFile(){
+    private File createModelDownloadFile(File modelFile){
         File modelDownloadFile = new File(AiHelper.getModelDirectory(), "download_link.txt");
         try {
             FileWriter fileWriter = new FileWriter(modelDownloadFile, false);
-            fileWriter.append(MODEL_DOWNLOAD_LINK);
+            fileWriter.append(MODEL_DOWNLOAD_LINK + "\n");
+            fileWriter.append("Copy to: " + modelFile.getAbsolutePath());
             fileWriter.close();
             Log.i(getClass().getName(), "Model download file has been created at " + modelDownloadFile.getAbsolutePath() + " with the link " + MODEL_DOWNLOAD_LINK);
 
