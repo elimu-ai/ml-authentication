@@ -7,15 +7,15 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".content.task.GraphemeActivity">
+    tools:context=".content.task.VisemeActivity">
 
-    <ImageView android:id="@+id/graphemeImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView android:id="@+id/visemeImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:src="@drawable/animated_grapheme" />
+        android:src="@drawable/viseme_neutral_to_t_animated_vector" />
 
-    <ImageButton android:id="@+id/graphemeImageButton"
+    <ImageButton android:id="@+id/visemeImageButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="fitXY"

@@ -46,27 +46,51 @@
             android:name=".content.task.GraphemeActivity"
             android:screenOrientation="fullSensor" />
         <activity
+            android:name=".content.task.VisemeActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
             android:name=".content.task.StarActivity"
             android:screenOrientation="fullSensor" />
         <activity android:name=".content.task.LessonCompleteActivity" />
         <activity android:name=".authentication.CameraViewActivity" />
         <activity
             android:name=".content.letter.LettersActivity"
-            android:parentActivityName=".CategoryActivity">
+            android:parentActivityName=".CategoryActivity"
+            android:icon="@mipmap/ic_launcher_literacy">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
         <activity
             android:name=".content.number.NumbersActivity"
-            android:parentActivityName=".CategoryActivity">
+            android:parentActivityName=".CategoryActivity"
+            android:icon="@mipmap/ic_launcher_numeracy">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
         <activity
             android:name=".content.multimedia.video.VideosActivity"
-            android:parentActivityName=".CategoryActivity">
+            android:parentActivityName=".CategoryActivity"
+            android:icon="@mipmap/ic_launcher_videos">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
@@ -87,10 +111,10 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity android:name=".authentication.fallback.StudentRegistrationActivity" />
-        <activity android:name=".authentication.fallback.StudentAuthenticationActivity">
+        <activity android:name=".authentication.fallback.StudentAuthenticationActivity"
+            android:icon="@mipmap/ic_launcher_authentication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

@@ -9,17 +9,19 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Display;
 
+import org.literacyapp.authentication.fallback.StudentAuthenticationActivity;
+
 import java.util.Calendar;
 
 /**
- * If more than 30 minutes have passed since the last StudentImageCollection event, open iamge
- * collection activity.
+ * If more than 30 minutes have passed since the last Student authentication, open
+ * authentication activity.
  */
 public class ScreenOnReceiver extends BroadcastReceiver {
 
-    private final static int MINUTES_OF_INACTIVITY_BETWEEN_SESSIONS = 30;
+    private final static int TIME_BETWEEN_AUTHENTICATIONS = 30;
 
-    private static final String PREF_LAST_STUDENT_IMAGE_COLLECTION = "pref_last_student_image_collection";
+    public static final String PREF_TIME_OF_LAST_AUTHENTICATION = "pref_time_of_last_authentication";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -34,23 +36,32 @@ public class ScreenOnReceiver extends BroadcastReceiver {
             }
         }
 
-        Calendar calendarLastCollectionEvent = null;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        long timeOfLastCollectionInMillis = sharedPreferences.getLong(PREF_LAST_STUDENT_IMAGE_COLLECTION, 0);
-        if (timeOfLastCollectionInMillis > 0) {
-            calendarLastCollectionEvent = Calendar.getInstance();
-            calendarLastCollectionEvent.setTimeInMillis(timeOfLastCollectionInMillis);
-            Log.i(getClass().getName(), "calendarLastCollectionEvent.getTime(): " + calendarLastCollectionEvent.getTime());
+
+        // Store time of last successful authentication
+        Calendar calendarLastAuthentication = null;
+        long timeOfLastAuthenticationInMillis = sharedPreferences.getLong(PREF_TIME_OF_LAST_AUTHENTICATION, 0);
+        if (timeOfLastAuthenticationInMillis > 0) {
+            calendarLastAuthentication = Calendar.getInstance();
+            calendarLastAuthentication.setTimeInMillis(timeOfLastAuthenticationInMillis);
+            Log.i(getClass().getName(), "calendarLastAuthenticationEvent.getTime(): " + calendarLastAuthentication.getTime());
         }
-        Calendar calendarLastTimeOfScreenOff = Calendar.getInstance();
-        calendarLastTimeOfScreenOff.add(Calendar.MINUTE, -MINUTES_OF_INACTIVITY_BETWEEN_SESSIONS);
-        Log.i(getClass().getName(), "calendarLastTimeOfScreenOff.getTime(): " + calendarLastTimeOfScreenOff.getTime());
-//        if ((calendarLastCollectionEvent == null) || (calendarLastCollectionEvent.before(calendarLastTimeOfScreenOff))) {
-//            Intent studentImageCollectionIntent = new Intent(context, StudentImageCollectionActivity.class);
-//            studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            context.startActivity(studentImageCollectionIntent);
-//
-//            sharedPreferences.edit().putLong(PREF_LAST_STUDENT_IMAGE_COLLECTION, Calendar.getInstance().getTimeInMillis()).commit();
-//        }
+
+        // Calculate expiry time of last authentication
+        Calendar calendarExpiry = null;
+        if (calendarLastAuthentication != null) {
+            calendarExpiry = Calendar.getInstance();
+            calendarExpiry.setTime(calendarLastAuthentication.getTime());
+            calendarExpiry.add(Calendar.MINUTE, -TIME_BETWEEN_AUTHENTICATIONS); // TODO: back off exponentially
+            Log.i(getClass().getName(), "calendarExpiry.getTime(): " + calendarExpiry.getTime());
+        }
+
+        // If new authentication required, open StudentAuthenticationActivity
+        if ((calendarLastAuthentication == null) || (calendarExpiry.before(Calendar.getInstance()))) {
+            Log.i(getClass().getName(), "Redirecting to authentication...");
+            Intent authenticationIntent = new Intent(context, StudentAuthenticationActivity.class);
+            authenticationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(authenticationIntent);
+        }
     }
 }

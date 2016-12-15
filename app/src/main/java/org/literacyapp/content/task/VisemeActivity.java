@@ -1,8 +1,5 @@
 package org.literacyapp.content.task;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.content.Intent;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -18,17 +15,17 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.AudioDao;
 import org.literacyapp.dao.LetterDao;
-import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.Letter;
+import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;
 
 public class VisemeActivity extends AppCompatActivity {
 
-    private ImageView mGraphemeImageView;
+    private ImageView mVisemeImageView;
 
-    private ImageButton mGraphemeImageButton;
+    private ImageButton mVisemeImageButton;
 
     private LetterDao letterDao;
     private AudioDao audioDao;
@@ -38,11 +35,11 @@ public class VisemeActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_grapheme);
+        setContentView(R.layout.activity_viseme);
 
-        mGraphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
+        mVisemeImageView = (ImageView) findViewById(R.id.visemeImageView);
 
-        mGraphemeImageButton = (ImageButton) findViewById(R.id.graphemeImageButton);
+        mVisemeImageButton = (ImageButton) findViewById(R.id.visemeImageButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
@@ -80,7 +77,7 @@ public class VisemeActivity extends AppCompatActivity {
             mediaPlayer.start();
         }
 
-        mGraphemeImageView.setOnClickListener(new View.OnClickListener() {
+        mVisemeImageView.setOnClickListener(new View.OnClickListener() {
 
 //            @TargetApi(Build.VERSION_CODES.M)
             @Override
@@ -101,42 +98,30 @@ public class VisemeActivity extends AppCompatActivity {
                     });
                     mediaPlayer.start();
                 }
+
+                // Morph to 't'
+                mVisemeImageView.setImageDrawable(getResources().getDrawable(R.drawable.viseme_neutral_to_t_animated_vector));
+                Drawable drawable = mVisemeImageView.getDrawable();
+                ((Animatable) drawable).start();
+
+                mVisemeImageView.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Morph back to neutral
+                        mVisemeImageView.setImageDrawable(getResources().getDrawable(R.drawable.viseme_t_to_neutral_animated_vector));
+                        Drawable drawable = mVisemeImageView.getDrawable();
+                        ((Animatable) drawable).start();
+                    }
+                }, 500);
             }
         });
 
-        mGraphemeImageButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Play a subtle animation
-                final long duration = 300;
-
-                final ObjectAnimator scaleXAnimator = ObjectAnimator.ofFloat(mGraphemeImageButton, View.SCALE_X, 1f, 1.2f, 1f);
-                scaleXAnimator.setDuration(duration);
-                scaleXAnimator.setRepeatCount(1);
-
-                final ObjectAnimator scaleYAnimator = ObjectAnimator.ofFloat(mGraphemeImageButton, View.SCALE_Y, 1f, 1.2f, 1f);
-                scaleYAnimator.setDuration(duration);
-                scaleYAnimator.setRepeatCount(1);
-
-                scaleXAnimator.start();
-                scaleYAnimator.start();
-
-                final AnimatorSet animatorSet = new AnimatorSet();
-                animatorSet.play(scaleXAnimator).with(scaleYAnimator);
-                animatorSet.start();
-            }
-        }, 2000);
-
-        Drawable drawable = mGraphemeImageView.getDrawable();
-        ((Animatable) drawable).start();
-
-        mGraphemeImageButton.setOnClickListener(new View.OnClickListener() {
+        mVisemeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                Intent starIntent = new Intent(getApplicationContext(), StarActivity.class);
-                startActivity(starIntent);
+
             }
         });
     }

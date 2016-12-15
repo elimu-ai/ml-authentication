@@ -52,11 +52,13 @@ public class ReadDeviceAsyncTask extends AsyncTask<Void, Void, String> {
                 JSONObject jsonObject = new JSONObject(jsonResponse);
                 if (!"success".equals(jsonObject.getString("result"))) {
                     // Device was not found
-                    Toast.makeText(context, context.getString(R.string.registering_device), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, context.getString(R.string.registering_device), Toast.LENGTH_SHORT).show();
+                    Log.i(getClass().getName(), context.getString(R.string.registering_device));
                     new RegisterDeviceAsyncTask(context).execute();
                 } else {
                     // Device was found
-                    Toast.makeText(context, context.getString(R.string.downloading_content), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, context.getString(R.string.downloading_content), Toast.LENGTH_SHORT).show();
+                    Log.i(getClass().getName(), context.getString(R.string.downloading_content));
                     new DownloadContentAsyncTask(context).execute();
                 }
             } catch (JSONException e) {
