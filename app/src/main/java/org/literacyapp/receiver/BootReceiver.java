@@ -35,6 +35,8 @@ public class BootReceiver extends BroadcastReceiver {
         Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
         context.startService(screenOnServiceIntent);
 
+        // TODO: trigger the same code as in ScreenOnReceiver
+
 //        // Initiate background job for face recognition training
 //        ComponentName componentNameFaceRecognitionTranining = new ComponentName(context, FaceRecognitionTrainingJobService.class);
 //        JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);

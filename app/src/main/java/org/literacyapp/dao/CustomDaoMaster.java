@@ -112,7 +112,7 @@ public class CustomDaoMaster extends DaoMaster {
                 onCreate(db);
             }
 
-            if (oldVersion < 1003001) {
+            if (oldVersion < 1003002) {
                 DbMigrationHelper.migrate(db,
                         StudentDao.class
                 );
