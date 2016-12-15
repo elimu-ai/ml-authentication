@@ -59,7 +59,7 @@ public class StudentSelectionActivity extends AppCompatActivity {
         for (final Student student : students) {
             View studentView = LayoutInflater.from(this).inflate(R.layout.content_student_selection_view, studentSelectionGridLayout, false);
 
-            File studentAvatar = new File(student.getAvatar().getImageFileUrl());
+            File studentAvatar = new File(student.getAvatar());
             ImageView studentImageView = (ImageView) studentView.findViewById(R.id.studentSelectionImageView);
             Bitmap bitmap = BitmapFactory.decodeFile(studentAvatar.getAbsolutePath());
             studentImageView.setImageBitmap(bitmap);

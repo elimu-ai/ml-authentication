@@ -98,7 +98,7 @@ public class StudentUpdateHelper {
             intent.putExtra("studentId", student.getUniqueId());
         }
         if ((student != null) && (student.getAvatar() != null)) {
-            intent.putExtra("studentAvatar", student.getAvatar().getImageFileUrl());
+            intent.putExtra("studentAvatar", student.getAvatar());
         }
         Log.i(getClass().getName(), "Sending broadcast to " + intent.getPackage());
         context.sendBroadcast(intent);

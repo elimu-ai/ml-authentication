@@ -23,6 +23,8 @@ public class ScreenOnService extends Service {
         ScreenOnReceiver screenOnReceiver = new ScreenOnReceiver();
         registerReceiver(screenOnReceiver, new IntentFilter("android.intent.action.SCREEN_ON"));
 
+        // TODO: keep running after application is closed/killed
+
         return super.onStartCommand(intent, flags, startId);
     }
 }

@@ -8,12 +8,10 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
-import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.annotation.Unique;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 
 import java.util.Calendar;
@@ -40,11 +38,8 @@ public class Student {
     @Convert(converter = CalendarConverter.class, columnType = Long.class)
     private Calendar timeCreated;
 
-    private long studentImageId;
-
     @NotNull
-    @ToOne(joinProperty = "studentImageId")
-    private StudentImage avatar;
+    private String avatar; // File path
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -54,12 +49,12 @@ public class Student {
     @Generated(hash = 1943931642)
     private transient StudentDao myDao;
 
-    @Generated(hash = 228789159)
-    public Student(Long id, @NotNull String uniqueId, @NotNull Calendar timeCreated, long studentImageId) {
+    @Generated(hash = 1002043760)
+    public Student(Long id, @NotNull String uniqueId, @NotNull Calendar timeCreated, @NotNull String avatar) {
         this.id = id;
         this.uniqueId = uniqueId;
         this.timeCreated = timeCreated;
-        this.studentImageId = studentImageId;
+        this.avatar = avatar;
     }
 
     @Generated(hash = 1556870573)
@@ -90,48 +85,12 @@ public class Student {
         this.timeCreated = timeCreated;
     }
 
-    public long getStudentImageId() {
-        return this.studentImageId;
+    public String getAvatar() {
+        return this.avatar;
     }
 
-    public void setStudentImageId(long studentImageId) {
-        this.studentImageId = studentImageId;
-    }
-
-    @Generated(hash = 1907406681)
-    private transient Long avatar__resolvedKey;
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 2064991221)
-    public StudentImage getAvatar() {
-        long __key = this.studentImageId;
-        if (avatar__resolvedKey == null || !avatar__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            StudentImageDao targetDao = daoSession.getStudentImageDao();
-            StudentImage avatarNew = targetDao.load(__key);
-            synchronized (this) {
-                avatar = avatarNew;
-                avatar__resolvedKey = __key;
-            }
-        }
-        return avatar;
-    }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 822529931)
-    public void setAvatar(@NotNull StudentImage avatar) {
-        if (avatar == null) {
-            throw new DaoException(
-                    "To-one property 'studentImageId' has not-null constraint; cannot set to-one to null");
-        }
-        synchronized (this) {
-            this.avatar = avatar;
-            studentImageId = avatar.getId();
-            avatar__resolvedKey = studentImageId;
-        }
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     /**

@@ -60,8 +60,8 @@ public class StudentHelper {
         return studentImageDirectory;
     }
 
-    public static File getStudentThumbnailDirectory() {
-        File studentThumbnailDirectory = new File(getStudentDirectory(), "student_thumbnail");
+    public static File getStudentAvatarDirectory() {
+        File studentThumbnailDirectory = new File(getStudentDirectory(), "student_avatar");
         if (!studentThumbnailDirectory.exists()) {
             studentThumbnailDirectory.mkdir();
         }

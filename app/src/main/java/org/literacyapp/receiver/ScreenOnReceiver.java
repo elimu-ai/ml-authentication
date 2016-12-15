@@ -19,7 +19,8 @@ import java.util.Calendar;
  */
 public class ScreenOnReceiver extends BroadcastReceiver {
 
-    private final static int TIME_BETWEEN_AUTHENTICATIONS = 30;
+//    private final static int TIME_BETWEEN_AUTHENTICATIONS = 30;
+    private final static int TIME_BETWEEN_AUTHENTICATIONS = 3; // Setting used temporarily for testing purposes
 
     public static final String PREF_TIME_OF_LAST_AUTHENTICATION = "pref_time_of_last_authentication";
 
@@ -52,9 +53,11 @@ public class ScreenOnReceiver extends BroadcastReceiver {
         if (calendarLastAuthentication != null) {
             calendarExpiry = Calendar.getInstance();
             calendarExpiry.setTime(calendarLastAuthentication.getTime());
-            calendarExpiry.add(Calendar.MINUTE, -TIME_BETWEEN_AUTHENTICATIONS); // TODO: back off exponentially
+            calendarExpiry.add(Calendar.MINUTE, TIME_BETWEEN_AUTHENTICATIONS); // TODO: back off exponentially
             Log.i(getClass().getName(), "calendarExpiry.getTime(): " + calendarExpiry.getTime());
         }
+
+        // TODO: detect how long the device has been inactive
 
         // If new authentication required, open StudentAuthenticationActivity
         if ((calendarLastAuthentication == null) || (calendarExpiry.before(Calendar.getInstance()))) {
