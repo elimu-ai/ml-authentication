@@ -1,0 +1,7 @@
+ <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+   android:drawable="@drawable/viseme_neutral">
+
+     <target
+         android:name="v"
+         android:animation="@anim/viseme_neutral_to_t_morph_animator" />
+ </animated-vector>

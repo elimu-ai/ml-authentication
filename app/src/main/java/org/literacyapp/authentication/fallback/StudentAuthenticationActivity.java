@@ -62,6 +62,11 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
                 String fileName = testStudentImageFile.getName();
                 Log.i(getClass().getName(), "fileName: " + fileName);
 
+                if (!fileName.endsWith(".png")) {
+                    Log.w(getClass().getName(), "Not a .png file. Skipping: " + fileName);
+                    continue;
+                }
+
                 Log.i(getClass().getName(), "Storing test StudentImage in database");
                 StudentImage studentImage = new StudentImage();
                 studentImage.setImageFileUrl(testStudentImageFile.getAbsolutePath());

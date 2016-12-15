@@ -24,10 +24,6 @@ public class BootReceiver extends BroadcastReceiver {
 //        bootIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        context.startActivity(bootIntent);
 
-//        // Start service for detecting when the screen is turned on
-//        Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
-//        context.startService(screenOnServiceIntent);
-
         // Initiate background job for synchronizing with server content
         ComponentName componentName = new ComponentName(context, ContentSynchronizationJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(1, componentName);
@@ -35,6 +31,7 @@ public class BootReceiver extends BroadcastReceiver {
         JobInfo jobInfo = builder.build();
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
+
         // Start service for detecting when the screen is turned on
         Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
         context.startService(screenOnServiceIntent);

@@ -3,11 +3,13 @@ package org.literacyapp.authentication.fallback;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
@@ -24,6 +26,7 @@ import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
+import org.literacyapp.receiver.ScreenOnReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.StudentHelper;
@@ -224,6 +227,10 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 Log.i(getClass().getName(), "Storing Student in database");
                 studentDao.insert(student);
                 Log.i(getClass().getName(), "Student stored in database with id " + student.getId());
+
+                // Store time of last successful authentication
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                sharedPreferences.edit().putLong(ScreenOnReceiver.PREF_TIME_OF_LAST_AUTHENTICATION, Calendar.getInstance().getTimeInMillis()).commit();
 
                 // Personalize apps/content according to Student's level
                 new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
