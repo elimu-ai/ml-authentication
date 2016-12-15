@@ -19,8 +19,7 @@ import java.util.Calendar;
  */
 public class ScreenOnReceiver extends BroadcastReceiver {
 
-//    private final static int TIME_BETWEEN_AUTHENTICATIONS = 30;
-    private final static int TIME_BETWEEN_AUTHENTICATIONS = 3; // Setting used temporarily for testing purposes
+    private final static int TIME_BETWEEN_AUTHENTICATIONS = 30;
 
     public static final String PREF_TIME_OF_LAST_AUTHENTICATION = "pref_time_of_last_authentication";
 
