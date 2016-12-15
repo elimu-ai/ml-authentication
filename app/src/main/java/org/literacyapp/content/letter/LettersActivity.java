@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.content.task.VisemeActivity;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.content.Letter;
@@ -77,8 +78,9 @@ public class LettersActivity extends AppCompatActivity {
                     intent.putExtra("literacySkill", "LETTER_IDENTIFICATION");
                     sendBroadcast(intent);
 
-//                    Intent visemeIntent = new Intent(getApplicationContext(), VisemeActivity.class);
-//                    startActivity(visemeIntent);
+                    Intent visemeIntent = new Intent(getApplicationContext(), VisemeActivity.class);
+                    visemeIntent.putExtra("letter", letter.getText());
+                    startActivity(visemeIntent);
                 }
             });
 

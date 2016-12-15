@@ -1,0 +1,7 @@
+ <animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+   android:drawable="@drawable/viseme_penguin_a">
+
+     <target
+         android:name="mouth"
+         android:animation="@anim/viseme_penguin_a_to_neutral_morph_animator" />
+ </animated-vector>
