@@ -96,6 +96,7 @@ public class NumbersActivity extends AppCompatActivity {
                     intent.setAction("literacyapp.intent.action.USAGE_EVENT");
                     intent.putExtra("packageName", getPackageName());
                     intent.putExtra("numeracySkill", "NUMBER_IDENTIFICATION");
+                    intent.putExtra("number", number.getValue());
                     sendBroadcast(intent);
                 }
             });
