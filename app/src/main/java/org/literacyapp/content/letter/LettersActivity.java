@@ -76,6 +76,7 @@ public class LettersActivity extends AppCompatActivity {
                     intent.setAction("literacyapp.intent.action.USAGE_EVENT");
                     intent.putExtra("packageName", getPackageName());
                     intent.putExtra("literacySkill", "LETTER_IDENTIFICATION");
+                    intent.putExtra("letter", letter.getText());
                     sendBroadcast(intent);
 
                     Intent visemeIntent = new Intent(getApplicationContext(), VisemeActivity.class);
