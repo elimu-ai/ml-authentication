@@ -106,7 +106,6 @@ public class StudentSelectionActivity extends AppCompatActivity {
                     public void run() {
                         MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_selection_cannot);
 
-                        fab.setVisibility(View.VISIBLE);
                         fab.postDelayed(new Runnable() {
                             @Override
                             public void run() {
