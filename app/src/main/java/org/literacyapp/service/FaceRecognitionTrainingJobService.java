@@ -16,6 +16,7 @@ public class FaceRecognitionTrainingJobService extends JobService {
         Log.i(getClass().getName(), "onStartJob");
         TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         trainingHelper.extractFeatures();
+        trainingHelper.trainClassifier();
         return false;
     }
 
