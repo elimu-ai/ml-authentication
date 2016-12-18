@@ -12,8 +12,23 @@
     <ImageView android:id="@+id/visemeImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:src="@drawable/viseme_neutral_to_t_animated_vector" />
+        android:src="@drawable/viseme_penguin_neutral_to_t_animated_vector" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:background="#FFF">
+
+        <TextView
+            android:id="@+id/visemeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="t"
+            android:textSize="172sp"
+            android:elegantTextHeight="true" />
+    </LinearLayout>
 
     <ImageButton android:id="@+id/visemeImageButton"
         android:layout_width="96dp"
@@ -23,5 +38,5 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_arrow_forward_black_24dp"
         style="?android:attr/buttonBarButtonStyle"
-        android:tint="@color/blue" />
+        android:tint="@color/colorAccent" />
 </RelativeLayout>
