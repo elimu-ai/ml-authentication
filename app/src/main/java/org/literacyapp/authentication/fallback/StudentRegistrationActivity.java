@@ -3,11 +3,13 @@ package org.literacyapp.authentication.fallback;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.DateFormat;
@@ -23,7 +25,7 @@ import org.literacyapp.R;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImage;
+import org.literacyapp.receiver.ScreenOnReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.StudentHelper;
@@ -191,7 +193,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
             // Store image on SD card
             String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
-            String imageFilePath = StudentHelper.getStudentThumbnailDirectory() + "/" + DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".png";
+            String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".png";
             Log.i(getClass().getName(), "Storing image at " + imageFilePath);
             File scaledScreenshotFile = new File(imageFilePath);
             try {
@@ -199,20 +201,8 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
                 fileOutputStream.close();
 
-                // Store StudentImageCollection event in database
-                // TODO
-
-                // Store StudentImage in database
-                StudentImage studentImage = new StudentImage();
-                studentImage.setImageFileUrl(imageFilePath);
-                studentImage.setTimeCollected(Calendar.getInstance());
-//                studentImage.setStudentImageCollectionEvent();
-                Log.i(getClass().getName(), "Storing StudentImage in database");
-                studentImageDao.insert(studentImage);
-                Log.i(getClass().getName(), "StudentImage stored in database with id " + studentImage.getId());
-
                 // Set Student skill level
-                // TODO: if this is the first Student being registered on the device, set skill level to match previous learning progress on Device, and assign all events to Student.
+                // TODO: if this is the first Student being registered on the device, set skill level to match previous learning progress stored on Device, and assign all previous events to Student.
 
                 // Store Student in database
                 Student student = new Student();
@@ -220,10 +210,14 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                 student.setUniqueId(uniqueId);
                 Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                 student.setTimeCreated(Calendar.getInstance());
-                student.setAvatar(studentImage);
+                student.setAvatar(imageFilePath);
                 Log.i(getClass().getName(), "Storing Student in database");
                 studentDao.insert(student);
                 Log.i(getClass().getName(), "Student stored in database with id " + student.getId());
+
+                // Store time of last successful authentication
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                sharedPreferences.edit().putLong(ScreenOnReceiver.PREF_TIME_OF_LAST_AUTHENTICATION, Calendar.getInstance().getTimeInMillis()).commit();
 
                 // Personalize apps/content according to Student's level
                 new StudentUpdateHelper(getApplicationContext(), student).updateStudent();

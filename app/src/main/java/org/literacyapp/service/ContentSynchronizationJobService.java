@@ -3,7 +3,6 @@ package org.literacyapp.service;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.literacyapp.R;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
@@ -26,9 +25,11 @@ public class ContentSynchronizationJobService extends JobService {
         boolean isWifiConnected = ConnectivityHelper.isWifiConnected(getApplicationContext());
         Log.i(getClass().getName(), "isWifiConnected: " + isWifiConnected);
         if (!isWifiEnabled) {
-            Toast.makeText(getApplicationContext(), getString(R.string.wifi_needs_to_be_enabled), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), getString(R.string.wifi_needs_to_be_enabled), Toast.LENGTH_SHORT).show();
+            Log.i(getClass().getName(), getString(R.string.wifi_needs_to_be_enabled));
         } else if (!isWifiConnected) {
-            Toast.makeText(getApplicationContext(), getString(R.string.wifi_needs_to_be_connected), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getApplicationContext(), getString(R.string.wifi_needs_to_be_connected), Toast.LENGTH_SHORT).show();
+            Log.i(getClass().getName(), getString(R.string.wifi_needs_to_be_connected));
         } else {
             new ReadDeviceAsyncTask(getApplicationContext()).execute();
         }

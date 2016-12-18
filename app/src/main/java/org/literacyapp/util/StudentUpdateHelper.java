@@ -94,9 +94,11 @@ public class StudentUpdateHelper {
         intent.putStringArrayListExtra("availableNumbers", availableNumbersStringArrayList);
         intent.putStringArrayListExtra("availableLiteracySkills", availableLiteracySkillsStringArrayList);
         intent.putStringArrayListExtra("availableNumeracySkills", availableNumeracySkillsStringArrayList);
-        if ((student != null) && (student.getAvatar() != null)) {
+        if ((student != null) && (student.getUniqueId() != null)) {
             intent.putExtra("studentId", student.getUniqueId());
-            intent.putExtra("studentAvatar", student.getAvatar().getImageFileUrl());
+        }
+        if ((student != null) && (student.getAvatar() != null)) {
+            intent.putExtra("studentAvatar", student.getAvatar());
         }
         Log.i(getClass().getName(), "Sending broadcast to " + intent.getPackage());
         context.sendBroadcast(intent);

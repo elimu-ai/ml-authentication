@@ -9,8 +9,8 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1003000 // Should match the database schemaVersion (see below)
-        versionName "1.3.0"
+        versionCode 1003002
+        versionName "1.3.2"
 
 //        jackOptions {
 //            enabled true
@@ -55,7 +55,7 @@ android {
 }
 
 greendao {
-    schemaVersion 1003000 // Should match the application's versionCode (see above)
+    schemaVersion android.defaultConfig.versionCode
     daoPackage 'org.literacyapp.dao'
     targetGenDir '../app/src/main/java'
 }

@@ -10,7 +10,6 @@ import org.literacyapp.R;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImage;
 import org.literacyapp.util.StudentHelper;
 
 import java.io.File;
@@ -62,12 +61,10 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
                 String fileName = testStudentImageFile.getName();
                 Log.i(getClass().getName(), "fileName: " + fileName);
 
-                Log.i(getClass().getName(), "Storing test StudentImage in database");
-                StudentImage studentImage = new StudentImage();
-                studentImage.setImageFileUrl(testStudentImageFile.getAbsolutePath());
-                studentImage.setTimeCollected(Calendar.getInstance());
-                studentImageDao.insert(studentImage);
-                Log.i(getClass().getName(), "StudentImage stored in database with id " + studentImage.getId());
+                if (!fileName.endsWith(".png")) {
+                    Log.w(getClass().getName(), "Not a .png file. Skipping: " + fileName);
+                    continue;
+                }
 
                 Log.i(getClass().getName(), "Storing test Student in database");
                 Student student = new Student();
@@ -75,7 +72,7 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
                 student.setUniqueId(uniqueId);
                 Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                 student.setTimeCreated(Calendar.getInstance());
-                student.setAvatar(studentImage);
+                student.setAvatar(testStudentImageFile.getAbsolutePath());
                 studentDao.insert(student);
                 Log.i(getClass().getName(), "Student stored in database with id " + student.getId());
             }
