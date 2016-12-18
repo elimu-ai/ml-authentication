@@ -162,7 +162,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                         }
 
                         // Stop after NUMBER_OF_IMAGES (settings option)
-                        if(imagesProcessed > NUMBER_OF_IMAGES){
+                        if(imagesProcessed == NUMBER_OF_IMAGES){
                             storeStudentImages();
 //                        if (literacyApplication.TEST_MODE){
 //                            storeTestImages();
