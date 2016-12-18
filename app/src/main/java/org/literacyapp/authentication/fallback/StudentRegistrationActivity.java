@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,7 +25,6 @@ import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.receiver.ScreenOnReceiver;
-import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.StudentHelper;
 import org.literacyapp.util.StudentUpdateHelper;
@@ -192,8 +190,9 @@ public class StudentRegistrationActivity extends AppCompatActivity {
             thumbnailImageView.setImageBitmap(imageBitmap);
 
             // Store image on SD card
-            String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
-            String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + DeviceInfoHelper.getDeviceId(getApplicationContext()) + "_" + dateFormatted + ".png";
+            String uniqueId = StudentHelper.generateNextUniqueId(getApplicationContext(), studentDao);
+            Log.i(getClass().getName(), "uniqueId: " + uniqueId);
+            String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + uniqueId + ".png";
             Log.i(getClass().getName(), "Storing image at " + imageFilePath);
             File scaledScreenshotFile = new File(imageFilePath);
             try {
@@ -206,9 +205,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
 
                 // Store Student in database
                 Student student = new Student();
-                String uniqueId = StudentHelper.generateNextUniqueId(getApplicationContext(), studentDao);
                 student.setUniqueId(uniqueId);
-                Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                 student.setTimeCreated(Calendar.getInstance());
                 student.setAvatar(imageFilePath);
                 Log.i(getClass().getName(), "Storing Student in database");
