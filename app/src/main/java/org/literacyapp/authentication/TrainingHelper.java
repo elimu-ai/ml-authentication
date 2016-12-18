@@ -241,7 +241,7 @@ public class TrainingHelper {
                         // Create new Student
                         Student student = new Student();
                         student.setUniqueId(StudentHelper.generateNextUniqueId(context, studentDao));
-                        File avatarFile = createAvatarFileFromStudentImage(studentImage);
+                        File avatarFile = createAvatarFileFromStudentImage(studentImage, student);
                         if (avatarFile.exists()) {
                             student.setAvatar(avatarFile.getAbsolutePath());
                             Log.i(getClass().getName(), "Avatar with the path: " + avatarFile.getAbsolutePath() + " has been set for the Student " + student.getUniqueId());
@@ -259,7 +259,7 @@ public class TrainingHelper {
                     } else if (TextUtils.isEmpty(studentImageCollectionEvent.getStudent().getAvatar())){
                         // Try to create an Avatar for the Student if no Avatar has been created yet
                         Student student = studentImageCollectionEvent.getStudent();
-                        File avatarFile = createAvatarFileFromStudentImage(studentImage);
+                        File avatarFile = createAvatarFileFromStudentImage(studentImage, student);
                         if (avatarFile.exists()) {
                             student.setAvatar(avatarFile.getAbsolutePath());
                             Log.i(getClass().getName(), "Avatar with the path: " + avatarFile.getAbsolutePath() + " has been set for the Student " + student.getUniqueId());
@@ -336,9 +336,8 @@ public class TrainingHelper {
      * @param studentImage
      * @return
      */
-    private File createAvatarFileFromStudentImage(StudentImage studentImage){
-        String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
-        String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + DeviceInfoHelper.getDeviceId(context) + "_" + dateFormatted + ".png";
+    private File createAvatarFileFromStudentImage(StudentImage studentImage, Student student){
+        String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + student.getUniqueId() + ".png";
         File avatarFile = new File(imageFilePath);
         try {
             Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Preparing InputStream and OutputStream to copy the StudentImage into the Avatar directory");
