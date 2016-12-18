@@ -76,6 +76,9 @@ public class LettersActivity extends AppCompatActivity {
                     intent.putExtra("packageName", getPackageName());
                     intent.putExtra("literacySkill", "LETTER_IDENTIFICATION");
                     sendBroadcast(intent);
+
+//                    Intent visemeIntent = new Intent(getApplicationContext(), VisemeActivity.class);
+//                    startActivity(visemeIntent);
                 }
             });
 

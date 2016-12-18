@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.literacyapp.service.ContentSynchronizationJobService;
-import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.service.ScreenOnService;
 
 public class BootReceiver extends BroadcastReceiver {
@@ -24,10 +23,6 @@ public class BootReceiver extends BroadcastReceiver {
 //        bootIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        context.startActivity(bootIntent);
 
-//        // Start service for detecting when the screen is turned on
-//        Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
-//        context.startService(screenOnServiceIntent);
-
         // Initiate background job for synchronizing with server content
         ComponentName componentName = new ComponentName(context, ContentSynchronizationJobService.class);
         JobInfo.Builder builder = new JobInfo.Builder(1, componentName);
@@ -35,18 +30,21 @@ public class BootReceiver extends BroadcastReceiver {
         JobInfo jobInfo = builder.build();
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
+
         // Start service for detecting when the screen is turned on
         Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
         context.startService(screenOnServiceIntent);
 
-        // Initiate background job for face recognition training
-        ComponentName componentNameFaceRecognitionTranining = new ComponentName(context, FaceRecognitionTrainingJobService.class);
-        JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
-        int faceRecognitionTrainingPeriodic = 15 * 60 * 1000;
-        builderFaceRecognitionTranining.setPeriodic(faceRecognitionTrainingPeriodic); // Every 15 minutes
-        JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
-        JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
-        Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + FACE_RECOGNITION_TRAINING_JOB_ID + " has been scheduled with periodic time = " + faceRecognitionTrainingPeriodic);
+        // TODO: trigger the same code as in ScreenOnReceiver
+
+//        // Initiate background job for face recognition training
+//        ComponentName componentNameFaceRecognitionTranining = new ComponentName(context, FaceRecognitionTrainingJobService.class);
+//        JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
+//        int faceRecognitionTrainingPeriodic = 15 * 60 * 1000;
+//        builderFaceRecognitionTranining.setPeriodic(faceRecognitionTrainingPeriodic); // Every 15 minutes
+//        JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
+//        JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//        jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
+//        Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + FACE_RECOGNITION_TRAINING_JOB_ID + " has been scheduled with periodic time = " + faceRecognitionTrainingPeriodic);
     }
 }
