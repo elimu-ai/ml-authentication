@@ -34,6 +34,22 @@ public class AiHelper {
         return modelDirectory;
     }
 
+    public static File getSvmDirectory() {
+        File svmDirectory = new File(getAiDirectory(), "svm");
+        if (!svmDirectory.exists()) {
+            svmDirectory.mkdir();
+        }
+        return svmDirectory;
+    }
+
+    public static File getSvmArchiveDirectory(){
+        File svmArchiveDirectory = new File(getSvmDirectory(), "archive");
+        if (!svmArchiveDirectory.exists()) {
+            svmArchiveDirectory.mkdir();
+        }
+        return svmArchiveDirectory;
+    }
+
     public static File getAnimalTemplateDirectory(Context context) {
         File animalTemplateDirectory = new File(getAiDirectory(), "animalTemplate");
         if (!animalTemplateDirectory.exists()) {

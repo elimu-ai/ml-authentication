@@ -1,18 +1,26 @@
 package org.literacyapp.authentication;
 
 import android.content.Context;
+import android.os.Debug;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
+import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
+import org.literacyapp.util.DeviceInfoHelper;
+import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -21,7 +29,15 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ch.zhaw.facerecognitionlibrary.PreProcessor.StandardPostprocessing.Resize;
@@ -34,12 +50,17 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
  */
 
 public class TrainingHelper {
+    private static final String MODEL_DOWNLOAD_LINK = "https://drive.google.com/open?id=0B3jQsJcchixPek9lU3BaOHpCUGc";
     private Context context;
     private DaoSession daoSession;
     private StudentImageDao studentImageDao;
     private StudentImageFeatureDao studentImageFeatureDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
+    private StudentDao studentDao;
     private SupportVectorMachine svm;
+    private File svmTrainingFile;
+    private File svmTrainingModelFile;
+    private File svmArchiveFolderWithTimestamp;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -54,7 +75,11 @@ public class TrainingHelper {
         studentImageDao = daoSession.getStudentImageDao();
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
-        svm = new SupportVectorMachine(context, Recognition.TRAINING);
+        studentDao = daoSession.getStudentDao();
+        svmTrainingFile = new File(AiHelper.getSvmDirectory(), "training");
+        svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
+        File svmPredictionFile = new File(AiHelper.getSvmDirectory(), "prediction");
+        svm = new SupportVectorMachine(svmTrainingFile, svmPredictionFile);
     }
 
 
@@ -62,21 +87,23 @@ public class TrainingHelper {
      * Get all the StudentImages where the features haven't been extracted yet
      * Extract features for every StudentImage and store them as StudentImageFeature
      */
-    public void extractFeatures(){
+    public synchronized void extractFeatures(){
         List<StudentImage> studentImageList = studentImageDao.queryBuilder()
                 .where(StudentImageDao.Properties.StudentImageFeatureId.eq(0))
                 .list();
         Log.i(getClass().getName(), "Number of StudentImages, where the features haven't been extracted yet: " + studentImageList.size());
-        TensorFlow tensorFlow = getInitializedTensorFlow();
-        if (tensorFlow != null){
-            for(StudentImage studentImage : studentImageList){
-                if (isStudentImageValid(studentImage)){
-                    String svmVector = getSvmVector(tensorFlow, studentImage);
-                    if (svmVector != null){
-                        storeStudentImageFeature(studentImage, svmVector);
-                    } else {
-                        Log.i(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " has been deleted recursively because the feature extraction failed.");
-                        deleteStudentImagesRecursive(studentImage, "the feature extraction failed.");
+        if (studentImageList.size() > 0){
+            TensorFlow tensorFlow = getInitializedTensorFlow();
+            if (tensorFlow != null){
+                for(StudentImage studentImage : studentImageList){
+                    if (isStudentImageValid(studentImage)){
+                        String svmVector = getSvmVector(tensorFlow, studentImage);
+                        if (svmVector != null){
+                            storeStudentImageFeature(studentImage, svmVector);
+                        } else {
+                            Log.w(getClass().getName(), "StudentImageCollectionEvent with the id " + studentImage.getStudentImageCollectionEventId() + " will be deleted recursively because the feature extraction failed.");
+                            deleteStudentImagesRecursive(studentImage, "the feature extraction failed.");
+                        }
                     }
                 }
             }
@@ -88,7 +115,7 @@ public class TrainingHelper {
      * @param studentImage - StudentImage
      * @param svmVector - Extracted features converted to an SVM string for LIBSVM (without the label)
      */
-    private void storeStudentImageFeature(StudentImage studentImage, String svmVector){
+    private synchronized void storeStudentImageFeature(StudentImage studentImage, String svmVector){
         StudentImageFeature studentImageFeature = new StudentImageFeature(studentImage.getId(), Calendar.getInstance(), svmVector);
         studentImage.setStudentImageFeature(studentImageFeature);
         studentImageFeatureDao.insert(studentImageFeature);
@@ -104,7 +131,7 @@ public class TrainingHelper {
      * @param studentImage
      * @return
      */
-    private String getSvmVector(TensorFlow tensorFlow, StudentImage studentImage){
+    private synchronized String getSvmVector(TensorFlow tensorFlow, StudentImage studentImage){
         // Load image into OpenCV Mat object
         Mat img = Imgcodecs.imread(studentImage.getImageFileUrl());
         Log.i(getClass().getName(), "StudentImage has been loaded from file " + studentImage.getImageFileUrl());
@@ -119,12 +146,20 @@ public class TrainingHelper {
      * Initialize TensorFlow model
      * @return
      */
-    private TensorFlow getInitializedTensorFlow(){
+    private synchronized TensorFlow getInitializedTensorFlow(){
         File modelFile = new File(AiHelper.getModelDirectory(), "vgg_faces.pb");
         if (!modelFile.exists()){
+            File modelDownloadFile = createModelDownloadFile(modelFile);
             String logMessage = "Model file: " + modelFile.getAbsolutePath() + " doesn't exist. Please copy it manually";
+            if (modelDownloadFile != null){
+                logMessage = logMessage + ". Find the download link in the file " + modelDownloadFile.getAbsolutePath();
+
+            } else {
+                logMessage = logMessage + " from " + MODEL_DOWNLOAD_LINK;
+            }
             Log.e(getClass().getName(), logMessage);
             Toast.makeText(context, logMessage, Toast.LENGTH_LONG).show();
+
             return null;
         }
         int inputSize = 224;
@@ -136,7 +171,15 @@ public class TrainingHelper {
         return tensorFlow;
     }
 
-    private boolean isStudentImageValid(StudentImage studentImage){
+    /**
+     * Check if StudentImage is valid
+     * The StudentImage is invalid if
+     *      a) no StudentImageCollectionEvent is assigned --> in this case the StudentImage gets deleted from the db
+     *      b) the StudentImage file on the sdcard doesn't exist --> in this case all related StudentImages, StudentImageFeatures and the StudentImageCollectionEvent get deleted recursively from the db
+     * @param studentImage
+     * @return
+     */
+    private synchronized boolean isStudentImageValid(StudentImage studentImage){
         boolean valid = true;
         File studentImageFile = new File(studentImage.getImageFileUrl());
         if (studentImage.getStudentImageCollectionEvent() == null){
@@ -152,7 +195,7 @@ public class TrainingHelper {
     }
 
     // Delete StudentImageCollectionEvent and all StudentImages if a file doesn't exist anymore or the feature extraction failed for another reason
-    private void deleteStudentImagesRecursive(StudentImage studentImage, String reason){
+    private synchronized void deleteStudentImagesRecursive(StudentImage studentImage, String reason){
         // Delete all StudentImages and StudentImageFeatures which have already been extracted for this StudentImageCollectionEvent
         List<StudentImage> studentImagesToDelete = studentImageDao.queryBuilder()
                 .where(StudentImageDao.Properties.StudentImageCollectionEventId.eq(studentImage.getStudentImageCollectionEventId()))
@@ -170,5 +213,147 @@ public class TrainingHelper {
         // Delete the StudentImage, where the file doesn't exist anymore
         studentImageDao.delete(studentImage);
         Log.i(getClass().getName(), "StudentImage with the id " + studentImage.getId() + " has been deleted because " + reason);
+    }
+
+    public synchronized void trainClassifier(){
+        Log.i(getClass().getName(), "trainClassifier");
+        // Initiate training if a StudentImageCollectionEvent has not been trained yet
+        long count = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(false)).count();
+        Log.i(getClass().getName(), "Count of StudentImageCollectionEvents where SvmTrainingExecuted is false: " + count);
+        if (count > 0){
+            List<StudentImage> studentImages = studentImageDao.queryBuilder()
+                    .where(StudentImageDao.Properties.StudentImageFeatureId.notEq(0))
+                    .list();
+            for (StudentImage studentImage : studentImages){
+                svm.addImage(studentImage.getStudentImageFeature().getSvmVector(), Long.toString(studentImage.getStudentImageCollectionEventId()));
+            }
+            if (archiveClassifierFiles()){
+                Log.i(getClass().getName(), "Classifier files have been archived.");
+            } else {
+                Log.e(getClass().getName(), "Failed to archive classifier files.");
+            }
+            Log.i(getClass().getName(), "Classifier training has started with linear kernel (LIBSVM -t 0).");
+            svm.train("-t 0 ");
+            if (checkClassifierTrainingResult()){
+                for (StudentImage studentImage : studentImages){
+                    StudentImageCollectionEvent studentImageCollectionEvent = studentImage.getStudentImageCollectionEvent();
+                    if (!studentImageCollectionEvent.getSvmTrainingExecuted()){
+                        // Create new Student
+                        Student student = new Student();
+                        student.setUniqueId(StudentHelper.generateNextUniqueId(context, studentDao));
+                        File avatarFile = createAvatarFileFromStudentImage(studentImage);
+                        if (avatarFile.exists()) {
+                            student.setAvatar(avatarFile.getAbsolutePath());
+                            Log.i(getClass().getName(), "Avatar with the path: " + avatarFile.getAbsolutePath() + " has been set for the Student " + student.getUniqueId());
+                        } else {
+                            Log.i(getClass().getName(), "Avatar couldn't be created from " + studentImage.getImageFileUrl() + " for the Student " + student.getUniqueId());
+                        }
+                        student.setTimeCreated(Calendar.getInstance());
+                        studentDao.insert(student);
+                        Log.i(getClass().getName(), "Student with Id " + student.getId() + " and uniqueId " + student.getUniqueId() + " has been created.");
+                        // Add Student to StudentImageCollectionEvent
+                        studentImageCollectionEvent.setStudent(student);
+                        studentImageCollectionEvent.setSvmTrainingExecuted(true);
+                        studentImageCollectionEventDao.update(studentImageCollectionEvent);
+                        Log.i(getClass().getName(), "StudentImageCollectionEvent with Id " + studentImageCollectionEvent.getId() + " has been trained in classifier");
+                    } else if (TextUtils.isEmpty(studentImageCollectionEvent.getStudent().getAvatar())){
+                        // Try to create an Avatar for the Student if no Avatar has been created yet
+                        Student student = studentImageCollectionEvent.getStudent();
+                        File avatarFile = createAvatarFileFromStudentImage(studentImage);
+                        if (avatarFile.exists()) {
+                            student.setAvatar(avatarFile.getAbsolutePath());
+                            Log.i(getClass().getName(), "Avatar with the path: " + avatarFile.getAbsolutePath() + " has been set for the Student " + student.getUniqueId());
+                        } else {
+                            Log.i(getClass().getName(), "Avatar couldn't be created from " + studentImage.getImageFileUrl() + " for the Student " + student.getUniqueId());
+                        }
+                        studentDao.update(student);
+                    }
+                }
+                Log.i(getClass().getName(), "Classifier training has finished succuessfully.");
+            } else {
+                Log.e(getClass().getName(), "Classifier training has failed.");
+            }
+        }
+    }
+
+    /**
+     * Archive the existing classifier files before training
+     *      a) for debugging purposes
+     *      b) for a backup if training fails --> so the last training files can be restored
+     * @return
+     */
+    private synchronized boolean archiveClassifierFiles(){
+        boolean success = true;
+        svmArchiveFolderWithTimestamp = new File(AiHelper.getSvmArchiveDirectory().getAbsolutePath(), Long.toString(new Date().getTime()));
+        Log.i(getClass().getName(), "Create archive directory " + svmArchiveFolderWithTimestamp.getAbsolutePath());
+        svmArchiveFolderWithTimestamp.mkdir();
+        success = success && svmTrainingFile.renameTo(new File(svmArchiveFolderWithTimestamp, svmTrainingFile.getName()));
+        success = success && svmTrainingModelFile.renameTo(new File(svmArchiveFolderWithTimestamp, svmTrainingModelFile.getName()));
+        if (!success){
+            svmArchiveFolderWithTimestamp.delete();
+        }
+        return success;
+    }
+
+    /**
+     * Checks whether the 2 training files exist. If not, restore the backup files.
+     * @return
+     */
+    private synchronized boolean checkClassifierTrainingResult(){
+        if (svmTrainingFile.exists() && svmTrainingModelFile.exists()){
+            return true;
+        } else {
+            // Move the newest archive files back to the main folder
+            svmTrainingFile.renameTo(new File(AiHelper.getSvmDirectory(),svmTrainingFile.getName()));
+            svmTrainingModelFile.renameTo(new File(AiHelper.getSvmDirectory(),svmTrainingModelFile.getName()));
+            svmArchiveFolderWithTimestamp.delete();
+            return false;
+        }
+    }
+
+    /**
+     * Create a text file with the TensorFlow model download linke in case the file doesn't exist
+     * @param modelFile
+     * @return
+     */
+    private File createModelDownloadFile(File modelFile){
+        File modelDownloadFile = new File(AiHelper.getModelDirectory(), "download_link.txt");
+        try {
+            FileWriter fileWriter = new FileWriter(modelDownloadFile, false);
+            fileWriter.append(MODEL_DOWNLOAD_LINK + "\n");
+            fileWriter.append("Copy to: " + modelFile.getAbsolutePath());
+            fileWriter.close();
+            Log.i(getClass().getName(), "Model download file has been created at " + modelDownloadFile.getAbsolutePath() + " with the link " + MODEL_DOWNLOAD_LINK);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return modelDownloadFile;
+    }
+
+    /**
+     * Create the Avatar file for a Student using a StudentImage
+     * @param studentImage
+     * @return
+     */
+    private File createAvatarFileFromStudentImage(StudentImage studentImage){
+        String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
+        String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + DeviceInfoHelper.getDeviceId(context) + "_" + dateFormatted + ".png";
+        File avatarFile = new File(imageFilePath);
+        try {
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Preparing InputStream and OutputStream to copy the StudentImage into the Avatar directory");
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: InputStream with the file: " + studentImage.getImageFileUrl());
+            InputStream inputStream = new FileInputStream(studentImage.getImageFileUrl());
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: OutputStream with the file: " + avatarFile.getAbsolutePath());
+            OutputStream outputStream = new FileOutputStream(avatarFile);
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Start copying of the file...");
+            MultimediaHelper.copyFile(inputStream, outputStream);
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Finished file copying.");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return avatarFile;
     }
 }
