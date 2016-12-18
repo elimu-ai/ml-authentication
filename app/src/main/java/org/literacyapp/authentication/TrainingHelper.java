@@ -2,6 +2,8 @@ package org.literacyapp.authentication;
 
 import android.content.Context;
 import android.os.Debug;
+import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
+import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
@@ -26,9 +29,13 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -234,7 +241,13 @@ public class TrainingHelper {
                         // Create new Student
                         Student student = new Student();
                         student.setUniqueId(StudentHelper.generateNextUniqueId(context, studentDao));
-                        student.setAvatar(studentImage);
+                        File avatarFile = createAvatarFileFromStudentImage(studentImage);
+                        if (avatarFile.exists()) {
+                            student.setAvatar(avatarFile.getAbsolutePath());
+                            Log.i(getClass().getName(), "Avatar with the path: " + avatarFile.getAbsolutePath() + " has been set for the Student " + student.getUniqueId());
+                        } else {
+                            Log.i(getClass().getName(), "Avatar couldn't be created from " + studentImage.getImageFileUrl() + " for the Student " + student.getUniqueId());
+                        }
                         student.setTimeCreated(Calendar.getInstance());
                         studentDao.insert(student);
                         Log.i(getClass().getName(), "Student with Id " + student.getId() + " and uniqueId " + student.getUniqueId() + " has been created.");
@@ -243,6 +256,17 @@ public class TrainingHelper {
                         studentImageCollectionEvent.setSvmTrainingExecuted(true);
                         studentImageCollectionEventDao.update(studentImageCollectionEvent);
                         Log.i(getClass().getName(), "StudentImageCollectionEvent with Id " + studentImageCollectionEvent.getId() + " has been trained in classifier");
+                    } else if (TextUtils.isEmpty(studentImageCollectionEvent.getStudent().getAvatar())){
+                        // Try to create an Avatar for the Student if no Avatar has been created yet
+                        Student student = studentImageCollectionEvent.getStudent();
+                        File avatarFile = createAvatarFileFromStudentImage(studentImage);
+                        if (avatarFile.exists()) {
+                            student.setAvatar(avatarFile.getAbsolutePath());
+                            Log.i(getClass().getName(), "Avatar with the path: " + avatarFile.getAbsolutePath() + " has been set for the Student " + student.getUniqueId());
+                        } else {
+                            Log.i(getClass().getName(), "Avatar couldn't be created from " + studentImage.getImageFileUrl() + " for the Student " + student.getUniqueId());
+                        }
+                        studentDao.update(student);
                     }
                 }
                 Log.i(getClass().getName(), "Classifier training has finished succuessfully.");
@@ -287,6 +311,11 @@ public class TrainingHelper {
         }
     }
 
+    /**
+     * Create a text file with the TensorFlow model download linke in case the file doesn't exist
+     * @param modelFile
+     * @return
+     */
     private File createModelDownloadFile(File modelFile){
         File modelDownloadFile = new File(AiHelper.getModelDirectory(), "download_link.txt");
         try {
@@ -300,5 +329,31 @@ public class TrainingHelper {
             e.printStackTrace();
         }
         return modelDownloadFile;
+    }
+
+    /**
+     * Create the Avatar file for a Student using a StudentImage
+     * @param studentImage
+     * @return
+     */
+    private File createAvatarFileFromStudentImage(StudentImage studentImage){
+        String dateFormatted = (String) DateFormat.format("yyyy-MM-dd_HHmmss", Calendar.getInstance());
+        String imageFilePath = StudentHelper.getStudentAvatarDirectory() + "/" + DeviceInfoHelper.getDeviceId(context) + "_" + dateFormatted + ".png";
+        File avatarFile = new File(imageFilePath);
+        try {
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Preparing InputStream and OutputStream to copy the StudentImage into the Avatar directory");
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: InputStream with the file: " + studentImage.getImageFileUrl());
+            InputStream inputStream = new FileInputStream(studentImage.getImageFileUrl());
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: OutputStream with the file: " + avatarFile.getAbsolutePath());
+            OutputStream outputStream = new FileOutputStream(avatarFile);
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Start copying of the file...");
+            MultimediaHelper.copyFile(inputStream, outputStream);
+            Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Finished file copying.");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return avatarFile;
     }
 }
