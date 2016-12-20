@@ -3,7 +3,6 @@ package org.literacyapp.authentication;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.SurfaceView;
 
 import org.literacyapp.LiteracyApplication;
@@ -15,7 +14,6 @@ import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
-import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
@@ -24,8 +22,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,7 +38,7 @@ import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
  * Activity to collect images via the front camera view, adding an overlay and storing images of detected faces
  */
 
-public class CameraViewActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class StudentImageCollectionActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     private JavaCameraView preview;
     private PreProcessorFactory ppF;
     private long lastTime;
@@ -50,20 +46,15 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Device device;
     private DeviceDao deviceDao;
-    private Mat imgOverlay;
     private LiteracyApplication literacyApplication;
     private List<Mat> studentImages;
-    private List<Mat> testImages;
+    private AnimalOverlayHelper animalOverlayHelper;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
     private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
-
-    // Mat objects for overlay
-    private Mat imgMask  = new Mat();
-    private Mat imgInvMask  = new Mat();
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -75,7 +66,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_camera_view);
+        setContentView(R.layout.activity_authentication_student_image_collection);
 
         MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
         mediaPlayer.start();
@@ -109,14 +100,9 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             deviceDao.insert(device);
         }
 
-        // ToDo studenImageCollectionEvent creation local or external
-        // studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
         studentImages = new ArrayList<>();
-//        if (literacyApplication.TEST_MODE){
-//            testImages = new ArrayList<>();
-//        }
 
-      //studentImageCollectionEvent = new StudentImageCollectionEvent(collectionEventId);
+        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
     }
 
     @Override
@@ -143,9 +129,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         long time = new Date().getTime();
 
         if(lastTime + TIMER_DIFF < time){
-//            if (literacyApplication.TEST_MODE){
-//                testImages.add(imgCopy);
-//            }
             List<Mat> images = ppF.getCroppedImage(imgCopy);
             if(images != null && images.size() == 1){
                 Mat img = images.get(0);
@@ -154,7 +137,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                     if ((faces != null) && (faces.length == 1)) {
                         faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
 
-                        // Name = DeviceId_CollectionEventId_ImageNumber
                         studentImages.add(img);
 
                         if(DIAGNOSE_MODE) {
@@ -164,9 +146,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
                         // Stop after NUMBER_OF_IMAGES (settings option)
                         if(imagesProcessed == NUMBER_OF_IMAGES){
                             storeStudentImages();
-//                        if (literacyApplication.TEST_MODE){
-//                            storeTestImages();
-//                        }
                             finish();
                         }
 
@@ -177,7 +156,7 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
         }
 
         // Add overlay
-        addOverlay(imgRgba);
+        animalOverlayHelper.addOverlay(imgRgba);
 
         return imgRgba;
     }
@@ -187,10 +166,13 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
     {
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
-        createOverlay();
+        animalOverlayHelper.createOverlay();
         preview.enableView();
     }
 
+    /**
+     * Stores all the buffered StudentImages to the file system and database
+     */
     private synchronized void storeStudentImages(){
         StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
         studentImageCollectionEvent.setTime(Calendar.getInstance());
@@ -210,39 +192,6 @@ public class CameraViewActivity extends AppCompatActivity implements CameraBridg
             studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
             studentImageDao.insert(studentImage);
         }
-    }
-
-    private void createOverlay() {
-        Log.i(getClass().getName(), "createOverlay");
-        File[] animalTemplateFiles = AiHelper.getAnimalTemplateDirectory(getApplicationContext()).listFiles();
-
-        int randomNumber = (int) (Math.random() * animalTemplateFiles.length);
-
-        imgOverlay = Imgcodecs.imread(animalTemplateFiles[randomNumber].getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
-        Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
-
-        // Create a mask of overlay and create its inverse mask also
-        Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
-        Imgproc.threshold(imgMask, imgMask, 250, 255, Imgproc.THRESH_BINARY_INV);
-        Core.bitwise_not(imgMask,imgMask);
-        Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
-
-        Core.bitwise_not(imgMask,imgInvMask);
-    }
-
-    private void addOverlay(Mat imgRgba){
-        Mat imgForeGround = new Mat();
-        Mat imgBackGround = new Mat();
-
-        //Black-out the area of overlay in img
-        Core.bitwise_and(imgMask,imgRgba,imgBackGround);
-
-        // Take only region of overlay from overlay image.
-        Core.bitwise_and(imgOverlay,imgInvMask,imgForeGround);
-
-        // Add overlay to frame
-        Core.add(imgForeGround,imgBackGround,imgRgba);
-
     }
 
 }

@@ -146,7 +146,7 @@ public class TrainingHelper {
      * Initialize TensorFlow model
      * @return
      */
-    private synchronized TensorFlow getInitializedTensorFlow(){
+    public synchronized TensorFlow getInitializedTensorFlow(){
         File modelFile = new File(AiHelper.getModelDirectory(), "vgg_faces.pb");
         if (!modelFile.exists()){
             File modelDownloadFile = createModelDownloadFile(modelFile);
@@ -233,7 +233,7 @@ public class TrainingHelper {
                 Log.e(getClass().getName(), "Failed to archive classifier files.");
             }
             Log.i(getClass().getName(), "Classifier training has started with linear kernel (LIBSVM -t 0).");
-            svm.train("-t 0 ");
+            svm.trainProbability("-t 0 ");
             if (checkClassifierTrainingResult()){
                 for (StudentImage studentImage : studentImages){
                     StudentImageCollectionEvent studentImageCollectionEvent = studentImage.getStudentImageCollectionEvent();
@@ -354,5 +354,9 @@ public class TrainingHelper {
             e.printStackTrace();
         }
         return avatarFile;
+    }
+
+    public SupportVectorMachine getSvm() {
+        return svm;
     }
 }
