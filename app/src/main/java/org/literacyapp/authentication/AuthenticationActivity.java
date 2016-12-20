@@ -161,15 +161,15 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         stringTokenizerHeader.nextToken();
         StringTokenizer stringTokenizerContent = new StringTokenizer(content, " ");
         // First token shows the label with the highest probability
-        int labelWithHighestProbability = Integer.valueOf(stringTokenizerContent.nextToken());
+        int eventIdWithHighestProbability = Integer.valueOf(stringTokenizerContent.nextToken());
 
         HashMap<Integer, Double> probabilityMap = new HashMap<Integer, Double>();
         while(stringTokenizerHeader.hasMoreTokens()){
             probabilityMap.put(Integer.valueOf(stringTokenizerHeader.nextToken()), Double.valueOf(stringTokenizerContent.nextToken()));
         }
 
-        if (probabilityMap.get(labelWithHighestProbability) > 0.9){
-            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEventDao.load((long) labelWithHighestProbability);
+        if (probabilityMap.get(eventIdWithHighestProbability) > 0.9){
+            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEventDao.load((long) eventIdWithHighestProbability);
             Student student = studentImageCollectionEvent.getStudent();
             return student;
         } else {
