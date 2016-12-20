@@ -11,7 +11,7 @@
         android:layout_height="fill_parent"
         android:visibility="gone"
         android:id="@+id/CameraView"
-        opencv:show_fps="true"
+        opencv:show_fps="false"
         opencv:camera_id="any" />
 
 </RelativeLayout>

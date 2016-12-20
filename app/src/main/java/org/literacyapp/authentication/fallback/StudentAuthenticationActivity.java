@@ -34,7 +34,7 @@ public class StudentAuthenticationActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_authentication);
+        setContentView(R.layout.activity_student_authentication);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
         studentDao = literacyApplication.getDaoSession().getStudentDao();
