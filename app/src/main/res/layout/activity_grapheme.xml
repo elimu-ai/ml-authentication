@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:src="@drawable/animated_grapheme" />
+        android:src="@drawable/animated_letter_a" />
 
     <ImageButton android:id="@+id/graphemeImageButton"
         android:layout_width="96dp"
