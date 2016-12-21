@@ -6,11 +6,19 @@
 
     <path
         android:name="stroke1"
-        android:pathData="M911.6,769.7C689.8,742.4 291.4,789.1 252.2,1054.7C237.8,1152.6 291.1,1260.7 391.1,1285.7C657,1352.2 960.7,1023.5 911.6,769.7C867.1,904.6 904.5,1228.5 1012.9,1333.3"
+        android:pathData="M512.5,274.3C535.2,454.4 502.3,1120.2 530.8,1198.6C600,1321.5 750.1,1186.3 798.2,1148.6"
         android:strokeLineCap="round"
         android:strokeColor="#000000"
         android:fillColor="#00000000"
         android:strokeWidth="64.0"
         android:strokeLineJoin="round"
         android:strokeAlpha="1.0"/>
+    <!--<path-->
+        <!--android:name="stroke2"-->
+        <!--android:pathData="M355.3,525.9L709,525.9"-->
+        <!--android:strokeLineCap="round"-->
+        <!--android:strokeColor="#000000"-->
+        <!--android:fillColor="#00000000"-->
+        <!--android:strokeWidth="64.0"-->
+        <!--android:strokeAlpha="1.0"/>-->
 </vector>

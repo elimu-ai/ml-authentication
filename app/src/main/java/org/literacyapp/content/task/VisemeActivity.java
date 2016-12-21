@@ -1,5 +1,6 @@
 package org.literacyapp.content.task;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
@@ -88,14 +89,17 @@ public class VisemeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
+                Intent graphemeIntent = new Intent(getApplicationContext(), GraphemeActivity.class);
+                graphemeIntent.putExtra("letter", letter.getText());
+                startActivity(graphemeIntent);
+
                 finish();
-                // TODO: open video
             }
         });
     }
 
     private void playLetterSound(Letter letter) {
-        Log.i(getClass().getName(), "onClick");
+        Log.i(getClass().getName(), "playLetterSound");
 
         // Look up corresponding Audio
         final Audio audio = audioDao.queryBuilder()
