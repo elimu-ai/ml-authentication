@@ -150,6 +150,8 @@ public class CurriculumHelper {
             // Student not yet identified
 
             // Fall back to default list
+            numeracySkills.add(NumeracySkill.SHAPE_IDENTIFICATION);
+            numeracySkills.add(NumeracySkill.SHAPE_NAMING);
             numeracySkills.add(NumeracySkill.ORAL_COUNTING);
             numeracySkills.add(NumeracySkill.ONE_TO_ONE_CORRESPONDENCE);
             numeracySkills.add(NumeracySkill.NUMBER_IDENTIFICATION);
@@ -157,6 +159,8 @@ public class CurriculumHelper {
             // TODO: check for NumeracySkill learning events matching Device
         } else {
             // Fall back to default list
+            numeracySkills.add(NumeracySkill.SHAPE_IDENTIFICATION);
+            numeracySkills.add(NumeracySkill.SHAPE_NAMING);
             numeracySkills.add(NumeracySkill.ORAL_COUNTING);
             numeracySkills.add(NumeracySkill.ONE_TO_ONE_CORRESPONDENCE);
             numeracySkills.add(NumeracySkill.NUMBER_IDENTIFICATION);
