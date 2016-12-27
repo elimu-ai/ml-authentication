@@ -23,4 +23,10 @@ public class EnvironmentSettings {
     public static String getRestUrl() {
         return getBaseUrl() + "/rest/v1";
     }
+
+    public static void freeMemory(){
+        System.runFinalization();
+        Runtime.getRuntime().gc();
+        System.gc();
+    }
 }
