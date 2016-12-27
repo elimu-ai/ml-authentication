@@ -91,6 +91,6 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.0'
     compile 'com.skyfishjy.ripplebackground:library:1.0.1'
 
-    compile 'ch.zhaw:facerecognitionlibrary:1.2.9.3'
+    compile 'ch.zhaw:facerecognitionlibrary:1.3.0'
     compile project(':openCVLibrary310')
 }

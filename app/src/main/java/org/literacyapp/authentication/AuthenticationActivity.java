@@ -5,10 +5,11 @@ import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
+import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
@@ -19,17 +20,14 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
-import ch.zhaw.facerecognitionlibrary.Recognition.Recognition;
 import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
@@ -42,6 +40,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private AnimalOverlayHelper animalOverlayHelper;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private int numberOfTries;
+    private AnimalOverlay animalOverlay;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -94,21 +93,32 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         // Mirror front camera image
         Core.flip(imgRgba,imgRgba,1);
 
+        Rect face = new Rect();
+        boolean isFaceInsideFrame = false;
+        boolean faceDetected = false;
+
         List<Mat> images = ppF.getCroppedImage(imgCopy);
         if (images != null && images.size() == 1){
             Mat img = images.get(0);
             if (img != null){
                 Rect[] faces = ppF.getFacesForRecognition();
                 if (faces != null && faces.length == 1){
-                    String svmString = getSvmString(img);
-                    String svmProbability = svm.recognizeProbability(svmString);
-                    Student student = getStudentFromProbability(svmProbability);
-                    numberOfTries++;
-                    if (student != null){
-                        new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
-                        finish();
-                    } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
-                        startActivity(new Intent(getApplicationContext(), StudentImageCollectionActivity.class));
+                    faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
+                    face = faces[0];
+                    faceDetected = true;
+                    isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
+
+                    if (isFaceInsideFrame){
+                        String svmString = getSvmString(img);
+                        String svmProbability = svm.recognizeProbability(svmString);
+                        Student student = getStudentFromProbability(svmProbability);
+                        numberOfTries++;
+                        if (student != null){
+                            new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
+                            finish();
+                        } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
+                            startActivity(new Intent(getApplicationContext(), StudentImageCollectionActivity.class));
+                        }
                     }
                 }
             }
@@ -116,6 +126,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         // Add overlay
         animalOverlayHelper.addOverlay(imgRgba);
+
+        if (faceDetected && !isFaceInsideFrame){
+            DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+        }
 
         return imgRgba;
     }
@@ -128,7 +142,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         svm = trainingHelper.getSvm();
         tensorFlow = trainingHelper.getInitializedTensorFlow();
         ppF = new PreProcessorFactory(getApplicationContext());
-        animalOverlayHelper.createOverlay();
+        animalOverlay = animalOverlayHelper.createOverlay();
         numberOfTries = 0;
         preview.enableView();
     }
