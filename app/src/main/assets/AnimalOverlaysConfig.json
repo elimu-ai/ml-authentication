@@ -5,6 +5,15 @@
     	},
         "elephant.jpg": { 
         	"imageWidth":1920, "imageHeight":1080, "frameStartX":584, "frameStartY": 0, "frameEndX": 1330, "frameEndY": 676
-        }
+        },
+		"hippo.jpg": {
+			"imageWidth":1920, "imageHeight":1080, "frameStartX":584, "frameStartY": 0, "frameEndX": 1330, "frameEndY": 746
+		},
+		"sheep.jpg": {
+			"imageWidth":1920, "imageHeight":1080, "frameStartX":588, "frameStartY": 184, "frameEndX": 1334, "frameEndY": 930
+		},
+		"zebra.jpg": {
+			"imageWidth":1920, "imageHeight":1080, "frameStartX":644, "frameStartY": 106, "frameEndX": 1290, "frameEndY": 752
+		}
     }
 }
