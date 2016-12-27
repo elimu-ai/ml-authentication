@@ -11,9 +11,11 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.authentication.fallback.StudentRegistrationActivity;
 import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
@@ -49,6 +51,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private PreProcessorFactory ppF;
     private long lastTime;
     private long startTimeFallback;
+    private StudentDao studentDao;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Device device;
@@ -99,6 +102,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
 
         // Create required DB Objects
+        studentDao = daoSession.getStudentDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
         deviceDao = daoSession.getDeviceDao();
@@ -230,8 +234,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     }
 
     private synchronized void startFallbackActivity(){
-        Intent studentSelectionIntent = new Intent(getApplicationContext(), StudentSelectionActivity.class);
-        studentSelectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(studentSelectionIntent);
+        if (studentDao.count() > 0){
+            Intent studentSelectionIntent = new Intent(getApplicationContext(), StudentSelectionActivity.class);
+            studentSelectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(studentSelectionIntent);
+        } else {
+            Intent studentRegistrationIntent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
+            studentRegistrationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(studentRegistrationIntent);
+        }
     }
 }
