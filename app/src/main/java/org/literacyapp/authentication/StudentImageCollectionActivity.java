@@ -182,7 +182,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         }
 
         if (startTimeFallback + MAX_TIME_BEFORE_FALLBACK < time){
-            Log.i(getClass().getName(), "Fallback activity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds.");
             // Prevent from second execution of fallback activity because of threading
             startTimeFallback = time;
             startFallbackActivity();
@@ -237,10 +236,12 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         if (studentDao.count() > 0){
             Intent studentSelectionIntent = new Intent(getApplicationContext(), StudentSelectionActivity.class);
             studentSelectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Log.i(getClass().getName(), "StudentSelectionActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and some Students are already existing.");
             startActivity(studentSelectionIntent);
         } else {
             Intent studentRegistrationIntent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
             studentRegistrationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Log.i(getClass().getName(), "StudentRegistrationActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and no Students are existing yet.");
             startActivity(studentRegistrationIntent);
         }
     }
