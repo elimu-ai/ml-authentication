@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceView;
 
 import org.literacyapp.LiteracyApplication;
@@ -113,6 +114,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                         String svmProbability = svm.recognizeProbability(svmString);
                         Student student = getStudentFromProbability(svmProbability);
                         numberOfTries++;
+                        Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
                         if (student != null){
                             new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
                             finish();
