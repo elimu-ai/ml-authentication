@@ -7,6 +7,8 @@ import android.view.SurfaceView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
+import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
@@ -19,9 +21,13 @@ import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +55,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private LiteracyApplication literacyApplication;
     private List<Mat> studentImages;
     private AnimalOverlayHelper animalOverlayHelper;
+    private AnimalOverlay animalOverlay;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
@@ -128,6 +135,10 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         // Face detection
         long time = new Date().getTime();
 
+        Rect face = new Rect();
+        boolean isFaceInsideFrame = false;
+        boolean faceDetected = false;
+
         if(lastTime + TIMER_DIFF < time){
             List<Mat> images = ppF.getCroppedImage(imgCopy);
             if(images != null && images.size() == 1){
@@ -136,20 +147,25 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                     Rect[] faces = ppF.getFacesForRecognition();
                     if ((faces != null) && (faces.length == 1)) {
                         faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
+                        face = faces[0];
+                        faceDetected = true;
+                        isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
-                        studentImages.add(img);
+                        if (isFaceInsideFrame){
+                            studentImages.add(img);
 
-                        if(DIAGNOSE_MODE) {
-                            MatOperation.drawRectangleAndLabelOnPreview(imgRgba, faces[0], "Face detected", true);
+                            if(DIAGNOSE_MODE) {
+                                MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
+                            }
+
+                            // Stop after NUMBER_OF_IMAGES (settings option)
+                            if(imagesProcessed == NUMBER_OF_IMAGES){
+                                storeStudentImages();
+                                finish();
+                            }
+
+                            imagesProcessed++;
                         }
-
-                        // Stop after NUMBER_OF_IMAGES (settings option)
-                        if(imagesProcessed == NUMBER_OF_IMAGES){
-                            storeStudentImages();
-                            finish();
-                        }
-
-                        imagesProcessed++;
                     }
                 }
             }
@@ -157,6 +173,10 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         // Add overlay
         animalOverlayHelper.addOverlay(imgRgba);
+
+        if (faceDetected && !isFaceInsideFrame){
+            DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+        }
 
         return imgRgba;
     }
@@ -166,7 +186,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     {
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
-        animalOverlayHelper.createOverlay();
+        animalOverlay = animalOverlayHelper.createOverlay();
         preview.enableView();
     }
 
@@ -193,5 +213,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
             studentImageDao.insert(studentImage);
         }
     }
+
 
 }
