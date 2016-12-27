@@ -38,9 +38,9 @@ public class AnimalOverlayHelper {
         Log.i(getClass().getName(), "createOverlay");
         List<AnimalOverlay> animalOverlays = getAnimalOverlays();
 
-        int randomNumber = (int) (Math.random() * animalOverlays.size());
+        int randomIndex = (int) (Math.random() * animalOverlays.size());
 
-        AnimalOverlay animalOverlay = animalOverlays.get(randomNumber);
+        AnimalOverlay animalOverlay = animalOverlays.get(randomIndex);
 
         imgOverlay = Imgcodecs.imread(animalOverlay.getAnimalTemplateFile().getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
         Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
