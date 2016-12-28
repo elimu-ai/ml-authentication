@@ -44,6 +44,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private int numberOfTries;
     private AnimalOverlay animalOverlay;
+    private MediaPlayer mediaPlayerInstruction;
+    private MediaPlayer mediaPlayerAnimalSound;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -56,8 +58,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
-        mediaPlayer.start();
+        // Initialize DB Session
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
+        DaoSession daoSession = literacyApplication.getDaoSession();
+        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+
+        if (!readyForAuthentication()){
+            startStudentImageCollectionActivity();
+        }
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
 
@@ -69,10 +77,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
 
-        // Initialize DB Session
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
-        DaoSession daoSession = literacyApplication.getDaoSession();
-        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
     }
 
     @Override
@@ -148,9 +153,19 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         svm = trainingHelper.getSvm();
         tensorFlow = trainingHelper.getInitializedTensorFlow();
         ppF = new PreProcessorFactory(getApplicationContext());
-        animalOverlay = animalOverlayHelper.createOverlay();
         numberOfTries = 0;
+        animalOverlay = animalOverlayHelper.createOverlay();
+        if (animalOverlay != null){
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerInstruction.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayerAnimalSound.start();
+                }
+            });
+        }
         preview.enableView();
+        mediaPlayerInstruction.start();
     }
 
     /**
@@ -201,5 +216,29 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(studentImageCollectionIntent);
+        finish();
+    }
+
+    private boolean readyForAuthentication(){
+        long svmTrainingsExecutedCount = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(true)).count();
+        Log.i(getClass().getName(), "readyForAuthentication: svmTrainingsExecutedCount: " + svmTrainingsExecutedCount);
+        boolean classifierFilesExist = TrainingHelper.classifierFilesExist();
+        Log.i(getClass().getName(), "readyForAuthentication: classifierFilesExist: " + classifierFilesExist);
+        if ((svmTrainingsExecutedCount > 0) && classifierFilesExist){
+            Log.i(getClass().getName(), "AuthenticationActivity is ready for authentication.");
+            return true;
+        } else {
+            Log.w(getClass().getName(), "AuthenticationActivity is not ready for authentication.");
+            return false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayerInstruction.stop();
+        mediaPlayerInstruction.release();
+        mediaPlayerAnimalSound.stop();
+        mediaPlayerAnimalSound.release();
     }
 }

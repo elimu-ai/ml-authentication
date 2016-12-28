@@ -17,13 +17,17 @@ public class DetectionHelper {
     private static final Scalar RED_COLOR = new Scalar(255, 0, 0, 255);
 
     public static boolean isFaceInsideFrame(AnimalOverlay animalOverlay, Mat img, Rect face){
-        Point frameTopLeft = new Point(animalOverlay.getFrameStartX(), animalOverlay.getFrameStartY());
-        Point frameBottomRight = new Point(animalOverlay.getFrameEndX(), animalOverlay.getFrameEndY());
-        Rect frame = new Rect(frameTopLeft, frameBottomRight);
-        if (face.tl().x >= frame.tl().x && face.tl().y >= frame.tl().y && face.br().x <= frame.br().x && face.br().y <= frame.br().y){
-            return true;
+        if (animalOverlay != null){
+            Point frameTopLeft = new Point(animalOverlay.getFrameStartX(), animalOverlay.getFrameStartY());
+            Point frameBottomRight = new Point(animalOverlay.getFrameEndX(), animalOverlay.getFrameEndY());
+            Rect frame = new Rect(frameTopLeft, frameBottomRight);
+            if ((face.tl().x >= frame.tl().x) && (face.tl().y >= frame.tl().y) && (face.br().x <= frame.br().x) && (face.br().y <= frame.br().y)){
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            return false;
+            return true;
         }
     }
 
