@@ -44,7 +44,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private int numberOfTries;
     private AnimalOverlay animalOverlay;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayerInstruction;
+    private MediaPlayer mediaPlayerAnimalSound;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -76,7 +77,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
+        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
     }
 
     @Override
@@ -152,10 +153,19 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         svm = trainingHelper.getSvm();
         tensorFlow = trainingHelper.getInitializedTensorFlow();
         ppF = new PreProcessorFactory(getApplicationContext());
-        animalOverlay = animalOverlayHelper.createOverlay();
         numberOfTries = 0;
+        animalOverlay = animalOverlayHelper.createOverlay();
+        if (animalOverlay != null){
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerInstruction.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayerAnimalSound.start();
+                }
+            });
+        }
         preview.enableView();
-        mediaPlayer.start();
+        mediaPlayerInstruction.start();
     }
 
     /**
@@ -226,6 +236,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayer.stop();
+        mediaPlayerInstruction.stop();
+        mediaPlayerInstruction.release();
+        mediaPlayerAnimalSound.stop();
+        mediaPlayerAnimalSound.release();
     }
 }

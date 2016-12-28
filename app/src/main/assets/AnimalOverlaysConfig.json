@@ -1,19 +1,19 @@
 {
 	"animalOverlays" : {
  		"deer.jpg": { 
- 			"imageWidth":1920, "imageHeight":1080, "frameStartX":662, "frameStartY": 232, "frameEndX": 1260, "frameEndY": 830 
+ 			"imageWidth":1920, "imageHeight":1080, "frameStartX":662, "frameStartY": 232, "frameEndX": 1260, "frameEndY": 830, "soundFile": "deer"
     	},
         "elephant.jpg": { 
-        	"imageWidth":1920, "imageHeight":1080, "frameStartX":584, "frameStartY": 0, "frameEndX": 1330, "frameEndY": 676
+        	"imageWidth":1920, "imageHeight":1080, "frameStartX":584, "frameStartY": 0, "frameEndX": 1330, "frameEndY": 676, "soundFile": "elephant"
         },
 		"hippo.jpg": {
-			"imageWidth":1920, "imageHeight":1080, "frameStartX":584, "frameStartY": 0, "frameEndX": 1330, "frameEndY": 746
+			"imageWidth":1920, "imageHeight":1080, "frameStartX":584, "frameStartY": 0, "frameEndX": 1330, "frameEndY": 746, "soundFile": "hippo"
 		},
 		"sheep.jpg": {
-			"imageWidth":1920, "imageHeight":1080, "frameStartX":588, "frameStartY": 184, "frameEndX": 1334, "frameEndY": 930
+			"imageWidth":1920, "imageHeight":1080, "frameStartX":588, "frameStartY": 184, "frameEndX": 1334, "frameEndY": 930, "soundFile": "sheep"
 		},
 		"zebra.jpg": {
-			"imageWidth":1920, "imageHeight":1080, "frameStartX":644, "frameStartY": 106, "frameEndX": 1290, "frameEndY": 752
+			"imageWidth":1920, "imageHeight":1080, "frameStartX":644, "frameStartY": 106, "frameEndX": 1290, "frameEndY": 752, "soundFile": "zebra"
 		}
     }
 }
