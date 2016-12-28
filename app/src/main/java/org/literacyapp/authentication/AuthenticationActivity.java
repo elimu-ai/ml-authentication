@@ -44,6 +44,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private int numberOfTries;
     private AnimalOverlay animalOverlay;
+    private MediaPlayer mediaPlayer;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -56,8 +57,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
-        mediaPlayer.start();
+        // Initialize DB Session
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
+        DaoSession daoSession = literacyApplication.getDaoSession();
+        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+
+        if (!readyForAuthentication()){
+            startStudentImageCollectionActivity();
+        }
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
 
@@ -69,10 +76,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
 
-        // Initialize DB Session
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
-        DaoSession daoSession = literacyApplication.getDaoSession();
-        studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+        mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
     }
 
     @Override
@@ -151,6 +155,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         animalOverlay = animalOverlayHelper.createOverlay();
         numberOfTries = 0;
         preview.enableView();
+        mediaPlayer.start();
     }
 
     /**
@@ -201,5 +206,26 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(studentImageCollectionIntent);
+        finish();
+    }
+
+    private boolean readyForAuthentication(){
+        long svmTrainingsExecutedCount = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(true)).count();
+        Log.i(getClass().getName(), "readyForAuthentication: svmTrainingsExecutedCount: " + svmTrainingsExecutedCount);
+        boolean classifierFilesExist = TrainingHelper.classifierFilesExist();
+        Log.i(getClass().getName(), "readyForAuthentication: classifierFilesExist: " + classifierFilesExist);
+        if ((svmTrainingsExecutedCount > 0) && classifierFilesExist){
+            Log.i(getClass().getName(), "AuthenticationActivity is ready for authentication.");
+            return true;
+        } else {
+            Log.w(getClass().getName(), "AuthenticationActivity is not ready for authentication.");
+            return false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
     }
 }
