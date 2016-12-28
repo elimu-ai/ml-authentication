@@ -11,10 +11,12 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.StudentUpdateHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -119,7 +121,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                             new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
                             finish();
                         } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
-                            startActivity(new Intent(getApplicationContext(), StudentImageCollectionActivity.class));
+                            startStudentImageCollectionActivity();
                         }
                     }
                 }
@@ -132,6 +134,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         if (faceDetected && !isFaceInsideFrame){
             DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
         }
+
+        EnvironmentSettings.freeMemory();
 
         return imgRgba;
     }
@@ -191,5 +195,11 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         } else {
             return null;
         }
+    }
+
+    private synchronized void startStudentImageCollectionActivity(){
+        Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
+        studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(studentImageCollectionIntent);
     }
 }
