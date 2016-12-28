@@ -1,33 +1,35 @@
 package org.literacyapp.authentication;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.SurfaceView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.authentication.fallback.StudentRegistrationActivity;
+import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.util.DeviceInfoHelper;
+import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -48,6 +50,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private JavaCameraView preview;
     private PreProcessorFactory ppF;
     private long lastTime;
+    private long startTimeFallback;
+    private StudentDao studentDao;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Device device;
@@ -61,6 +65,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
     private static final int NUMBER_OF_IMAGES = 20;
+    private static final int MAX_TIME_BEFORE_FALLBACK = 5000;
     private int imagesProcessed;
 
     static {
@@ -86,6 +91,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         preview.setCvCameraViewListener(this);
 
         lastTime = new Date().getTime();
+        startTimeFallback = lastTime;
 
         // Reset imageProcessed counter
         imagesProcessed = 0;
@@ -96,6 +102,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
 
         // Create required DB Objects
+        studentDao = daoSession.getStudentDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
         deviceDao = daoSession.getDeviceDao();
@@ -140,6 +147,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         boolean faceDetected = false;
 
         if(lastTime + TIMER_DIFF < time){
+            lastTime = time;
             List<Mat> images = ppF.getCroppedImage(imgCopy);
             if(images != null && images.size() == 1){
                 Mat img = images.get(0);
@@ -149,6 +157,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                         faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
                         face = faces[0];
                         faceDetected = true;
+                        // Reset startTimeFallback for fallback timeout, because at least one face has been detected
+                        startTimeFallback = time;
                         isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                         if (isFaceInsideFrame){
@@ -171,12 +181,20 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
             }
         }
 
+        if (startTimeFallback + MAX_TIME_BEFORE_FALLBACK < time){
+            // Prevent from second execution of fallback activity because of threading
+            startTimeFallback = time;
+            startFallbackActivity();
+        }
+
         // Add overlay
         animalOverlayHelper.addOverlay(imgRgba);
 
         if (faceDetected && !isFaceInsideFrame){
             DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
         }
+
+        EnvironmentSettings.freeMemory();
 
         return imgRgba;
     }
@@ -214,5 +232,17 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         }
     }
 
-
+    private synchronized void startFallbackActivity(){
+        if (studentDao.count() > 0){
+            Intent studentSelectionIntent = new Intent(getApplicationContext(), StudentSelectionActivity.class);
+            studentSelectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Log.i(getClass().getName(), "StudentSelectionActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and some Students are already existing.");
+            startActivity(studentSelectionIntent);
+        } else {
+            Intent studentRegistrationIntent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
+            studentRegistrationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Log.i(getClass().getName(), "StudentRegistrationActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and no Students are existing yet.");
+            startActivity(studentRegistrationIntent);
+        }
+    }
 }
