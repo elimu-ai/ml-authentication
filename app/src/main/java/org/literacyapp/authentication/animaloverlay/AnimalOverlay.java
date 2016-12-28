@@ -14,8 +14,9 @@ public class AnimalOverlay {
     private int frameStartY;
     private int frameEndX;
     private int frameEndY;
+    private String soundFile;
 
-    public AnimalOverlay(File animalTemplateFile, int imageWidth, int imageHeight, int frameStartX, int frameStartY, int frameEndX, int frameEndY) {
+    public AnimalOverlay(File animalTemplateFile, int imageWidth, int imageHeight, int frameStartX, int frameStartY, int frameEndX, int frameEndY, String soundFile) {
         this.animalTemplateFile = animalTemplateFile;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
@@ -23,6 +24,7 @@ public class AnimalOverlay {
         this.frameStartY = frameStartY;
         this.frameEndX = frameEndX;
         this.frameEndY = frameEndY;
+        this.soundFile = soundFile;
     }
 
     public File getAnimalTemplateFile() {
@@ -79,5 +81,13 @@ public class AnimalOverlay {
 
     public void setFrameEndY(int frameEndY) {
         this.frameEndY = frameEndY;
+    }
+
+    public String getSoundFile() {
+        return soundFile;
+    }
+
+    public void setSoundFile(String soundFile) {
+        this.soundFile = soundFile;
     }
 }

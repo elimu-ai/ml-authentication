@@ -23,6 +23,7 @@ import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
+import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.FileHelper;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatName;
@@ -60,7 +62,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private List<Mat> studentImages;
     private AnimalOverlayHelper animalOverlayHelper;
     private AnimalOverlay animalOverlay;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayerInstruction;
+    private MediaPlayer mediaPlayerAnimalSound;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
@@ -81,7 +84,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
+        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
 
@@ -205,8 +208,17 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
         animalOverlay = animalOverlayHelper.createOverlay();
+        if (animalOverlay != null){
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerInstruction.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayerAnimalSound.start();
+                }
+            });
+        }
         preview.enableView();
-        mediaPlayer.start();
+        mediaPlayerInstruction.start();
     }
 
     /**
@@ -251,6 +263,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayer.stop();
+        mediaPlayerInstruction.stop();
+        mediaPlayerInstruction.release();
+        mediaPlayerAnimalSound.stop();
+        mediaPlayerAnimalSound.release();
     }
 }
