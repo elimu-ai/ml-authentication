@@ -60,6 +60,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private List<Mat> studentImages;
     private AnimalOverlayHelper animalOverlayHelper;
     private AnimalOverlay animalOverlay;
+    private MediaPlayer mediaPlayer;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
@@ -80,8 +81,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
-        mediaPlayer.start();
+        mediaPlayer = MediaPlayer.create(this, R.raw.face_instruction);
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
 
@@ -206,6 +206,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         ppF = new PreProcessorFactory(getApplicationContext());
         animalOverlay = animalOverlayHelper.createOverlay();
         preview.enableView();
+        mediaPlayer.start();
     }
 
     /**
@@ -244,5 +245,12 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
             Log.i(getClass().getName(), "StudentRegistrationActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and no Students are existing yet.");
             startActivity(studentRegistrationIntent);
         }
+        finish();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mediaPlayer.stop();
     }
 }

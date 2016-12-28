@@ -58,8 +58,8 @@ public class TrainingHelper {
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private StudentDao studentDao;
     private SupportVectorMachine svm;
-    private File svmTrainingFile;
-    private File svmTrainingModelFile;
+    private static final File svmTrainingFile = new File(AiHelper.getSvmDirectory(), "training");
+    private static final File svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
     private File svmArchiveFolderWithTimestamp;
 
     static {
@@ -76,8 +76,6 @@ public class TrainingHelper {
         studentImageFeatureDao = daoSession.getStudentImageFeatureDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentDao = daoSession.getStudentDao();
-        svmTrainingFile = new File(AiHelper.getSvmDirectory(), "training");
-        svmTrainingModelFile = new File(svmTrainingFile.getAbsolutePath() + "_model");
         File svmPredictionFile = new File(AiHelper.getSvmDirectory(), "prediction");
         svm = new SupportVectorMachine(svmTrainingFile, svmPredictionFile);
     }
@@ -300,13 +298,21 @@ public class TrainingHelper {
      * @return
      */
     private synchronized boolean checkClassifierTrainingResult(){
-        if (svmTrainingFile.exists() && svmTrainingModelFile.exists()){
+        if (classifierFilesExist()){
             return true;
         } else {
             // Move the newest archive files back to the main folder
             svmTrainingFile.renameTo(new File(AiHelper.getSvmDirectory(),svmTrainingFile.getName()));
             svmTrainingModelFile.renameTo(new File(AiHelper.getSvmDirectory(),svmTrainingModelFile.getName()));
             svmArchiveFolderWithTimestamp.delete();
+            return false;
+        }
+    }
+
+    public static synchronized boolean classifierFilesExist(){
+        if (svmTrainingFile.exists() && svmTrainingModelFile.exists()){
+            return true;
+        } else {
             return false;
         }
     }
