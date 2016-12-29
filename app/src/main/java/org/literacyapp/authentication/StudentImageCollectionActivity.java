@@ -146,7 +146,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         boolean isFaceInsideFrame = false;
         boolean faceDetected = false;
 
-        if(lastTime + TIMER_DIFF < currentTime){
+        if((lastTime + TIMER_DIFF) < currentTime){
             lastTime = currentTime;
             List<Mat> images = ppF.getCroppedImage(imgCopy);
             if(images != null && images.size() == 1){
