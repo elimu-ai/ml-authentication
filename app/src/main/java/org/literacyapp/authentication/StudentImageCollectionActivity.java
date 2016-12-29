@@ -176,7 +176,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
             if((lastTime + TIMER_DIFF) < currentTime){
                 lastTime = currentTime;
                 List<Mat> images = ppF.getCroppedImage(imgCopy);
-                if(images != null && images.size() == 1){
+                if((images != null) && (images.size() == 1)){
                     Mat img = images.get(0);
                     if(img != null) {
                         Rect[] faces = ppF.getFacesForRecognition();
