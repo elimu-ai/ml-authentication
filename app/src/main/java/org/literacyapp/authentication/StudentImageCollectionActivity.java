@@ -22,6 +22,7 @@ import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
+import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -85,6 +86,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
+        MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
 
         authenticationAnimationAlreadyPlayed = getIntent().getBooleanExtra(AuthenticationActivity.AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
         if (authenticationAnimationAlreadyPlayed){
@@ -238,7 +240,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                     authenticationAnimation.setVisibility(View.INVISIBLE);
 
                     ImageView animalOverlayImageView = (ImageView)findViewById(R.id.animalOverlay);
-                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), "drawable", getPackageName()));
+                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), MultimediaHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
                     animalOverlayImageView.setVisibility(View.VISIBLE);
 
                     preview.disableView();

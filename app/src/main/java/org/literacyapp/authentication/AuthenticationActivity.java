@@ -18,6 +18,7 @@ import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.util.EnvironmentSettings;
+import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentUpdateHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -69,6 +70,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         setContentView(R.layout.activity_authentication);
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
+        MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
 
         // Initialize DB Session
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
@@ -219,7 +221,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                     authenticationAnimation.setVisibility(View.INVISIBLE);
 
                     ImageView animalOverlayImageView = (ImageView)findViewById(R.id.animalOverlay);
-                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), "drawable", getPackageName()));
+                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), MultimediaHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
                     animalOverlayImageView.setVisibility(View.VISIBLE);
 
                     preview.disableView();
@@ -271,10 +273,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         if (authenticationAnimationAlreadyPlayed){
             studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, true);
+            studentImageCollectionIntent.putExtra(ANIMAL_OVERLAY_IDENTIFIER, animalOverlay.getName());
         } else {
             studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
         }
-        studentImageCollectionIntent.putExtra(ANIMAL_OVERLAY_IDENTIFIER, animalOverlay.getName());
         startActivity(studentImageCollectionIntent);
         finish();
     }
