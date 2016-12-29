@@ -6,6 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
@@ -48,6 +52,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
     private long startTimeFallback;
+    private Thread tensorFlowLoadingThread;
+    private ImageView authenticationAnimation;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -59,6 +65,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+
+        authenticationAnimation = (ImageView)findViewById(R.id.authentication_animation);
 
         // Initialize DB Session
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
@@ -82,6 +90,15 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
         startTimeFallback = new Date().getTime();
+
+        final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
+        svm = trainingHelper.getSvm();
+        tensorFlowLoadingThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                tensorFlow = trainingHelper.getInitializedTensorFlow();
+            }
+        });
     }
 
     @Override
@@ -97,66 +114,73 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
-        Mat imgCopy = new Mat();
+        if (!tensorFlowLoadingThread.isAlive()){
+            removeAuthenticationAnimation();
 
-        // Store original image for face recognition
-        imgRgba.copyTo(imgCopy);
+            Mat imgCopy = new Mat();
 
-        // Mirror front camera image
-        Core.flip(imgRgba,imgRgba,1);
+            // Store original image for face recognition
+            imgRgba.copyTo(imgCopy);
 
-        // Face detection
-        long currentTime = new Date().getTime();
+            // Mirror front camera image
+            Core.flip(imgRgba,imgRgba,1);
 
-        Rect face = new Rect();
-        boolean isFaceInsideFrame = false;
-        boolean faceDetected = false;
+            // Face detection
+            long currentTime = new Date().getTime();
 
-        List<Mat> images = ppF.getCroppedImage(imgCopy);
-        if (images != null && images.size() == 1){
-            Mat img = images.get(0);
-            if (img != null){
-                Rect[] faces = ppF.getFacesForRecognition();
-                if (faces != null && faces.length == 1){
-                    faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
-                    face = faces[0];
-                    faceDetected = true;
-                    // Reset startTimeFallback for fallback timeout, because at least one face has been detected
-                    startTimeFallback = currentTime;
-                    isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
+            Rect face = new Rect();
+            boolean isFaceInsideFrame = false;
+            boolean faceDetected = false;
 
-                    if (isFaceInsideFrame){
-                        String svmString = getSvmString(img);
-                        String svmProbability = svm.recognizeProbability(svmString);
-                        Student student = getStudentFromProbability(svmProbability);
-                        numberOfTries++;
-                        Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
-                        if (student != null){
-                            new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
-                            finish();
-                        } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
-                            startStudentImageCollectionActivity();
+            List<Mat> images = ppF.getCroppedImage(imgCopy);
+            if (images != null && images.size() == 1){
+                Mat img = images.get(0);
+                if (img != null){
+                    Rect[] faces = ppF.getFacesForRecognition();
+                    if (faces != null && faces.length == 1){
+                        faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
+                        face = faces[0];
+                        faceDetected = true;
+                        // Reset startTimeFallback for fallback timeout, because at least one face has been detected
+                        startTimeFallback = currentTime;
+                        isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
+
+                        if (isFaceInsideFrame){
+                            if (mediaPlayerAnimalSound != null){
+                                mediaPlayerAnimalSound.start();
+                            }
+                            String svmString = getSvmString(img);
+                            String svmProbability = svm.recognizeProbability(svmString);
+                            Student student = getStudentFromProbability(svmProbability);
+                            numberOfTries++;
+                            Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
+                            if (student != null){
+                                new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
+                                finish();
+                            } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
+                                startStudentImageCollectionActivity();
+                            }
                         }
                     }
                 }
             }
+
+            // Add overlay
+            animalOverlayHelper.addOverlay(imgRgba);
+
+            if (faceDetected && !isFaceInsideFrame){
+                DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+            }
+
+            if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
+                // Prevent from second execution of fallback activity because of threading
+                startTimeFallback = currentTime;
+                DetectionHelper.startFallbackActivity(getApplicationContext(), getClass().getName());
+                finish();
+            }
+
+            EnvironmentSettings.freeMemory();
         }
-
-        // Add overlay
-        animalOverlayHelper.addOverlay(imgRgba);
-
-        if (faceDetected && !isFaceInsideFrame){
-            DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
-        }
-
-        if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
-            // Prevent from second execution of fallback activity because of threading
-            startTimeFallback = currentTime;
-            DetectionHelper.startFallbackActivity(getApplicationContext(), getClass().getName());
-            finish();
-        }
-
-        EnvironmentSettings.freeMemory();
 
         return imgRgba;
     }
@@ -165,23 +189,26 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     public void onResume()
     {
         super.onResume();
-        TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
-        svm = trainingHelper.getSvm();
-        tensorFlow = trainingHelper.getInitializedTensorFlow();
         ppF = new PreProcessorFactory(getApplicationContext());
         numberOfTries = 0;
         animalOverlay = animalOverlayHelper.createOverlay();
-        if (animalOverlay != null){
+        if (animalOverlay != null) {
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
-            mediaPlayerInstruction.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayerAnimalSound.start();
-                }
-            });
         }
         preview.enableView();
         mediaPlayerInstruction.start();
+        tensorFlowLoadingThread.start();
+    }
+
+    private void removeAuthenticationAnimation(){
+        if (authenticationAnimation.getVisibility() == View.VISIBLE){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    authenticationAnimation.setVisibility(View.INVISIBLE);
+                }
+            });
+        }
     }
 
     /**
