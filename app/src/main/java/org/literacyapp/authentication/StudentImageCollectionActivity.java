@@ -52,6 +52,7 @@ import ch.zhaw.facerecognitionlibrary.Helpers.FileHelper;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatName;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Activity to collect images via the front camera view, adding an overlay and storing images of detected faces
@@ -73,7 +74,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private AnimalOverlay animalOverlay;
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
-    private ImageView authenticationAnimation;
+    private GifImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
     private String animalOverlayName;
 
@@ -95,7 +96,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
-        authenticationAnimation = (ImageView)findViewById(R.id.authentication_animation);
+        authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
 
         authenticationAnimationAlreadyPlayed = getIntent().getBooleanExtra(AuthenticationActivity.AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
         if (authenticationAnimationAlreadyPlayed){

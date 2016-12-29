@@ -35,6 +35,7 @@ import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
 import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
+import pl.droidsonroids.gif.GifImageView;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
@@ -53,7 +54,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private long startTimeFallback;
     private Thread tensorFlowLoadingThread;
     private RecognitionThread recognitionThread;
-    private ImageView authenticationAnimation;
+    private GifImageView authenticationAnimation;
     private boolean recognitionThreadStarted;
 
     static {
@@ -67,7 +68,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        authenticationAnimation = (ImageView)findViewById(R.id.authentication_animation);
+        authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
 
         // Initialize DB Session
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
