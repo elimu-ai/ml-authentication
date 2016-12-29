@@ -53,7 +53,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private PreProcessorFactory ppF;
     private long lastTime;
     private long startTimeFallback;
-    private StudentDao studentDao;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Device device;
@@ -69,7 +68,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
     private static final int NUMBER_OF_IMAGES = 20;
-    private static final int MAX_TIME_BEFORE_FALLBACK = 5000;
     private int imagesProcessed;
 
     static {
@@ -105,7 +103,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         studentImageCollectionEventDao = literacyApplication.getDaoSession().getStudentImageCollectionEventDao();
 
         // Create required DB Objects
-        studentDao = daoSession.getStudentDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
         deviceDao = daoSession.getDeviceDao();
@@ -143,14 +140,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         Core.flip(imgRgba,imgRgba,1);
 
         // Face detection
-        long time = new Date().getTime();
+        long currentTime = new Date().getTime();
 
         Rect face = new Rect();
         boolean isFaceInsideFrame = false;
         boolean faceDetected = false;
 
-        if(lastTime + TIMER_DIFF < time){
-            lastTime = time;
+        if((lastTime + TIMER_DIFF) < currentTime){
+            lastTime = currentTime;
             List<Mat> images = ppF.getCroppedImage(imgCopy);
             if(images != null && images.size() == 1){
                 Mat img = images.get(0);
@@ -161,7 +158,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                         face = faces[0];
                         faceDetected = true;
                         // Reset startTimeFallback for fallback timeout, because at least one face has been detected
-                        startTimeFallback = time;
+                        startTimeFallback = currentTime;
                         isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                         if (isFaceInsideFrame){
@@ -184,10 +181,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
             }
         }
 
-        if (startTimeFallback + MAX_TIME_BEFORE_FALLBACK < time){
+        if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
             // Prevent from second execution of fallback activity because of threading
-            startTimeFallback = time;
-            startFallbackActivity();
+            startTimeFallback = currentTime;
+            DetectionHelper.startFallbackActivity(getApplicationContext(), getClass().getName());
+            finish();
         }
 
         // Add overlay
@@ -225,39 +223,30 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
      * Stores all the buffered StudentImages to the file system and database
      */
     private synchronized void storeStudentImages(){
-        StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
-        studentImageCollectionEvent.setTime(Calendar.getInstance());
-        studentImageCollectionEvent.setDevice(device);
-        Long studentImageCollectionEventId = studentImageCollectionEventDao.insert(studentImageCollectionEvent);
-        for(int i=0; i<studentImages.size(); i++){
-            MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
-            FileHelper fileHelper = new FileHelper();
-            String wholeFolderPath = StudentHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
-            new File(wholeFolderPath).mkdirs();
-            fileHelper.saveMatToImage(matName, wholeFolderPath + "/");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
+                studentImageCollectionEvent.setTime(Calendar.getInstance());
+                studentImageCollectionEvent.setDevice(device);
+                Long studentImageCollectionEventId = studentImageCollectionEventDao.insert(studentImageCollectionEvent);
+                for(int i=0; i<studentImages.size(); i++){
+                    MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
+                    FileHelper fileHelper = new FileHelper();
+                    String wholeFolderPath = StudentHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
+                    new File(wholeFolderPath).mkdirs();
+                    fileHelper.saveMatToImage(matName, wholeFolderPath + "/");
 
-            String imageUrl = wholeFolderPath + "/" + Integer.toString(i) + ".png";
-            StudentImage studentImage = new StudentImage();
-            studentImage.setTimeCollected(Calendar.getInstance());
-            studentImage.setImageFileUrl(imageUrl);
-            studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
-            studentImageDao.insert(studentImage);
-        }
-    }
-
-    private synchronized void startFallbackActivity(){
-        if (studentDao.count() > 0){
-            Intent studentSelectionIntent = new Intent(getApplicationContext(), StudentSelectionActivity.class);
-            studentSelectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Log.i(getClass().getName(), "StudentSelectionActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and some Students are already existing.");
-            startActivity(studentSelectionIntent);
-        } else {
-            Intent studentRegistrationIntent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
-            studentRegistrationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Log.i(getClass().getName(), "StudentRegistrationActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and no Students are existing yet.");
-            startActivity(studentRegistrationIntent);
-        }
-        finish();
+                    String imageUrl = wholeFolderPath + "/" + Integer.toString(i) + ".png";
+                    StudentImage studentImage = new StudentImage();
+                    studentImage.setTimeCollected(Calendar.getInstance());
+                    studentImage.setImageFileUrl(imageUrl);
+                    studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
+                    studentImageDao.insert(studentImage);
+                }
+                Log.i(getClass().getName(), "storeStudentImages has finished successfully.");
+            }
+        }).start();
     }
 
     @Override

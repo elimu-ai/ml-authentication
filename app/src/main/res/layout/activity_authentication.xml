@@ -14,4 +14,10 @@
         opencv:show_fps="false"
         opencv:camera_id="any" />
 
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/authentication_animation"
+        android:src="@drawable/authentication_animation"
+        android:background="@android:color/white" />
 </RelativeLayout>
