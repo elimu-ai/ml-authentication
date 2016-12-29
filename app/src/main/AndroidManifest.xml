@@ -115,6 +115,9 @@
         <service
             android:name=".service.FaceRecognitionTrainingJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+            android:name=".service.synchronization.AuthenticationJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity android:name=".authentication.fallback.StudentRegistrationActivity" />
         <activity

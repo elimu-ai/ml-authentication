@@ -12,6 +12,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.service.ContentSynchronizationJobService;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.service.ScreenOnService;
+import org.literacyapp.service.synchronization.AuthenticationJobService;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -35,6 +36,9 @@ public class BootReceiver extends BroadcastReceiver {
         // Initiate background job for face recognition training
         scheduleFaceRecognitionTranining(context);
 
+        // Initiate authentication job for face recognition authentication
+        scheduleAuthentication(context, 30);
+
         // Start service for detecting when the screen is turned on
         Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
         context.startService(screenOnServiceIntent);
@@ -51,5 +55,16 @@ public class BootReceiver extends BroadcastReceiver {
         JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
         Log.i(context.getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + LiteracyApplication.FACE_RECOGNITION_TRAINING_JOB_ID + " has been scheduled with periodic time = " + faceRecognitionTrainingPeriodic);
+    }
+
+    public static void scheduleAuthentication(Context context, int minutesBetweenAuthentications){
+        ComponentName componentNameAuthentication = new ComponentName(context, AuthenticationJobService.class);
+        JobInfo.Builder builderAuthentication = new JobInfo.Builder(LiteracyApplication.AUTHENTICATION_JOB_ID, componentNameAuthentication);
+        int authenticationPeriodic = minutesBetweenAuthentications * 60 * 1000;
+        builderAuthentication.setPeriodic(authenticationPeriodic);
+        JobInfo authenticationJobInfo = builderAuthentication.build();
+        JobScheduler jobSchedulerAuthentication = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobSchedulerAuthentication.schedule(authenticationJobInfo);
+        Log.i(context.getClass().getName(), "AUTHENTICATION_JOB with ID " + LiteracyApplication.AUTHENTICATION_JOB_ID + " has been scheduled with periodic time = " + authenticationPeriodic);
     }
 }
