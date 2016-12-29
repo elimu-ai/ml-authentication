@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
@@ -53,6 +55,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private PreProcessorFactory ppF;
     private long lastTime;
     private long startTimeFallback;
+    private long startTimeAuthenticationAnimation;
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Device device;
@@ -63,10 +66,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private AnimalOverlay animalOverlay;
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
+    private ImageView authenticationAnimation;
+    private boolean authenticationAnimationAlreadyPlayed;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
+    private static long AUTHENTICATION_ANIMATION_TIME = 4000;
     private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
 
@@ -81,6 +87,12 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
+        authenticationAnimation = (ImageView)findViewById(R.id.authentication_animation);
+
+        authenticationAnimationAlreadyPlayed = getIntent().getBooleanExtra(AuthenticationActivity.AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
+        if (authenticationAnimationAlreadyPlayed){
+            authenticationAnimation.setVisibility(View.INVISIBLE);
+        }
 
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
@@ -93,6 +105,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         lastTime = new Date().getTime();
         startTimeFallback = lastTime;
+        startTimeAuthenticationAnimation = lastTime;
 
         // Reset imageProcessed counter
         imagesProcessed = 0;
@@ -131,71 +144,77 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
-        Mat imgCopy = new Mat();
-
-        // Store original image for face recognition
-        imgRgba.copyTo(imgCopy);
-
-        // Mirror front camera image
-        Core.flip(imgRgba,imgRgba,1);
 
         // Face detection
         long currentTime = new Date().getTime();
 
-        Rect face = new Rect();
-        boolean isFaceInsideFrame = false;
-        boolean faceDetected = false;
+        if (authenticationAnimationAlreadyPlayed || ((startTimeAuthenticationAnimation + AUTHENTICATION_ANIMATION_TIME) < currentTime)){
+            prepareForAuthentication();
 
-        if((lastTime + TIMER_DIFF) < currentTime){
-            lastTime = currentTime;
-            List<Mat> images = ppF.getCroppedImage(imgCopy);
-            if(images != null && images.size() == 1){
-                Mat img = images.get(0);
-                if(img != null) {
-                    Rect[] faces = ppF.getFacesForRecognition();
-                    if ((faces != null) && (faces.length == 1)) {
-                        faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
-                        face = faces[0];
-                        faceDetected = true;
-                        // Reset startTimeFallback for fallback timeout, because at least one face has been detected
-                        startTimeFallback = currentTime;
-                        isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
+            Mat imgCopy = new Mat();
 
-                        if (isFaceInsideFrame){
-                            studentImages.add(img);
+            // Store original image for face recognition
+            imgRgba.copyTo(imgCopy);
 
-                            if(DIAGNOSE_MODE) {
-                                MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
+            // Mirror front camera image
+            Core.flip(imgRgba,imgRgba,1);
+
+            Rect face = new Rect();
+            boolean isFaceInsideFrame = false;
+            boolean faceDetected = false;
+
+            if((lastTime + TIMER_DIFF) < currentTime){
+                lastTime = currentTime;
+                List<Mat> images = ppF.getCroppedImage(imgCopy);
+                if(images != null && images.size() == 1){
+                    Mat img = images.get(0);
+                    if(img != null) {
+                        Rect[] faces = ppF.getFacesForRecognition();
+                        if ((faces != null) && (faces.length == 1)) {
+                            faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
+                            face = faces[0];
+                            faceDetected = true;
+                            // Reset startTimeFallback for fallback timeout, because at least one face has been detected
+                            startTimeFallback = currentTime;
+                            isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
+
+                            if (isFaceInsideFrame){
+                                mediaPlayerAnimalSound.start();
+                                studentImages.add(img);
+
+                                if(DIAGNOSE_MODE) {
+                                    MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
+                                }
+
+                                // Stop after NUMBER_OF_IMAGES (settings option)
+                                if(imagesProcessed == NUMBER_OF_IMAGES){
+                                    storeStudentImages();
+                                    finish();
+                                }
+
+                                imagesProcessed++;
                             }
-
-                            // Stop after NUMBER_OF_IMAGES (settings option)
-                            if(imagesProcessed == NUMBER_OF_IMAGES){
-                                storeStudentImages();
-                                finish();
-                            }
-
-                            imagesProcessed++;
                         }
                     }
                 }
             }
+
+            if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
+                // Prevent from second execution of fallback activity because of threading
+                startTimeFallback = currentTime;
+                DetectionHelper.startFallbackActivity(getApplicationContext(), getClass().getName());
+                finish();
+            }
+
+            // Add overlay
+            animalOverlayHelper.addOverlay(imgRgba);
+
+            if (faceDetected && !isFaceInsideFrame){
+                DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+            }
+
+            EnvironmentSettings.freeMemory();
         }
-
-        if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
-            // Prevent from second execution of fallback activity because of threading
-            startTimeFallback = currentTime;
-            DetectionHelper.startFallbackActivity(getApplicationContext(), getClass().getName());
-            finish();
-        }
-
-        // Add overlay
-        animalOverlayHelper.addOverlay(imgRgba);
-
-        if (faceDetected && !isFaceInsideFrame){
-            DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
-        }
-
-        EnvironmentSettings.freeMemory();
 
         return imgRgba;
     }
@@ -208,15 +227,23 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         animalOverlay = animalOverlayHelper.createOverlay();
         if (animalOverlay != null){
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
-            mediaPlayerInstruction.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    mediaPlayerAnimalSound.start();
-                }
-            });
         }
         preview.enableView();
         mediaPlayerInstruction.start();
+    }
+
+    private void prepareForAuthentication(){
+        if (authenticationAnimation.getVisibility() == View.VISIBLE){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    authenticationAnimation.setVisibility(View.INVISIBLE);
+                    preview.disableView();
+                    preview.enableView();
+                }
+            });
+            startTimeFallback = new Date().getTime();
+        }
     }
 
     /**

@@ -37,7 +37,8 @@ import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
-    private static final int NUMBER_OF_MAXIMUM_TRIES = 5;
+    public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
+    private static final int NUMBER_OF_MAXIMUM_TRIES = 3;
     private SupportVectorMachine svm;
     private TensorFlow tensorFlow;
     private PreProcessorFactory ppF;
@@ -73,7 +74,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
 
         if (!readyForAuthentication()){
-            startStudentImageCollectionActivity();
+            startStudentImageCollectionActivity(false);
         }
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
@@ -129,7 +130,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                     new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
                     finish();
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
-                    startStudentImageCollectionActivity();
+                    startStudentImageCollectionActivity(true);
                 }
             }
 
@@ -222,6 +223,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             });
             recognitionThread = new RecognitionThread(svm, tensorFlow);
+            startTimeFallback = new Date().getTime();
         }
     }
 
@@ -259,9 +261,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         }
     }
 
-    private synchronized void startStudentImageCollectionActivity(){
+    private synchronized void startStudentImageCollectionActivity(boolean authenticationAnimationAlreadyPlayed){
         Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (authenticationAnimationAlreadyPlayed){
+            studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, true);
+        } else {
+            studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
+        }
         startActivity(studentImageCollectionIntent);
         finish();
     }
