@@ -13,7 +13,7 @@ import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.service.ScreenOnService;
 
 public class BootReceiver extends BroadcastReceiver {
-    private static final int FACE_RECOGNITION_TRAINING_JOB_ID = 0;
+    public static final int FACE_RECOGNITION_TRAINING_JOB_ID = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {

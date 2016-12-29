@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -27,6 +28,7 @@ import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
@@ -73,6 +75,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private MediaPlayer mediaPlayerAnimalSound;
     private ImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
+    private String animalOverlayName;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
@@ -98,6 +101,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         if (authenticationAnimationAlreadyPlayed){
             authenticationAnimation.setVisibility(View.INVISIBLE);
         }
+
+        animalOverlayName = getIntent().getStringExtra(AuthenticationActivity.ANIMAL_OVERLAY_IDENTIFIER);
 
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
@@ -229,12 +234,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     {
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
-        animalOverlay = animalOverlayHelper.createOverlay();
+        animalOverlay = animalOverlayHelper.createOverlay(animalOverlayName);
         if (animalOverlay != null){
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
         }
         preview.enableView();
-        mediaPlayerInstruction.start();
+        if (!authenticationAnimationAlreadyPlayed){
+            mediaPlayerInstruction.start();
+        }
     }
 
     private void prepareForAuthentication(){
@@ -278,13 +285,16 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                 }
                 Log.i(getClass().getName(), "storeStudentImages has finished successfully.");
 
-                // Initiate background job ad-hoc for face recognition training
+                // Initiate background job for face recognition training
                 ComponentName componentNameFaceRecognitionTranining = new ComponentName(getApplicationContext(), FaceRecognitionTrainingJobService.class);
-                JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(0, componentNameFaceRecognitionTranining);
+                JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(BootReceiver.FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
+                int faceRecognitionTrainingPeriodic = 15 * 60 * 1000;
+                builderFaceRecognitionTranining.setPeriodic(faceRecognitionTrainingPeriodic); // Every 15 minutes
                 JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
-                JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) getApplicationContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
                 jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
-                Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + 0 + " has been scheduled.");
+                Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + BootReceiver.FACE_RECOGNITION_TRAINING_JOB_ID + " has been scheduled with periodic time = " + faceRecognitionTrainingPeriodic);
+
             }
         }).start();
     }

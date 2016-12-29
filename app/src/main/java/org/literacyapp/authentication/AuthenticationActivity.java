@@ -38,6 +38,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
     public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
+    public static final String ANIMAL_OVERLAY_IDENTIFIER = "AnimalOverlayName";
     private static final int NUMBER_OF_MAXIMUM_TRIES = 3;
     private SupportVectorMachine svm;
     private TensorFlow tensorFlow;
@@ -73,6 +74,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         DaoSession daoSession = literacyApplication.getDaoSession();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
 
+        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
+        animalOverlay = animalOverlayHelper.createOverlay("");
+
         if (!readyForAuthentication()){
             startStudentImageCollectionActivity(false);
         }
@@ -84,8 +88,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         preview.setVisibility(SurfaceView.VISIBLE);
         preview.setCvCameraViewListener(this);
-
-        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
 
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
@@ -203,7 +205,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
         numberOfTries = 0;
-        animalOverlay = animalOverlayHelper.createOverlay();
         if (animalOverlay != null) {
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
         }
@@ -269,6 +270,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         } else {
             studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
         }
+        studentImageCollectionIntent.putExtra(ANIMAL_OVERLAY_IDENTIFIER, animalOverlay.getName());
         startActivity(studentImageCollectionIntent);
         finish();
     }
