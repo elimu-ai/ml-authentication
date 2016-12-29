@@ -75,9 +75,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         DaoSession daoSession = literacyApplication.getDaoSession();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
 
-        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
-        animalOverlay = animalOverlayHelper.createOverlay("");
-
         if (!readyForAuthentication()){
             startStudentImageCollectionActivity(false);
         }
@@ -105,6 +102,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         });
 
         recognitionThreadStarted = false;
+
+        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
     }
 
     @Override
@@ -180,9 +179,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             }
 
-            // Add overlay
-            animalOverlayHelper.addOverlay(imgRgba);
-
             if (faceDetected && !isFaceInsideFrame){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
             }
@@ -206,6 +202,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
         numberOfTries = 0;
+        animalOverlay = animalOverlayHelper.getAnimalOverlay("");
         if (animalOverlay != null) {
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
         }
@@ -220,10 +217,16 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 @Override
                 public void run() {
                     authenticationAnimation.setVisibility(View.INVISIBLE);
+
+                    ImageView animalOverlayImageView = (ImageView)findViewById(R.id.animalOverlay);
+                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), "drawable", getPackageName()));
+                    animalOverlayImageView.setVisibility(View.VISIBLE);
+
                     preview.disableView();
                     preview.enableView();
                 }
             });
+
             recognitionThread = new RecognitionThread(svm, tensorFlow);
             startTimeFallback = new Date().getTime();
         }

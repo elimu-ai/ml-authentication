@@ -2,22 +2,16 @@ package org.literacyapp.authentication.animaloverlay;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.google.gson.Gson;
 
-import org.literacyapp.util.AiHelper;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.w3c.dom.Text;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by sladomic on 18.12.16.
@@ -26,18 +20,13 @@ import java.util.List;
 public class AnimalOverlayHelper {
     private static final String ANIMAL_OVERLAYS_CONFIG_JSON = "AnimalOverlaysConfig.json";
     private Context context;
-    private Mat imgOverlay;
-    private Mat imgMask;
-    private Mat imgInvMask;
 
     public AnimalOverlayHelper(Context context){
         this.context = context;
-        imgMask = new Mat();
-        imgInvMask = new Mat();
     }
 
-    public AnimalOverlay createOverlay(String animalOverlayName) {
-        Log.i(getClass().getName(), "createOverlay");
+    public AnimalOverlay getAnimalOverlay(String animalOverlayName) {
+        Log.i(getClass().getName(), "getAnimalOverlay");
         List<AnimalOverlay> animalOverlays = getAnimalOverlays(animalOverlayName);
 
         if (animalOverlays.size() > 0){
@@ -50,108 +39,77 @@ public class AnimalOverlayHelper {
                 animalOverlay = animalOverlays.get(randomIndex);
             }
 
-            imgOverlay = Imgcodecs.imread(animalOverlay.getAnimalTemplateFile().getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
-            Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
-
-            // Create a mask of overlay and create its inverse mask also
-            Imgproc.cvtColor(imgOverlay, imgMask, Imgproc.COLOR_BGRA2GRAY);
-            Imgproc.threshold(imgMask, imgMask, 250, 255, Imgproc.THRESH_BINARY_INV);
-            Core.bitwise_not(imgMask,imgMask);
-            Imgproc.cvtColor(imgMask, imgMask, Imgproc.COLOR_GRAY2RGBA);
-
-            Core.bitwise_not(imgMask,imgInvMask);
-
             return animalOverlay;
         } else {
             return null;
         }
     }
 
-    public void addOverlay(Mat imgRgba){
-        if (imgOverlay != null && !imgOverlay.empty()){
-            Mat imgForeGround = new Mat();
-            Mat imgBackGround = new Mat();
-
-            //Black-out the area of overlay in img
-            Core.bitwise_and(imgMask,imgRgba,imgBackGround);
-
-            // Take only region of overlay from overlay image.
-            Core.bitwise_and(imgOverlay,imgInvMask,imgForeGround);
-
-            // Add overlay to frame
-            Core.add(imgForeGround,imgBackGround,imgRgba);
-        }
-    }
-
     private List<AnimalOverlay> getAnimalOverlays(String animalOverlayName){
-        File[] animalTemplateFiles = AiHelper.getAnimalTemplateDirectory(context).listFiles();
-        AnimalOverlaysMap animalOverlaysMap = getAnimalOverlaysMap();
+        AnimalOverlaysMap animalOverlaysMap = getAnimalOverlaysMapFromConfig();
         if (animalOverlaysMap == null){
             Log.e(getClass().getName(), "The asset: " + ANIMAL_OVERLAYS_CONFIG_JSON + " is missing or cannot be parsed.");
             return null;
         }
-        List<AnimalOverlay> animalOverlays = new ArrayList<>();
-        for (File animalTemplateFile : animalTemplateFiles){
-            String assetName = animalTemplateFile.getName();
-            if (animalOverlaysMap.getAnimalOverlays().get(assetName) != null){
-                int imageWidth = animalOverlaysMap.getAnimalOverlays().get(assetName).getImageWidth();
-                if (imageWidth <= 0){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the imageWidth: " + imageWidth + " being <= 0");
+        Set<String> animalOverlaysKeySet = animalOverlaysMap.getAnimalOverlays().keySet();
+        List<AnimalOverlay> animalOverlaysValidated = new ArrayList<>();
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int screenWidth = displayMetrics.widthPixels;
+        int screenHeight = displayMetrics.heightPixels;
+        for (String animalOverlayKey : animalOverlaysKeySet){
+            if (animalOverlaysMap.getAnimalOverlays().get(animalOverlayKey) != null){
+                if (context.getResources().getIdentifier(animalOverlayKey, "drawable", context.getPackageName()) == 0){
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because the image file: " + animalOverlayKey + " is not existing");
                     continue;
                 }
-                int imageHeight = animalOverlaysMap.getAnimalOverlays().get(assetName).getImageHeight();
-                if (imageHeight <= 0){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the imageHeight: " + imageHeight + " being <= 0");
-                    continue;
-                }
-                int frameStartX = animalOverlaysMap.getAnimalOverlays().get(assetName).getFrameStartX();
+                int frameStartX = animalOverlaysMap.getAnimalOverlays().get(animalOverlayKey).getFrameStartX();
                 if (frameStartX < 0){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the frameStartX: " + frameStartX + " being < 0");
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because of the frameStartX: " + frameStartX + " being < 0");
                     continue;
                 }
-                int frameStartY = animalOverlaysMap.getAnimalOverlays().get(assetName).getFrameStartY();
+                int frameStartY = animalOverlaysMap.getAnimalOverlays().get(animalOverlayKey).getFrameStartY();
                 if (frameStartY < 0){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the frameStartY: " + frameStartY + " being < 0");
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because of the frameStartY: " + frameStartY + " being < 0");
                     continue;
                 }
-                int frameEndX = animalOverlaysMap.getAnimalOverlays().get(assetName).getFrameEndX();
-                if (frameEndX > imageWidth){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the frameEndX: " + frameEndX + " being > imageWidth: " + imageWidth);
+                int frameEndX = animalOverlaysMap.getAnimalOverlays().get(animalOverlayKey).getFrameEndX();
+                if (frameEndX > screenWidth){
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because of the frameEndX: " + frameEndX + " being > screenWidth: " + screenWidth);
                     continue;
                 }
-                int frameEndY = animalOverlaysMap.getAnimalOverlays().get(assetName).getFrameEndY();
-                if (frameEndY > imageHeight){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the frameEndY: " + frameEndY + " being > imageHeight: " + imageHeight);
+                int frameEndY = animalOverlaysMap.getAnimalOverlays().get(animalOverlayKey).getFrameEndY();
+                if (frameEndY > screenHeight){
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because of the frameEndY: " + frameEndY + " being > screenHeight: " + screenHeight);
                     continue;
                 }
-                String soundFile = animalOverlaysMap.getAnimalOverlays().get(assetName).getSoundFile();
+                String soundFile = animalOverlaysMap.getAnimalOverlays().get(animalOverlayKey).getSoundFile();
                 if (TextUtils.isEmpty(soundFile)){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because of the soundFile: " + soundFile + " being empty");
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because of the soundFile: " + soundFile + " being empty");
                     continue;
                 }
                 if (context.getResources().getIdentifier(soundFile, "raw", context.getPackageName()) == 0){
-                    Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because the soundFile: " + soundFile + " is not existing");
+                    Log.w(getClass().getName(), "The AnimalOverlay " + animalOverlayKey + " is discarded because the soundFile: " + soundFile + " is not existing");
                     continue;
                 }
 
-                AnimalOverlay animalOverlay = new AnimalOverlay(assetName, animalTemplateFile, imageWidth, imageHeight, frameStartX, frameStartY, frameEndX, frameEndY, soundFile);
+                AnimalOverlay animalOverlay = new AnimalOverlay(animalOverlayKey, frameStartX, frameStartY, frameEndX, frameEndY, soundFile);
 
                 // If only a specific animalOverlay shall be returned
-                if (assetName.equals(animalOverlayName)){
-                    animalOverlays = new ArrayList<>();
-                    animalOverlays.add(animalOverlay);
-                    return animalOverlays;
+                if (animalOverlayKey.equals(animalOverlayName)){
+                    animalOverlaysValidated = new ArrayList<>();
+                    animalOverlaysValidated.add(animalOverlay);
+                    return animalOverlaysValidated;
                 }
 
-                animalOverlays.add(animalOverlay);
+                animalOverlaysValidated.add(animalOverlay);
             } else {
-                Log.w(getClass().getName(), "The config for the animalOverlay " + assetName + " is missing. Please check the config file " + ANIMAL_OVERLAYS_CONFIG_JSON + " in the assets folder.");
+                Log.w(getClass().getName(), "The config for the animalOverlay " + animalOverlayKey + " is missing. Please check the config file " + ANIMAL_OVERLAYS_CONFIG_JSON + " in the assets folder.");
             }
         }
-        return animalOverlays;
+        return animalOverlaysValidated;
     }
 
-    private AnimalOverlaysMap getAnimalOverlaysMap(){
+    private AnimalOverlaysMap getAnimalOverlaysMapFromConfig(){
         Gson gson = new Gson();
         AnimalOverlaysMap animalOverlayMap = new AnimalOverlaysMap();
         try {
