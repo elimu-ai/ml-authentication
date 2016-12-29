@@ -1,13 +1,7 @@
 package org.literacyapp.authentication;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -18,21 +12,17 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
-import org.literacyapp.authentication.fallback.StudentRegistrationActivity;
-import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
-import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
-import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
-import org.literacyapp.util.MediaPlayerHelper;
+import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -46,12 +36,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.FileHelper;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatName;
 import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
+import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Activity to collect images via the front camera view, adding an overlay and storing images of detected faces
@@ -73,7 +63,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private AnimalOverlay animalOverlay;
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
-    private ImageView authenticationAnimation;
+    private GifImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
     private String animalOverlayName;
 
@@ -95,7 +85,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
-        authenticationAnimation = (ImageView)findViewById(R.id.authentication_animation);
+        authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
+        MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
 
         authenticationAnimationAlreadyPlayed = getIntent().getBooleanExtra(AuthenticationActivity.AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
         if (authenticationAnimationAlreadyPlayed){
@@ -216,9 +207,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                 finish();
             }
 
-            // Add overlay
-            animalOverlayHelper.addOverlay(imgRgba);
-
             if (faceDetected && !isFaceInsideFrame){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
             }
@@ -234,7 +222,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     {
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
-        animalOverlay = animalOverlayHelper.createOverlay(animalOverlayName);
+        animalOverlay = animalOverlayHelper.getAnimalOverlay(animalOverlayName);
         if (animalOverlay != null){
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
         }
@@ -250,6 +238,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                 @Override
                 public void run() {
                     authenticationAnimation.setVisibility(View.INVISIBLE);
+
+                    ImageView animalOverlayImageView = (ImageView)findViewById(R.id.animalOverlay);
+                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), MultimediaHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
+                    animalOverlayImageView.setVisibility(View.VISIBLE);
+
                     preview.disableView();
                     preview.enableView();
                 }
@@ -286,14 +279,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                 Log.i(getClass().getName(), "storeStudentImages has finished successfully.");
 
                 // Initiate background job for face recognition training
-                ComponentName componentNameFaceRecognitionTranining = new ComponentName(getApplicationContext(), FaceRecognitionTrainingJobService.class);
-                JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(BootReceiver.FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
-                int faceRecognitionTrainingPeriodic = 15 * 60 * 1000;
-                builderFaceRecognitionTranining.setPeriodic(faceRecognitionTrainingPeriodic); // Every 15 minutes
-                JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
-                JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) getApplicationContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
-                Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + BootReceiver.FACE_RECOGNITION_TRAINING_JOB_ID + " has been scheduled with periodic time = " + faceRecognitionTrainingPeriodic);
+                BootReceiver.scheduleFaceRecognitionTranining(getApplicationContext());
 
             }
         }).start();

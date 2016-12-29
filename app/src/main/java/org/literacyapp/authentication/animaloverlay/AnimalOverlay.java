@@ -8,20 +8,14 @@ import java.io.File;
 
 public class AnimalOverlay {
     private String name;
-    private File animalTemplateFile;
-    private int imageWidth;
-    private int imageHeight;
     private int frameStartX;
     private int frameStartY;
     private int frameEndX;
     private int frameEndY;
     private String soundFile;
 
-    public AnimalOverlay(String name, File animalTemplateFile, int imageWidth, int imageHeight, int frameStartX, int frameStartY, int frameEndX, int frameEndY, String soundFile) {
+    public AnimalOverlay(String name, int frameStartX, int frameStartY, int frameEndX, int frameEndY, String soundFile) {
         this.name = name;
-        this.animalTemplateFile = animalTemplateFile;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
         this.frameStartX = frameStartX;
         this.frameStartY = frameStartY;
         this.frameEndX = frameEndX;
@@ -35,30 +29,6 @@ public class AnimalOverlay {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public File getAnimalTemplateFile() {
-        return animalTemplateFile;
-    }
-
-    public void setAnimalTemplateFile(File animalTemplateFile) {
-        this.animalTemplateFile = animalTemplateFile;
-    }
-
-    public int getImageWidth() {
-        return imageWidth;
-    }
-
-    public void setImageWidth(int imageWidth) {
-        this.imageWidth = imageWidth;
-    }
-
-    public int getImageHeight() {
-        return imageHeight;
-    }
-
-    public void setImageHeight(int imageHeight) {
-        this.imageHeight = imageHeight;
     }
 
     public int getFrameStartX() {

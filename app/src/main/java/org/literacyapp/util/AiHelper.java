@@ -49,43 +49,4 @@ public class AiHelper {
         }
         return svmArchiveDirectory;
     }
-
-    public static File getAnimalTemplateDirectory(Context context) {
-        File animalTemplateDirectory = new File(getAiDirectory(), "animalTemplate");
-        if (!animalTemplateDirectory.exists()) {
-            animalTemplateDirectory.mkdir();
-        }
-
-        copyAnimalTemplatesToSdCard(context, animalTemplateDirectory);
-
-        return animalTemplateDirectory;
-    }
-
-    private static void copyAnimalTemplatesToSdCard(Context context, File animalTemplateDirectory){
-        AssetManager assetManager = context.getAssets();
-        String[] animalTemplateAssets = null;
-        try {
-            animalTemplateAssets = assetManager.list(ASSETS_ANIMAL_TEMPLATE_PATH);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (animalTemplateAssets != null){
-            for(String animalTemplateAsset : animalTemplateAssets){
-                File animalTemplateFile = new File(animalTemplateDirectory, animalTemplateAsset);
-                if (!animalTemplateFile.exists()){
-                    try {
-                        InputStream inputStream = assetManager.open(ASSETS_ANIMAL_TEMPLATE_PATH + "/" + animalTemplateAsset);
-                        OutputStream outputStream = new FileOutputStream(animalTemplateFile);
-                        Log.i(AiHelper.class.getName(), "Copying overlay template to " + animalTemplateDirectory.getAbsolutePath() + animalTemplateAsset);
-                        MultimediaHelper.copyFile(inputStream, outputStream);
-                        Log.i(AiHelper.class.getName(), "Overlay template has been copied successfully to " + animalTemplateDirectory.getAbsolutePath() + animalTemplateAsset);
-                    } catch (IOException e) {
-                        Log.i(AiHelper.class.getName(), "Overlay template has failed to be copied to  " + animalTemplateDirectory.getAbsolutePath() + animalTemplateAsset);
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 }
