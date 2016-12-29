@@ -1,7 +1,10 @@
 package org.literacyapp.util;
 
+import android.content.Context;
 import android.os.Environment;
+import android.widget.ImageView;
 
+import org.literacyapp.dao.converter.StringSetConverter;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
 import org.literacyapp.model.content.multimedia.Video;
@@ -11,10 +14,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import pl.droidsonroids.gif.GifImageView;
+
 /**
  * Helper class for determining folder paths of multimedia content.
  */
 public class MultimediaHelper {
+    private static final String AUTHENTICATION_INSTRUCTION_BOY = "authentication_instruction_640";
+    private static final String AUTHENTICATION_INSTRUCTION_GIRL = "authentication_instruction_girl_640";
+    public static final String RESOURCES_DRAWABLE_FOLDER = "drawable";
 
     public static File getMultimediaDirectory() {
         File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + "/.literacyapp/multimedia");
@@ -105,6 +113,21 @@ public class MultimediaHelper {
         int read;
         while((read = in.read(buffer)) != -1){
             out.write(buffer, 0, read);
+        }
+    }
+
+    public static void setAuthenticationInstructionAnimation(Context context, ImageView animationImageView){
+        int randomIndex = (int) (Math.random() * 2);
+        switch (randomIndex){
+            case 0:
+                animationImageView.setImageResource(context.getResources().getIdentifier(AUTHENTICATION_INSTRUCTION_BOY, RESOURCES_DRAWABLE_FOLDER, context.getPackageName()));
+                break;
+            case 1:
+                animationImageView.setImageResource(context.getResources().getIdentifier(AUTHENTICATION_INSTRUCTION_GIRL, RESOURCES_DRAWABLE_FOLDER, context.getPackageName()));
+                break;
+            default:
+                animationImageView.setImageResource(context.getResources().getIdentifier(AUTHENTICATION_INSTRUCTION_BOY, RESOURCES_DRAWABLE_FOLDER, context.getPackageName()));
+                break;
         }
     }
 }
