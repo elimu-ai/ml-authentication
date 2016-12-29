@@ -15,6 +15,7 @@ import org.literacyapp.service.ScreenOnService;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
 
 public class BootReceiver extends BroadcastReceiver {
+    private static final int MINUTES_BETWEEN_AUTHENTICATIONS = 30;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -37,7 +38,7 @@ public class BootReceiver extends BroadcastReceiver {
         scheduleFaceRecognitionTranining(context);
 
         // Initiate authentication job for face recognition authentication
-        scheduleAuthentication(context, 30);
+        scheduleAuthentication(context, MINUTES_BETWEEN_AUTHENTICATIONS);
 
         // Start service for detecting when the screen is turned on
         Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
