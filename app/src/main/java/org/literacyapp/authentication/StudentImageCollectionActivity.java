@@ -223,24 +223,30 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
      * Stores all the buffered StudentImages to the file system and database
      */
     private synchronized void storeStudentImages(){
-        StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
-        studentImageCollectionEvent.setTime(Calendar.getInstance());
-        studentImageCollectionEvent.setDevice(device);
-        Long studentImageCollectionEventId = studentImageCollectionEventDao.insert(studentImageCollectionEvent);
-        for(int i=0; i<studentImages.size(); i++){
-            MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
-            FileHelper fileHelper = new FileHelper();
-            String wholeFolderPath = StudentHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
-            new File(wholeFolderPath).mkdirs();
-            fileHelper.saveMatToImage(matName, wholeFolderPath + "/");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                StudentImageCollectionEvent studentImageCollectionEvent = new StudentImageCollectionEvent();
+                studentImageCollectionEvent.setTime(Calendar.getInstance());
+                studentImageCollectionEvent.setDevice(device);
+                Long studentImageCollectionEventId = studentImageCollectionEventDao.insert(studentImageCollectionEvent);
+                for(int i=0; i<studentImages.size(); i++){
+                    MatName matName = new MatName(Integer.toString(i), studentImages.get(i));
+                    FileHelper fileHelper = new FileHelper();
+                    String wholeFolderPath = StudentHelper.getStudentImageDirectory() + "/" + device.getDeviceId() + "/" + Long.toString(studentImageCollectionEventId);
+                    new File(wholeFolderPath).mkdirs();
+                    fileHelper.saveMatToImage(matName, wholeFolderPath + "/");
 
-            String imageUrl = wholeFolderPath + "/" + Integer.toString(i) + ".png";
-            StudentImage studentImage = new StudentImage();
-            studentImage.setTimeCollected(Calendar.getInstance());
-            studentImage.setImageFileUrl(imageUrl);
-            studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
-            studentImageDao.insert(studentImage);
-        }
+                    String imageUrl = wholeFolderPath + "/" + Integer.toString(i) + ".png";
+                    StudentImage studentImage = new StudentImage();
+                    studentImage.setTimeCollected(Calendar.getInstance());
+                    studentImage.setImageFileUrl(imageUrl);
+                    studentImage.setStudentImageCollectionEvent(studentImageCollectionEvent);
+                    studentImageDao.insert(studentImage);
+                }
+                Log.i(getClass().getName(), "storeStudentImages has finished successfully.");
+            }
+        }).start();
     }
 
     @Override
