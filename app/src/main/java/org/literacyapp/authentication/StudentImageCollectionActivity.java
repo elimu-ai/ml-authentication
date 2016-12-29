@@ -286,14 +286,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                 Log.i(getClass().getName(), "storeStudentImages has finished successfully.");
 
                 // Initiate background job for face recognition training
-                ComponentName componentNameFaceRecognitionTranining = new ComponentName(getApplicationContext(), FaceRecognitionTrainingJobService.class);
-                JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(BootReceiver.FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
-                int faceRecognitionTrainingPeriodic = 15 * 60 * 1000;
-                builderFaceRecognitionTranining.setPeriodic(faceRecognitionTrainingPeriodic); // Every 15 minutes
-                JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
-                JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) getApplicationContext().getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
-                Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + BootReceiver.FACE_RECOGNITION_TRAINING_JOB_ID + " has been scheduled with periodic time = " + faceRecognitionTrainingPeriodic);
+                BootReceiver.scheduleFaceRecognitionTranining(getApplicationContext());
 
             }
         }).start();
