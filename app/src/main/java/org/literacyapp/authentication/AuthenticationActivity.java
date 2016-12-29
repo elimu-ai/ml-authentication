@@ -7,15 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
-import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
@@ -53,7 +50,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private MediaPlayer mediaPlayerAnimalSound;
     private long startTimeFallback;
     private Thread tensorFlowLoadingThread;
+    private RecognitionThread recognitionThread;
     private ImageView authenticationAnimation;
+    private boolean recognitionThreadStarted;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -93,12 +92,15 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         svm = trainingHelper.getSvm();
+
         tensorFlowLoadingThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 tensorFlow = trainingHelper.getInitializedTensorFlow();
             }
         });
+
+        recognitionThreadStarted = false;
     }
 
     @Override
@@ -115,7 +117,21 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
         if (!tensorFlowLoadingThread.isAlive()){
-            removeAuthenticationAnimation();
+            prepareForAuthentication();
+
+            if (!recognitionThread.isAlive() && recognitionThreadStarted) {
+                String svmProbability = svm.recognizeProbability(recognitionThread.getSvmString());
+                Student student = getStudentFromProbability(svmProbability);
+                numberOfTries++;
+                recognitionThreadStarted = false;
+                Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
+                if (student != null) {
+                    new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
+                    finish();
+                } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
+                    startStudentImageCollectionActivity();
+                }
+            }
 
             Mat imgCopy = new Mat();
 
@@ -146,19 +162,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                         isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                         if (isFaceInsideFrame){
-                            if (mediaPlayerAnimalSound != null){
-                                mediaPlayerAnimalSound.start();
-                            }
-                            String svmString = getSvmString(img);
-                            String svmProbability = svm.recognizeProbability(svmString);
-                            Student student = getStudentFromProbability(svmProbability);
-                            numberOfTries++;
-                            Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
-                            if (student != null){
-                                new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
-                                finish();
-                            } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
-                                startStudentImageCollectionActivity();
+                            if (!recognitionThread.isAlive() && !recognitionThreadStarted){
+                                if (mediaPlayerAnimalSound != null){
+                                    mediaPlayerAnimalSound.start();
+                                }
+                                recognitionThread = new RecognitionThread(svm, tensorFlow);
+                                recognitionThread.setImg(img);
+                                recognitionThread.start();
+                                recognitionThreadStarted = true;
                             }
                         }
                     }
@@ -200,7 +211,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         tensorFlowLoadingThread.start();
     }
 
-    private void removeAuthenticationAnimation(){
+    private void prepareForAuthentication(){
         if (authenticationAnimation.getVisibility() == View.VISIBLE){
             runOnUiThread(new Runnable() {
                 @Override
@@ -210,17 +221,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                     preview.enableView();
                 }
             });
+            recognitionThread = new RecognitionThread(svm, tensorFlow);
         }
-    }
-
-    /**
-     * Returns the SVM string using the feature vector
-     * @param img
-     * @return
-     */
-    private synchronized String getSvmString(Mat img){
-        Mat featureVector = tensorFlow.getFeatureVector(img);
-        return svm.getSvmString(featureVector);
     }
 
     /**
