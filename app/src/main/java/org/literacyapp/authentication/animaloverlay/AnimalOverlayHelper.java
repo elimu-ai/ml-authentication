@@ -11,6 +11,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,14 +36,19 @@ public class AnimalOverlayHelper {
         imgInvMask = new Mat();
     }
 
-    public AnimalOverlay createOverlay() {
+    public AnimalOverlay createOverlay(String animalOverlayName) {
         Log.i(getClass().getName(), "createOverlay");
-        List<AnimalOverlay> animalOverlays = getAnimalOverlays();
+        List<AnimalOverlay> animalOverlays = getAnimalOverlays(animalOverlayName);
 
         if (animalOverlays.size() > 0){
-            int randomIndex = (int) (Math.random() * animalOverlays.size());
+            AnimalOverlay animalOverlay;
 
-            AnimalOverlay animalOverlay = animalOverlays.get(randomIndex);
+            if (!TextUtils.isEmpty(animalOverlayName) && (animalOverlays.size() == 1)){
+                animalOverlay = animalOverlays.get(0);
+            } else {
+                int randomIndex = (int) (Math.random() * animalOverlays.size());
+                animalOverlay = animalOverlays.get(randomIndex);
+            }
 
             imgOverlay = Imgcodecs.imread(animalOverlay.getAnimalTemplateFile().getAbsolutePath(), Imgcodecs.IMREAD_UNCHANGED);
             Imgproc.cvtColor(imgOverlay, imgOverlay, Imgproc.COLOR_BGR2RGBA);
@@ -77,7 +83,7 @@ public class AnimalOverlayHelper {
         }
     }
 
-    private List<AnimalOverlay> getAnimalOverlays(){
+    private List<AnimalOverlay> getAnimalOverlays(String animalOverlayName){
         File[] animalTemplateFiles = AiHelper.getAnimalTemplateDirectory(context).listFiles();
         AnimalOverlaysMap animalOverlaysMap = getAnimalOverlaysMap();
         if (animalOverlaysMap == null){
@@ -127,7 +133,16 @@ public class AnimalOverlayHelper {
                     Log.w(getClass().getName(), "The AnimalOverlay " + assetName + " is discarded because the soundFile: " + soundFile + " is not existing");
                     continue;
                 }
-                AnimalOverlay animalOverlay = new AnimalOverlay(animalTemplateFile, imageWidth, imageHeight, frameStartX, frameStartY, frameEndX, frameEndY, soundFile);
+
+                AnimalOverlay animalOverlay = new AnimalOverlay(assetName, animalTemplateFile, imageWidth, imageHeight, frameStartX, frameStartY, frameEndX, frameEndY, soundFile);
+
+                // If only a specific animalOverlay shall be returned
+                if (assetName.equals(animalOverlayName)){
+                    animalOverlays = new ArrayList<>();
+                    animalOverlays.add(animalOverlay);
+                    return animalOverlays;
+                }
+
                 animalOverlays.add(animalOverlay);
             } else {
                 Log.w(getClass().getName(), "The config for the animalOverlay " + assetName + " is missing. Please check the config file " + ANIMAL_OVERLAYS_CONFIG_JSON + " in the assets folder.");

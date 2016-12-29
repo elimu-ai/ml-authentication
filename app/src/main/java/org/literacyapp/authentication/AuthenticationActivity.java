@@ -7,15 +7,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
-import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
@@ -40,7 +37,9 @@ import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
-    private static final int NUMBER_OF_MAXIMUM_TRIES = 5;
+    public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
+    public static final String ANIMAL_OVERLAY_IDENTIFIER = "AnimalOverlayName";
+    private static final int NUMBER_OF_MAXIMUM_TRIES = 3;
     private SupportVectorMachine svm;
     private TensorFlow tensorFlow;
     private PreProcessorFactory ppF;
@@ -53,7 +52,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private MediaPlayer mediaPlayerAnimalSound;
     private long startTimeFallback;
     private Thread tensorFlowLoadingThread;
+    private RecognitionThread recognitionThread;
     private ImageView authenticationAnimation;
+    private boolean recognitionThreadStarted;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -73,8 +74,11 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         DaoSession daoSession = literacyApplication.getDaoSession();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
 
+        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
+        animalOverlay = animalOverlayHelper.createOverlay("");
+
         if (!readyForAuthentication()){
-            startStudentImageCollectionActivity();
+            startStudentImageCollectionActivity(false);
         }
 
         preview = (JavaCameraView) findViewById(R.id.CameraView);
@@ -85,20 +89,21 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         preview.setVisibility(SurfaceView.VISIBLE);
         preview.setCvCameraViewListener(this);
 
-        animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
-
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
         startTimeFallback = new Date().getTime();
 
         final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         svm = trainingHelper.getSvm();
+
         tensorFlowLoadingThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 tensorFlow = trainingHelper.getInitializedTensorFlow();
             }
         });
+
+        recognitionThreadStarted = false;
     }
 
     @Override
@@ -115,7 +120,21 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
         if (!tensorFlowLoadingThread.isAlive()){
-            removeAuthenticationAnimation();
+            prepareForAuthentication();
+
+            if (!recognitionThread.isAlive() && recognitionThreadStarted) {
+                String svmProbability = svm.recognizeProbability(recognitionThread.getSvmString());
+                Student student = getStudentFromProbability(svmProbability);
+                numberOfTries++;
+                recognitionThreadStarted = false;
+                Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
+                if (student != null) {
+                    new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
+                    finish();
+                } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
+                    startStudentImageCollectionActivity(true);
+                }
+            }
 
             Mat imgCopy = new Mat();
 
@@ -146,19 +165,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                         isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                         if (isFaceInsideFrame){
-                            if (mediaPlayerAnimalSound != null){
-                                mediaPlayerAnimalSound.start();
-                            }
-                            String svmString = getSvmString(img);
-                            String svmProbability = svm.recognizeProbability(svmString);
-                            Student student = getStudentFromProbability(svmProbability);
-                            numberOfTries++;
-                            Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
-                            if (student != null){
-                                new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
-                                finish();
-                            } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES){
-                                startStudentImageCollectionActivity();
+                            if (!recognitionThread.isAlive() && !recognitionThreadStarted){
+                                if (mediaPlayerAnimalSound != null){
+                                    mediaPlayerAnimalSound.start();
+                                }
+                                recognitionThread = new RecognitionThread(svm, tensorFlow);
+                                recognitionThread.setImg(img);
+                                recognitionThread.start();
+                                recognitionThreadStarted = true;
                             }
                         }
                     }
@@ -191,7 +205,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onResume();
         ppF = new PreProcessorFactory(getApplicationContext());
         numberOfTries = 0;
-        animalOverlay = animalOverlayHelper.createOverlay();
         if (animalOverlay != null) {
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
         }
@@ -200,7 +213,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         tensorFlowLoadingThread.start();
     }
 
-    private void removeAuthenticationAnimation(){
+    private void prepareForAuthentication(){
         if (authenticationAnimation.getVisibility() == View.VISIBLE){
             runOnUiThread(new Runnable() {
                 @Override
@@ -210,17 +223,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                     preview.enableView();
                 }
             });
+            recognitionThread = new RecognitionThread(svm, tensorFlow);
+            startTimeFallback = new Date().getTime();
         }
-    }
-
-    /**
-     * Returns the SVM string using the feature vector
-     * @param img
-     * @return
-     */
-    private synchronized String getSvmString(Mat img){
-        Mat featureVector = tensorFlow.getFeatureVector(img);
-        return svm.getSvmString(featureVector);
     }
 
     /**
@@ -257,9 +262,15 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         }
     }
 
-    private synchronized void startStudentImageCollectionActivity(){
+    private synchronized void startStudentImageCollectionActivity(boolean authenticationAnimationAlreadyPlayed){
         Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        if (authenticationAnimationAlreadyPlayed){
+            studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, true);
+        } else {
+            studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
+        }
+        studentImageCollectionIntent.putExtra(ANIMAL_OVERLAY_IDENTIFIER, animalOverlay.getName());
         startActivity(studentImageCollectionIntent);
         finish();
     }
