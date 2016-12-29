@@ -25,6 +25,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -46,6 +47,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private AnimalOverlay animalOverlay;
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
+    private long startTimeFallback;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -78,6 +80,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
 
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
+
+        startTimeFallback = new Date().getTime();
     }
 
     @Override
@@ -101,6 +105,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         // Mirror front camera image
         Core.flip(imgRgba,imgRgba,1);
 
+        // Face detection
+        long currentTime = new Date().getTime();
+
         Rect face = new Rect();
         boolean isFaceInsideFrame = false;
         boolean faceDetected = false;
@@ -114,6 +121,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                     faces = MatOperation.rotateFaces(imgRgba, faces, ppF.getAngleForRecognition());
                     face = faces[0];
                     faceDetected = true;
+                    // Reset startTimeFallback for fallback timeout, because at least one face has been detected
+                    startTimeFallback = currentTime;
                     isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                     if (isFaceInsideFrame){
@@ -138,6 +147,13 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         if (faceDetected && !isFaceInsideFrame){
             DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+        }
+
+        if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
+            // Prevent from second execution of fallback activity because of threading
+            startTimeFallback = currentTime;
+            DetectionHelper.startFallbackActivity(getApplicationContext(), getClass().getName());
+            finish();
         }
 
         EnvironmentSettings.freeMemory();
