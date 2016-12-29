@@ -1,5 +1,9 @@
 package org.literacyapp.authentication;
 
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -23,6 +27,7 @@ import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MediaPlayerHelper;
@@ -272,6 +277,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                     studentImageDao.insert(studentImage);
                 }
                 Log.i(getClass().getName(), "storeStudentImages has finished successfully.");
+
+                // Initiate background job ad-hoc for face recognition training
+                ComponentName componentNameFaceRecognitionTranining = new ComponentName(getApplicationContext(), FaceRecognitionTrainingJobService.class);
+                JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(0, componentNameFaceRecognitionTranining);
+                JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
+                JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                jobSchedulerFaceRecognitionTranining.schedule(faceRecognitionTrainingJobInfo);
+                Log.i(getClass().getName(), "FACE_RECOGNITION_TRAINING_JOB with ID " + 0 + " has been scheduled.");
             }
         }).start();
     }
