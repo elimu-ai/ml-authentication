@@ -206,6 +206,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 @Override
                 public void run() {
                     authenticationAnimation.setVisibility(View.INVISIBLE);
+                    preview.disableView();
+                    preview.enableView();
                 }
             });
         }
