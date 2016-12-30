@@ -17,6 +17,8 @@ import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.receiver.BootReceiver;
+import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentUpdateHelper;
@@ -39,6 +41,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 import pl.droidsonroids.gif.GifImageView;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+    public static final long AUTHENTICATION_ANIMATION_TIME = 5000;
     public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
     public static final String ANIMAL_OVERLAY_IDENTIFIER = "AnimalOverlayName";
     private static final int NUMBER_OF_MAXIMUM_TRIES = 3;
@@ -53,10 +56,12 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
     private long startTimeFallback;
+    private long startTimeAuthenticationAnimation;
     private Thread tensorFlowLoadingThread;
     private RecognitionThread recognitionThread;
     private GifImageView authenticationAnimation;
     private boolean recognitionThreadStarted;
+    private boolean activityStopped;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -91,8 +96,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
-        startTimeFallback = new Date().getTime();
-
         final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         svm = trainingHelper.getSvm();
 
@@ -106,6 +109,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         recognitionThreadStarted = false;
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
+
+        activityStopped = false;
     }
 
     @Override
@@ -121,14 +126,15 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
-        if (!tensorFlowLoadingThread.isAlive()){
+
+        long currentTime = new Date().getTime();
+
+        if ((!tensorFlowLoadingThread.isAlive()) && ((startTimeAuthenticationAnimation + AUTHENTICATION_ANIMATION_TIME) < currentTime)){
             prepareForAuthentication();
 
             if (!recognitionThread.isAlive() && recognitionThreadStarted) {
-                String svmProbability = svm.recognizeProbability(recognitionThread.getSvmString());
-                Student student = getStudentFromProbability(svmProbability);
+                Student student = recognitionThread.getStudent();
                 numberOfTries++;
-                recognitionThreadStarted = false;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
                 if (student != null) {
                     new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
@@ -136,6 +142,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
                     startStudentImageCollectionActivity(true);
                 }
+                recognitionThreadStarted = false;
             }
 
             Mat imgCopy = new Mat();
@@ -145,9 +152,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
             // Mirror front camera image
             Core.flip(imgRgba,imgRgba,1);
-
-            // Face detection
-            long currentTime = new Date().getTime();
 
             Rect face = new Rect();
             boolean isFaceInsideFrame = false;
@@ -168,13 +172,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
                         if (isFaceInsideFrame){
                             if (!recognitionThread.isAlive() && !recognitionThreadStarted){
-                                if (mediaPlayerAnimalSound != null){
+                                if (!activityStopped){
                                     mediaPlayerAnimalSound.start();
+
+                                    recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
+                                    recognitionThread.setImg(img);
+                                    recognitionThread.start();
+                                    recognitionThreadStarted = true;
                                 }
-                                recognitionThread = new RecognitionThread(svm, tensorFlow);
-                                recognitionThread.setImg(img);
-                                recognitionThread.start();
-                                recognitionThreadStarted = true;
                             }
                         }
                     }
@@ -206,11 +211,13 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         numberOfTries = 0;
         animalOverlay = animalOverlayHelper.getAnimalOverlay("");
         if (animalOverlay != null) {
-            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
         mediaPlayerInstruction.start();
         tensorFlowLoadingThread.start();
+        startTimeFallback = new Date().getTime();
+        startTimeAuthenticationAnimation = new Date().getTime();
     }
 
     private void prepareForAuthentication(){
@@ -229,42 +236,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             });
 
-            recognitionThread = new RecognitionThread(svm, tensorFlow);
+            recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
             startTimeFallback = new Date().getTime();
-        }
-    }
-
-    /**
-     * Determines if and which Student has been recognized. The Student is only returned if the probability is above 90%
-     * @param svmProbability
-     * @return
-     */
-    private synchronized Student getStudentFromProbability(String svmProbability){
-        // Example string for svmProbability: labels 1 2\n2 0.458817 0.541183
-        StringTokenizer stringTokenizerSvmProbability = new StringTokenizer(svmProbability, "\n");
-        // Example string for header: labels 1 2
-        String header = stringTokenizerSvmProbability.nextToken();
-        // Example string for content: 2 0.458817 0.541183
-        String content = stringTokenizerSvmProbability.nextToken();
-
-        StringTokenizer stringTokenizerHeader = new StringTokenizer(header, " ");
-        // Skip first token
-        stringTokenizerHeader.nextToken();
-        StringTokenizer stringTokenizerContent = new StringTokenizer(content, " ");
-        // First token shows the label with the highest probability
-        int eventIdWithHighestProbability = Integer.valueOf(stringTokenizerContent.nextToken());
-
-        HashMap<Integer, Double> probabilityMap = new HashMap<Integer, Double>();
-        while(stringTokenizerHeader.hasMoreTokens()){
-            probabilityMap.put(Integer.valueOf(stringTokenizerHeader.nextToken()), Double.valueOf(stringTokenizerContent.nextToken()));
-        }
-
-        if (probabilityMap.get(eventIdWithHighestProbability) > 0.9){
-            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEventDao.load((long) eventIdWithHighestProbability);
-            Student student = studentImageCollectionEvent.getStudent();
-            return student;
-        } else {
-            return null;
         }
     }
 
@@ -284,8 +257,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private boolean readyForAuthentication(){
         long svmTrainingsExecutedCount = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(true)).count();
         Log.i(getClass().getName(), "readyForAuthentication: svmTrainingsExecutedCount: " + svmTrainingsExecutedCount);
+
         boolean classifierFilesExist = TrainingHelper.classifierFilesExist();
         Log.i(getClass().getName(), "readyForAuthentication: classifierFilesExist: " + classifierFilesExist);
+
         if ((svmTrainingsExecutedCount > 0) && classifierFilesExist){
             Log.i(getClass().getName(), "AuthenticationActivity is ready for authentication.");
             return true;
@@ -302,5 +277,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerInstruction.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
+        activityStopped = true;
     }
 }
