@@ -2,15 +2,21 @@ package org.literacyapp.authentication;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.utils.Converters;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.StringTokenizer;
 
-import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
 /**
@@ -18,68 +24,32 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
  */
 
 public class RecognitionThread extends Thread {
-    private SupportVectorMachine svm;
+    private static final double SIMILARITY_THRESHOLD = 0.5;
     private TensorFlow tensorFlow;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Mat img;
     private Student student;
+    private Gson gson;
 
-    public RecognitionThread(SupportVectorMachine svm, TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao) {
-        this.svm = svm;
+    public RecognitionThread(TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao) {
         this.tensorFlow = tensorFlow;
         this.studentImageCollectionEventDao = studentImageCollectionEventDao;
+        gson = new Gson();
     }
 
     @Override
     public void run() {
-        String svmProbability = svm.recognizeProbability(getSvmString(img));
-        student = getStudentFromProbability(svmProbability);
+        Mat featureVectorToRecognize = getFeatureVector(img);
+        student = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
     }
 
     /**
-     * Returns the SVM string using the feature vector
+     * Returns the featureVector derived from the Neural Network
      * @param img
      * @return
      */
-    private synchronized String getSvmString(Mat img){
-        Mat featureVector = tensorFlow.getFeatureVector(img);
-        return svm.getSvmString(featureVector);
-    }
-
-    /**
-     * Determines if and which Student has been recognized. The Student is only returned if the probability is above 90%
-     * @param svmProbability
-     * @return
-     */
-    private synchronized Student getStudentFromProbability(String svmProbability){
-        // Example string for svmProbability: labels 1 2\n2 0.458817 0.541183
-        StringTokenizer stringTokenizerSvmProbability = new StringTokenizer(svmProbability, "\n");
-        // Example string for header: labels 1 2
-        String header = stringTokenizerSvmProbability.nextToken();
-        // Example string for content: 2 0.458817 0.541183
-        String content = stringTokenizerSvmProbability.nextToken();
-
-        StringTokenizer stringTokenizerHeader = new StringTokenizer(header, " ");
-        // Skip first token
-        stringTokenizerHeader.nextToken();
-        StringTokenizer stringTokenizerContent = new StringTokenizer(content, " ");
-        // First token shows the label with the highest probability
-        int eventIdWithHighestProbability = Integer.valueOf(stringTokenizerContent.nextToken());
-
-        HashMap<Integer, Double> probabilityMap = new HashMap<Integer, Double>();
-        while(stringTokenizerHeader.hasMoreTokens()){
-            probabilityMap.put(Integer.valueOf(stringTokenizerHeader.nextToken()), Double.valueOf(stringTokenizerContent.nextToken()));
-        }
-
-        Log.i(getClass().getName(), "The StudentImageCollectionEvent with the Id " + eventIdWithHighestProbability + " has the highest probability " + probabilityMap.get(eventIdWithHighestProbability));
-
-        if (probabilityMap.get(eventIdWithHighestProbability) > 0.9){
-            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEventDao.load((long) eventIdWithHighestProbability);
-            Student student = studentImageCollectionEvent.getStudent();
-            return student;
-        } else {
-            return null;
-        }
+    private synchronized Mat getFeatureVector(Mat img){
+        return tensorFlow.getFeatureVector(img);
     }
 
     public void setImg(Mat img) {
@@ -88,5 +58,38 @@ public class RecognitionThread extends Thread {
 
     public Student getStudent() {
         return student;
+    }
+
+    /**
+     * Returns the recognized Student if the cosineSimilarity was above the threshold
+     * @param featureVectorToRecognize
+     * @return
+     */
+    private synchronized Student getMostSimilarStudentIfInThreshold(Mat featureVectorToRecognize){
+        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
+        List<Student> studentsInThreshold = new ArrayList<>();
+        for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
+            List<Float> featureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
+            Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
+            double dotProduct = featureVector.dot(featureVectorToRecognize);
+            double normFeatureVector = Core.norm(featureVector, Core.NORM_L2);
+            double normFeatureVectorToRecognize = Core.norm(featureVectorToRecognize, Core.NORM_L2);
+            double cosineSimilarity = dotProduct / (normFeatureVector * normFeatureVectorToRecognize);
+            double absoluteCosineSimilarity = Math.abs(cosineSimilarity);
+            Student student = studentImageCollectionEvent.getStudent();
+            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + student.getUniqueId());
+            if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
+                studentsInThreshold.add(student);
+            }
+        }
+        int numberOfStudentsInThreshold = studentsInThreshold.size();
+        if (numberOfStudentsInThreshold == 1){
+            Student student = studentsInThreshold.get(0);
+            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: The Student was recognized as " + student.getUniqueId());
+            return studentsInThreshold.get(0);
+        } else {
+            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: No Student was recognized, because the numberOfStudentsInThreshold was: " + numberOfStudentsInThreshold);
+            return null;
+        }
     }
 }
