@@ -70,7 +70,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
-    private static long AUTHENTICATION_ANIMATION_TIME = 4000;
     private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
 
@@ -105,8 +104,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         preview.setCvCameraViewListener(this);
 
         lastTime = new Date().getTime();
-        startTimeFallback = lastTime;
-        startTimeAuthenticationAnimation = lastTime;
 
         // Reset imageProcessed counter
         imagesProcessed = 0;
@@ -146,10 +143,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
 
-        // Face detection
         long currentTime = new Date().getTime();
 
-        if (authenticationAnimationAlreadyPlayed || ((startTimeAuthenticationAnimation + AUTHENTICATION_ANIMATION_TIME) < currentTime)){
+        if (authenticationAnimationAlreadyPlayed || ((startTimeAuthenticationAnimation + AuthenticationActivity.AUTHENTICATION_ANIMATION_TIME) < currentTime)){
             prepareForAuthentication();
 
             Mat imgCopy = new Mat();
@@ -230,6 +226,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         if (!authenticationAnimationAlreadyPlayed){
             mediaPlayerInstruction.start();
         }
+        startTimeFallback = new Date().getTime();
+        startTimeAuthenticationAnimation = new Date().getTime();
     }
 
     private void prepareForAuthentication(){

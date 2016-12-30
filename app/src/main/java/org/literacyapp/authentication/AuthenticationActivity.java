@@ -39,6 +39,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 import pl.droidsonroids.gif.GifImageView;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+    public static final long AUTHENTICATION_ANIMATION_TIME = 5000;
     public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
     public static final String ANIMAL_OVERLAY_IDENTIFIER = "AnimalOverlayName";
     private static final int NUMBER_OF_MAXIMUM_TRIES = 3;
@@ -53,6 +54,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private MediaPlayer mediaPlayerInstruction;
     private MediaPlayer mediaPlayerAnimalSound;
     private long startTimeFallback;
+    private long startTimeAuthenticationAnimation;
     private Thread tensorFlowLoadingThread;
     private RecognitionThread recognitionThread;
     private GifImageView authenticationAnimation;
@@ -92,8 +94,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
 
-        startTimeFallback = new Date().getTime();
-
         final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         svm = trainingHelper.getSvm();
 
@@ -122,7 +122,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
-        if (!tensorFlowLoadingThread.isAlive()){
+
+        long currentTime = new Date().getTime();
+
+        if ((!tensorFlowLoadingThread.isAlive()) && ((startTimeAuthenticationAnimation + AUTHENTICATION_ANIMATION_TIME) < currentTime)){
             prepareForAuthentication();
 
             if (!recognitionThread.isAlive() && recognitionThreadStarted) {
@@ -145,9 +148,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
             // Mirror front camera image
             Core.flip(imgRgba,imgRgba,1);
-
-            // Face detection
-            long currentTime = new Date().getTime();
 
             Rect face = new Rect();
             boolean isFaceInsideFrame = false;
@@ -212,6 +212,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         preview.enableView();
         mediaPlayerInstruction.start();
         tensorFlowLoadingThread.start();
+        startTimeFallback = new Date().getTime();
+        startTimeAuthenticationAnimation = new Date().getTime();
     }
 
     private void prepareForAuthentication(){
