@@ -14,8 +14,8 @@ import org.greenrobot.greendao.database.DatabaseStatement;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
-import org.literacyapp.model.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 
 import org.literacyapp.model.StudentImage;
 

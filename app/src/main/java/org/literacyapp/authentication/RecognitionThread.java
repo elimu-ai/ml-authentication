@@ -4,8 +4,7 @@ import android.util.Log;
 
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImageCollectionEvent;
-import org.literacyapp.util.StudentUpdateHelper;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.opencv.core.Mat;
 
 import java.util.HashMap;

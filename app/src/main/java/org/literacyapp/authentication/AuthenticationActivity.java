@@ -2,8 +2,8 @@ package org.literacyapp.authentication;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
@@ -16,9 +16,6 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImageCollectionEvent;
-import org.literacyapp.receiver.BootReceiver;
-import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentUpdateHelper;
@@ -30,9 +27,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
