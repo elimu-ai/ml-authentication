@@ -61,7 +61,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private RecognitionThread recognitionThread;
     private GifImageView authenticationAnimation;
     private boolean recognitionThreadStarted;
-    private boolean mediaPlayerAnimalSoundReleased;
+    private boolean activityStopped;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -109,6 +109,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         recognitionThreadStarted = false;
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
+
+        activityStopped = false;
     }
 
     @Override
@@ -170,13 +172,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
                         if (isFaceInsideFrame){
                             if (!recognitionThread.isAlive() && !recognitionThreadStarted){
-                                if (!mediaPlayerAnimalSoundReleased){
+                                if (!activityStopped){
                                     mediaPlayerAnimalSound.start();
+
+                                    recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
+                                    recognitionThread.setImg(img);
+                                    recognitionThread.start();
+                                    recognitionThreadStarted = true;
                                 }
-                                recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
-                                recognitionThread.setImg(img);
-                                recognitionThread.start();
-                                recognitionThreadStarted = true;
                             }
                         }
                     }
@@ -209,7 +212,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         animalOverlay = animalOverlayHelper.getAnimalOverlay("");
         if (animalOverlay != null) {
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
-            mediaPlayerAnimalSoundReleased = false;
         }
         preview.enableView();
         mediaPlayerInstruction.start();
@@ -275,6 +277,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerInstruction.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
-        mediaPlayerAnimalSoundReleased = true;
+        activityStopped = true;
     }
 }

@@ -66,7 +66,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private GifImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
     private String animalOverlayName;
-    private boolean mediaPlayerAnimalSoundReleased;
+    private boolean activityStopped;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
@@ -129,6 +129,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         studentImages = new ArrayList<>();
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
+
+        activityStopped = false;
     }
 
     @Override
@@ -177,22 +179,23 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                             isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                             if (isFaceInsideFrame){
-                                if (!mediaPlayerAnimalSoundReleased){
+                                if (!activityStopped){
                                     mediaPlayerAnimalSound.start();
-                                }
-                                studentImages.add(img);
 
-                                if(DIAGNOSE_MODE) {
-                                    MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
-                                }
+                                    studentImages.add(img);
 
-                                // Stop after NUMBER_OF_IMAGES (settings option)
-                                if(imagesProcessed == NUMBER_OF_IMAGES){
-                                    storeStudentImages();
-                                    finish();
-                                }
+                                    if(DIAGNOSE_MODE) {
+                                        MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
+                                    }
 
-                                imagesProcessed++;
+                                    // Stop after NUMBER_OF_IMAGES (settings option)
+                                    if(imagesProcessed == NUMBER_OF_IMAGES){
+                                        storeStudentImages();
+                                        finish();
+                                    }
+
+                                    imagesProcessed++;
+                                }
                             }
                         }
                     }
@@ -224,7 +227,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         animalOverlay = animalOverlayHelper.getAnimalOverlay(animalOverlayName);
         if (animalOverlay != null){
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
-            mediaPlayerAnimalSoundReleased = false;
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
@@ -294,6 +296,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerInstruction.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
-        mediaPlayerAnimalSoundReleased = true;
+        activityStopped = true;
     }
 }
