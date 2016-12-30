@@ -11,12 +11,16 @@ import org.literacyapp.authentication.TrainingHelper;
  */
 
 public class FaceRecognitionTrainingJobService extends JobService {
+    public static boolean isRunning = false;
+
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStartJob");
+        isRunning = true;
         TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         trainingHelper.extractFeatures();
         trainingHelper.trainClassifier();
+        isRunning = false;
         return false;
     }
 

@@ -23,6 +23,7 @@ public class MultimediaHelper {
     private static final String AUTHENTICATION_INSTRUCTION_BOY = "authentication_instruction_640";
     private static final String AUTHENTICATION_INSTRUCTION_GIRL = "authentication_instruction_girl_640";
     public static final String RESOURCES_DRAWABLE_FOLDER = "drawable";
+    public static final String RESOURCES_RAW_FOLDER = "raw";
 
     public static File getMultimediaDirectory() {
         File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + "/.literacyapp/multimedia");

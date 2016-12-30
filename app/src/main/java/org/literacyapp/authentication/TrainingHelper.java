@@ -9,17 +9,18 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
+import org.literacyapp.dao.StudentImageDao;
+import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
-import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
-import org.literacyapp.dao.StudentImageFeatureDao;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
@@ -34,6 +35,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
 import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
@@ -356,5 +358,51 @@ public class TrainingHelper {
 
     public SupportVectorMachine getSvm() {
         return svm;
+    }
+
+    public synchronized void findAndMergeSimilarStudents(){
+        Log.i(getClass().getName(), "findAndMergeSimilarStudents");
+        PreProcessorFactory ppF = new PreProcessorFactory(context);
+        List<Student> students = studentDao.loadAll();
+        // Iterate through all students
+        for (Student student : students){
+            // Take the avatar image of the student
+            Mat avatarImage = Imgcodecs.imread(student.getAvatar());
+            // Search for faces in the avatar image
+            List<Mat> faceImages = ppF.getCroppedImage(avatarImage);
+            if (faceImages != null && faceImages.size() == 1) {
+                // Proceed if exactly one face has been detected
+                Mat faceImage = faceImages.get(0);
+                if (faceImage != null) {
+                    // Get detected face rectangles
+                    Rect[] faces = ppF.getFacesForRecognition();
+                    if (faces != null && faces.length == 1) {
+                        // Proceed if exactly one face rectangle exists
+                        RecognitionThread recognitionThread = new RecognitionThread(svm, getInitializedTensorFlow(), studentImageCollectionEventDao);
+                        recognitionThread.setImg(faceImage);
+                        Log.i(getClass().getName(), "findAndMergeSimilarStudents: recognitionThread will be started to recognize student: " + student.getUniqueId());
+                        recognitionThread.start();
+                        try {
+                            recognitionThread.join();
+                            Student recognizedStudent = recognitionThread.getStudent();
+                            if (recognizedStudent != null){
+                                Log.i(getClass().getName(), "findAndMergeSimilarStudents: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
+                                mergeSimilarStudents(student, recognizedStudent);
+                            } else {
+                                Log.i(getClass().getName(), "findAndMergeSimilarStudents: The student " + student.getUniqueId() + " was not recognized");
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
+    private synchronized void mergeSimilarStudents(Student student1, Student student2){
+        Log.i(getClass().getName(), "mergeSimilarStudents: student1: " + student1.getUniqueId() + " student2: " + student2.getUniqueId());
     }
 }

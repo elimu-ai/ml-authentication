@@ -15,7 +15,7 @@ import org.literacyapp.service.ScreenOnService;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
 
 public class BootReceiver extends BroadcastReceiver {
-    private static final int MINUTES_BETWEEN_AUTHENTICATIONS = 30;
+    public static final int MINUTES_BETWEEN_AUTHENTICATIONS = 30;
 
     @Override
     public void onReceive(Context context, Intent intent) {

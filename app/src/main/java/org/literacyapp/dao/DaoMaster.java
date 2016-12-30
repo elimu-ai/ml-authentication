@@ -21,6 +21,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
+        StudentImageCollectionEventDao.createTable(db, ifNotExists);
         AllophoneDao.createTable(db, ifNotExists);
         LetterDao.createTable(db, ifNotExists);
         AudioDao.createTable(db, ifNotExists);
@@ -42,11 +43,11 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentDao.createTable(db, ifNotExists);
         StudentImageDao.createTable(db, ifNotExists);
         StudentImageFeatureDao.createTable(db, ifNotExists);
-        StudentImageCollectionEventDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
+        StudentImageCollectionEventDao.dropTable(db, ifExists);
         AllophoneDao.dropTable(db, ifExists);
         LetterDao.dropTable(db, ifExists);
         AudioDao.dropTable(db, ifExists);
@@ -68,7 +69,6 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentDao.dropTable(db, ifExists);
         StudentImageDao.dropTable(db, ifExists);
         StudentImageFeatureDao.dropTable(db, ifExists);
-        StudentImageCollectionEventDao.dropTable(db, ifExists);
     }
 
     /**
@@ -87,6 +87,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(StudentImageCollectionEventDao.class);
         registerDaoClass(AllophoneDao.class);
         registerDaoClass(LetterDao.class);
         registerDaoClass(AudioDao.class);
@@ -108,7 +109,6 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(StudentDao.class);
         registerDaoClass(StudentImageDao.class);
         registerDaoClass(StudentImageFeatureDao.class);
-        registerDaoClass(StudentImageCollectionEventDao.class);
     }
 
     public DaoSession newSession() {

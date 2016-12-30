@@ -66,11 +66,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private GifImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
     private String animalOverlayName;
+    private boolean activityStopped;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
-    private static long AUTHENTICATION_ANIMATION_TIME = 4000;
     private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
 
@@ -105,8 +105,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         preview.setCvCameraViewListener(this);
 
         lastTime = new Date().getTime();
-        startTimeFallback = lastTime;
-        startTimeAuthenticationAnimation = lastTime;
 
         // Reset imageProcessed counter
         imagesProcessed = 0;
@@ -131,6 +129,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         studentImages = new ArrayList<>();
 
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
+
+        activityStopped = false;
     }
 
     @Override
@@ -146,10 +146,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
 
-        // Face detection
         long currentTime = new Date().getTime();
 
-        if (authenticationAnimationAlreadyPlayed || ((startTimeAuthenticationAnimation + AUTHENTICATION_ANIMATION_TIME) < currentTime)){
+        if (authenticationAnimationAlreadyPlayed || ((startTimeAuthenticationAnimation + AuthenticationActivity.AUTHENTICATION_ANIMATION_TIME) < currentTime)){
             prepareForAuthentication();
 
             Mat imgCopy = new Mat();
@@ -180,20 +179,23 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                             isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                             if (isFaceInsideFrame){
-                                mediaPlayerAnimalSound.start();
-                                studentImages.add(img);
+                                if (!activityStopped){
+                                    mediaPlayerAnimalSound.start();
 
-                                if(DIAGNOSE_MODE) {
-                                    MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
+                                    studentImages.add(img);
+
+                                    if(DIAGNOSE_MODE) {
+                                        MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
+                                    }
+
+                                    // Stop after NUMBER_OF_IMAGES (settings option)
+                                    if(imagesProcessed == NUMBER_OF_IMAGES){
+                                        storeStudentImages();
+                                        finish();
+                                    }
+
+                                    imagesProcessed++;
                                 }
-
-                                // Stop after NUMBER_OF_IMAGES (settings option)
-                                if(imagesProcessed == NUMBER_OF_IMAGES){
-                                    storeStudentImages();
-                                    finish();
-                                }
-
-                                imagesProcessed++;
                             }
                         }
                     }
@@ -224,12 +226,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         ppF = new PreProcessorFactory(getApplicationContext());
         animalOverlay = animalOverlayHelper.getAnimalOverlay(animalOverlayName);
         if (animalOverlay != null){
-            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
             mediaPlayerInstruction.start();
         }
+        startTimeFallback = new Date().getTime();
+        startTimeAuthenticationAnimation = new Date().getTime();
     }
 
     private void prepareForAuthentication(){
@@ -292,5 +296,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerInstruction.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
+        activityStopped = true;
     }
 }
