@@ -7,10 +7,10 @@ import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
+import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.Student;
@@ -18,7 +18,7 @@ import org.literacyapp.model.Student;
 import java.util.Calendar;
 
 /**
- * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}
+ * Based on {@link org.literacyapp.model.gson.analytics.AuthenticationEventGson}
  */
 @Entity
 public class AuthenticationEvent {
@@ -44,27 +44,27 @@ public class AuthenticationEvent {
     @ToOne(joinProperty = "studentId")
     private Student student;
 
-    private boolean svmTrainingExecuted;
+    private boolean isFallback;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
 
     /** Used for active entity operations. */
-    @Generated(hash = 136770604)
-    private transient StudentImageCollectionEventDao myDao;
+    @Generated(hash = 374865976)
+    private transient AuthenticationEventDao myDao;
 
-    @Generated(hash = 1512432081)
+    @Generated(hash = 1693135147)
     public AuthenticationEvent(Long id, long deviceId, @NotNull Calendar time,
-                               long studentId, boolean svmTrainingExecuted) {
+            long studentId, boolean isFallback) {
         this.id = id;
         this.deviceId = deviceId;
         this.time = time;
         this.studentId = studentId;
-        this.svmTrainingExecuted = svmTrainingExecuted;
+        this.isFallback = isFallback;
     }
 
-    @Generated(hash = 802935259)
+    @Generated(hash = 1896657709)
     public AuthenticationEvent() {
     }
 
@@ -100,12 +100,12 @@ public class AuthenticationEvent {
         this.studentId = studentId;
     }
 
-    public boolean getSvmTrainingExecuted() {
-        return this.svmTrainingExecuted;
+    public boolean getIsFallback() {
+        return this.isFallback;
     }
 
-    public void setSvmTrainingExecuted(boolean svmTrainingExecuted) {
-        this.svmTrainingExecuted = svmTrainingExecuted;
+    public void setIsFallback(boolean isFallback) {
+        this.isFallback = isFallback;
     }
 
     @Generated(hash = 708752895)
@@ -217,9 +217,9 @@ public class AuthenticationEvent {
     }
 
     /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 76995743)
+    @Generated(hash = 81474974)
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
-        myDao = daoSession != null ? daoSession.getStudentImageCollectionEventDao() : null;
+        myDao = daoSession != null ? daoSession.getAuthenticationEventDao() : null;
     }
 }

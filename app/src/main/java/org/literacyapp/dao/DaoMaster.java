@@ -21,6 +21,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
+        AuthenticationEventDao.createTable(db, ifNotExists);
         StudentImageCollectionEventDao.createTable(db, ifNotExists);
         AllophoneDao.createTable(db, ifNotExists);
         LetterDao.createTable(db, ifNotExists);
@@ -47,6 +48,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
+        AuthenticationEventDao.dropTable(db, ifExists);
         StudentImageCollectionEventDao.dropTable(db, ifExists);
         AllophoneDao.dropTable(db, ifExists);
         LetterDao.dropTable(db, ifExists);
@@ -87,6 +89,7 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(AuthenticationEventDao.class);
         registerDaoClass(StudentImageCollectionEventDao.class);
         registerDaoClass(AllophoneDao.class);
         registerDaoClass(LetterDao.class);
