@@ -118,6 +118,12 @@ public class CustomDaoMaster extends DaoMaster {
                 );
             }
 
+            if (oldVersion < 1003004) {
+                DbMigrationHelper.migrate(db,
+                        AuthenticationEventDao.class
+                );
+            }
+
             // If tables and/or columns have been renamed, add custom script.
 //            db.execSQL("...");
         }

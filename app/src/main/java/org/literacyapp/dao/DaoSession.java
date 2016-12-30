@@ -8,6 +8,7 @@ import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.identityscope.IdentityScopeType;
 import org.greenrobot.greendao.internal.DaoConfig;
 
+import org.literacyapp.model.analytics.AuthenticationEvent;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.model.content.Allophone;
 import org.literacyapp.model.content.Letter;
@@ -31,6 +32,7 @@ import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageFeature;
 
+import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.AllophoneDao;
 import org.literacyapp.dao.LetterDao;
@@ -63,6 +65,7 @@ import org.literacyapp.dao.StudentImageFeatureDao;
  */
 public class DaoSession extends AbstractDaoSession {
 
+    private final DaoConfig authenticationEventDaoConfig;
     private final DaoConfig studentImageCollectionEventDaoConfig;
     private final DaoConfig allophoneDaoConfig;
     private final DaoConfig letterDaoConfig;
@@ -86,6 +89,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig studentImageDaoConfig;
     private final DaoConfig studentImageFeatureDaoConfig;
 
+    private final AuthenticationEventDao authenticationEventDao;
     private final StudentImageCollectionEventDao studentImageCollectionEventDao;
     private final AllophoneDao allophoneDao;
     private final LetterDao letterDao;
@@ -112,6 +116,9 @@ public class DaoSession extends AbstractDaoSession {
     public DaoSession(Database db, IdentityScopeType type, Map<Class<? extends AbstractDao<?, ?>>, DaoConfig>
             daoConfigMap) {
         super(db);
+
+        authenticationEventDaoConfig = daoConfigMap.get(AuthenticationEventDao.class).clone();
+        authenticationEventDaoConfig.initIdentityScope(type);
 
         studentImageCollectionEventDaoConfig = daoConfigMap.get(StudentImageCollectionEventDao.class).clone();
         studentImageCollectionEventDaoConfig.initIdentityScope(type);
@@ -179,6 +186,7 @@ public class DaoSession extends AbstractDaoSession {
         studentImageFeatureDaoConfig = daoConfigMap.get(StudentImageFeatureDao.class).clone();
         studentImageFeatureDaoConfig.initIdentityScope(type);
 
+        authenticationEventDao = new AuthenticationEventDao(authenticationEventDaoConfig, this);
         studentImageCollectionEventDao = new StudentImageCollectionEventDao(studentImageCollectionEventDaoConfig, this);
         allophoneDao = new AllophoneDao(allophoneDaoConfig, this);
         letterDao = new LetterDao(letterDaoConfig, this);
@@ -202,6 +210,7 @@ public class DaoSession extends AbstractDaoSession {
         studentImageDao = new StudentImageDao(studentImageDaoConfig, this);
         studentImageFeatureDao = new StudentImageFeatureDao(studentImageFeatureDaoConfig, this);
 
+        registerDao(AuthenticationEvent.class, authenticationEventDao);
         registerDao(StudentImageCollectionEvent.class, studentImageCollectionEventDao);
         registerDao(Allophone.class, allophoneDao);
         registerDao(Letter.class, letterDao);
@@ -227,6 +236,7 @@ public class DaoSession extends AbstractDaoSession {
     }
     
     public void clear() {
+        authenticationEventDaoConfig.clearIdentityScope();
         studentImageCollectionEventDaoConfig.clearIdentityScope();
         allophoneDaoConfig.clearIdentityScope();
         letterDaoConfig.clearIdentityScope();
@@ -249,6 +259,10 @@ public class DaoSession extends AbstractDaoSession {
         studentDaoConfig.clearIdentityScope();
         studentImageDaoConfig.clearIdentityScope();
         studentImageFeatureDaoConfig.clearIdentityScope();
+    }
+
+    public AuthenticationEventDao getAuthenticationEventDao() {
+        return authenticationEventDao;
     }
 
     public StudentImageCollectionEventDao getStudentImageCollectionEventDao() {
