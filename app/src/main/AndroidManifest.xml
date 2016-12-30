@@ -52,13 +52,7 @@
             android:name=".content.task.StarActivity"
             android:screenOrientation="fullSensor" />
         <activity android:name=".content.task.LessonCompleteActivity" />
-        <activity android:name=".authentication.StudentImageCollectionActivity"
-            android:icon="@mipmap/ic_launcher_student_image_collection">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".authentication.StudentImageCollectionActivity"/>
         <activity
             android:name=".content.letter.LettersActivity"
             android:icon="@mipmap/ic_launcher_literacy"
@@ -133,13 +127,7 @@
             android:name=".authentication.fallback.StudentSelectionActivity"
             android:label="@string/title_activity_student_selection"
             android:theme="@style/AppTheme" />
-        <activity android:name=".authentication.AuthenticationActivity"
-            android:icon="@mipmap/ic_launcher_authentication_2">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".authentication.AuthenticationActivity"/>
     </application>
 
 </manifest>

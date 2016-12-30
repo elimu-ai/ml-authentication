@@ -66,6 +66,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private GifImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
     private String animalOverlayName;
+    private boolean mediaPlayerAnimalSoundReleased;
 
     // Image collection parameters
     private static final boolean DIAGNOSE_MODE = true;
@@ -176,7 +177,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                             isFaceInsideFrame = DetectionHelper.isFaceInsideFrame(animalOverlay, imgRgba, face);
 
                             if (isFaceInsideFrame){
-                                mediaPlayerAnimalSound.start();
+                                if (!mediaPlayerAnimalSoundReleased){
+                                    mediaPlayerAnimalSound.start();
+                                }
                                 studentImages.add(img);
 
                                 if(DIAGNOSE_MODE) {
@@ -220,7 +223,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         ppF = new PreProcessorFactory(getApplicationContext());
         animalOverlay = animalOverlayHelper.getAnimalOverlay(animalOverlayName);
         if (animalOverlay != null){
-            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
+            mediaPlayerAnimalSoundReleased = false;
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
@@ -290,5 +294,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerInstruction.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
+        mediaPlayerAnimalSoundReleased = true;
     }
 }

@@ -17,6 +17,8 @@ import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.receiver.BootReceiver;
+import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentUpdateHelper;
@@ -206,7 +208,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         numberOfTries = 0;
         animalOverlay = animalOverlayHelper.getAnimalOverlay("");
         if (animalOverlay != null) {
-            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
             mediaPlayerAnimalSoundReleased = false;
         }
         preview.enableView();
@@ -253,8 +255,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private boolean readyForAuthentication(){
         long svmTrainingsExecutedCount = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(true)).count();
         Log.i(getClass().getName(), "readyForAuthentication: svmTrainingsExecutedCount: " + svmTrainingsExecutedCount);
+
         boolean classifierFilesExist = TrainingHelper.classifierFilesExist();
         Log.i(getClass().getName(), "readyForAuthentication: classifierFilesExist: " + classifierFilesExist);
+
         if ((svmTrainingsExecutedCount > 0) && classifierFilesExist){
             Log.i(getClass().getName(), "AuthenticationActivity is ready for authentication.");
             return true;
