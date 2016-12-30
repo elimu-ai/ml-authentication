@@ -31,7 +31,6 @@ import java.util.List;
 
 import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
-import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -40,7 +39,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
     public static final String ANIMAL_OVERLAY_IDENTIFIER = "AnimalOverlayName";
     private static final int NUMBER_OF_MAXIMUM_TRIES = 3;
-    private SupportVectorMachine svm;
     private TensorFlow tensorFlow;
     private PreProcessorFactory ppF;
     private JavaCameraView preview;
@@ -89,10 +87,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         preview.setVisibility(SurfaceView.VISIBLE);
         preview.setCvCameraViewListener(this);
 
-        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
-
         final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
-        svm = trainingHelper.getSvm();
 
         tensorFlowLoadingThread = new Thread(new Runnable() {
             @Override
@@ -170,7 +165,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                                 if (!activityStopped){
                                     mediaPlayerAnimalSound.start();
 
-                                    recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
+                                    recognitionThread = new RecognitionThread(tensorFlow, studentImageCollectionEventDao);
                                     recognitionThread.setImg(img);
                                     recognitionThread.start();
                                     recognitionThreadStarted = true;
@@ -209,6 +204,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
+        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
         mediaPlayerInstruction.start();
         tensorFlowLoadingThread.start();
         startTimeFallback = new Date().getTime();
@@ -231,7 +227,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             });
 
-            recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
+            recognitionThread = new RecognitionThread(tensorFlow, studentImageCollectionEventDao);
             startTimeFallback = new Date().getTime();
         }
     }
@@ -250,13 +246,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     }
 
     private boolean readyForAuthentication(){
-        long svmTrainingsExecutedCount = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.SvmTrainingExecuted.eq(true)).count();
-        Log.i(getClass().getName(), "readyForAuthentication: svmTrainingsExecutedCount: " + svmTrainingsExecutedCount);
+        long meanFeatureVectorsCount = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).count();
+        Log.i(getClass().getName(), "readyForAuthentication: meanFeatureVectorsCount: " + meanFeatureVectorsCount);
 
-        boolean classifierFilesExist = TrainingHelper.classifierFilesExist();
-        Log.i(getClass().getName(), "readyForAuthentication: classifierFilesExist: " + classifierFilesExist);
-
-        if ((svmTrainingsExecutedCount > 0) && classifierFilesExist){
+        if (meanFeatureVectorsCount > 0){
             Log.i(getClass().getName(), "AuthenticationActivity is ready for authentication.");
             return true;
         } else {

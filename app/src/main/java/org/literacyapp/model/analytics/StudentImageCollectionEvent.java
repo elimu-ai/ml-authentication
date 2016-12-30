@@ -6,6 +6,7 @@ import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
@@ -14,8 +15,11 @@ import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.Student;
+import org.literacyapp.model.StudentImage;
 
 import java.util.Calendar;
+import java.util.List;
+import org.literacyapp.dao.StudentImageDao;
 
 /**
  * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}
@@ -44,7 +48,10 @@ public class StudentImageCollectionEvent {
     @ToOne(joinProperty = "studentId")
     private Student student;
 
-    private boolean svmTrainingExecuted;
+    private String meanFeatureVector;
+
+    @ToMany(referencedJoinProperty = "studentImageCollectionEventId")
+    private List<StudentImage> studentImages;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -54,14 +61,14 @@ public class StudentImageCollectionEvent {
     @Generated(hash = 136770604)
     private transient StudentImageCollectionEventDao myDao;
 
-    @Generated(hash = 1512432081)
-    public StudentImageCollectionEvent(Long id, long deviceId, @NotNull Calendar time,
-            long studentId, boolean svmTrainingExecuted) {
+    @Generated(hash = 862266622)
+    public StudentImageCollectionEvent(Long id, long deviceId, @NotNull Calendar time, long studentId,
+            String meanFeatureVector) {
         this.id = id;
         this.deviceId = deviceId;
         this.time = time;
         this.studentId = studentId;
-        this.svmTrainingExecuted = svmTrainingExecuted;
+        this.meanFeatureVector = meanFeatureVector;
     }
 
     @Generated(hash = 802935259)
@@ -98,14 +105,6 @@ public class StudentImageCollectionEvent {
 
     public void setStudentId(long studentId) {
         this.studentId = studentId;
-    }
-
-    public boolean getSvmTrainingExecuted() {
-        return this.svmTrainingExecuted;
-    }
-
-    public void setSvmTrainingExecuted(boolean svmTrainingExecuted) {
-        this.svmTrainingExecuted = svmTrainingExecuted;
     }
 
     @Generated(hash = 708752895)
@@ -221,5 +220,42 @@ public class StudentImageCollectionEvent {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getStudentImageCollectionEventDao() : null;
+    }
+
+    public String getMeanFeatureVector() {
+        return this.meanFeatureVector;
+    }
+
+    public void setMeanFeatureVector(String meanFeatureVector) {
+        this.meanFeatureVector = meanFeatureVector;
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1492710689)
+    public List<StudentImage> getStudentImages() {
+        if (studentImages == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            StudentImageDao targetDao = daoSession.getStudentImageDao();
+            List<StudentImage> studentImagesNew = targetDao
+                    ._queryStudentImageCollectionEvent_StudentImages(id);
+            synchronized (this) {
+                if (studentImages == null) {
+                    studentImages = studentImagesNew;
+                }
+            }
+        }
+        return studentImages;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1313731009)
+    public synchronized void resetStudentImages() {
+        studentImages = null;
     }
 }

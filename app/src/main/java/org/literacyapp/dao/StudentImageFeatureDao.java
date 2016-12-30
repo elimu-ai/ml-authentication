@@ -29,7 +29,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property TimeCreated = new Property(1, long.class, "timeCreated", false, "TIME_CREATED");
-        public final static Property SvmVector = new Property(2, String.class, "svmVector", false, "SVM_VECTOR");
+        public final static Property FeatureVector = new Property(2, String.class, "featureVector", false, "FEATURE_VECTOR");
     }
 
     private final CalendarConverter timeCreatedConverter = new CalendarConverter();
@@ -48,7 +48,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         db.execSQL("CREATE TABLE " + constraint + "\"STUDENT_IMAGE_FEATURE\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
                 "\"TIME_CREATED\" INTEGER NOT NULL ," + // 1: timeCreated
-                "\"SVM_VECTOR\" TEXT NOT NULL );"); // 2: svmVector
+                "\"FEATURE_VECTOR\" TEXT NOT NULL );"); // 2: featureVector
     }
 
     /** Drops the underlying database table. */
@@ -66,7 +66,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
             stmt.bindLong(1, id);
         }
         stmt.bindLong(2, timeCreatedConverter.convertToDatabaseValue(entity.getTimeCreated()));
-        stmt.bindString(3, entity.getSvmVector());
+        stmt.bindString(3, entity.getFeatureVector());
     }
 
     @Override
@@ -78,7 +78,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
             stmt.bindLong(1, id);
         }
         stmt.bindLong(2, timeCreatedConverter.convertToDatabaseValue(entity.getTimeCreated()));
-        stmt.bindString(3, entity.getSvmVector());
+        stmt.bindString(3, entity.getFeatureVector());
     }
 
     @Override
@@ -91,7 +91,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
         StudentImageFeature entity = new StudentImageFeature( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             timeCreatedConverter.convertToEntityProperty(cursor.getLong(offset + 1)), // timeCreated
-            cursor.getString(offset + 2) // svmVector
+            cursor.getString(offset + 2) // featureVector
         );
         return entity;
     }
@@ -100,7 +100,7 @@ public class StudentImageFeatureDao extends AbstractDao<StudentImageFeature, Lon
     public void readEntity(Cursor cursor, StudentImageFeature entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setTimeCreated(timeCreatedConverter.convertToEntityProperty(cursor.getLong(offset + 1)));
-        entity.setSvmVector(cursor.getString(offset + 2));
+        entity.setFeatureVector(cursor.getString(offset + 2));
      }
     
     @Override

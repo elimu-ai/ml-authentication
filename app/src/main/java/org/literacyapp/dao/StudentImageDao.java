@@ -11,6 +11,8 @@ import org.greenrobot.greendao.internal.SqlUtils;
 import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
+import org.greenrobot.greendao.query.Query;
+import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
@@ -42,6 +44,7 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
     private DaoSession daoSession;
 
     private final CalendarConverter timeCollectedConverter = new CalendarConverter();
+    private Query<StudentImage> studentImageCollectionEvent_StudentImagesQuery;
 
     public StudentImageDao(DaoConfig config) {
         super(config);
@@ -154,6 +157,20 @@ public class StudentImageDao extends AbstractDao<StudentImage, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "studentImages" to-many relationship of StudentImageCollectionEvent. */
+    public List<StudentImage> _queryStudentImageCollectionEvent_StudentImages(long studentImageCollectionEventId) {
+        synchronized (this) {
+            if (studentImageCollectionEvent_StudentImagesQuery == null) {
+                QueryBuilder<StudentImage> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.StudentImageCollectionEventId.eq(null));
+                studentImageCollectionEvent_StudentImagesQuery = queryBuilder.build();
+            }
+        }
+        Query<StudentImage> query = studentImageCollectionEvent_StudentImagesQuery.forCurrentThread();
+        query.setParameter(0, studentImageCollectionEventId);
+        return query.list();
+    }
+
     private String selectDeep;
 
     protected String getSelectDeep() {
