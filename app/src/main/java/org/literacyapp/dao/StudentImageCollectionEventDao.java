@@ -36,7 +36,7 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         public final static Property DeviceId = new Property(1, long.class, "deviceId", false, "DEVICE_ID");
         public final static Property Time = new Property(2, long.class, "time", false, "TIME");
         public final static Property StudentId = new Property(3, long.class, "studentId", false, "STUDENT_ID");
-        public final static Property SvmTrainingExecuted = new Property(4, boolean.class, "svmTrainingExecuted", false, "SVM_TRAINING_EXECUTED");
+        public final static Property MeanFeatureVector = new Property(4, String.class, "meanFeatureVector", false, "MEAN_FEATURE_VECTOR");
     }
 
     private DaoSession daoSession;
@@ -60,7 +60,7 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
                 "\"DEVICE_ID\" INTEGER NOT NULL ," + // 1: deviceId
                 "\"TIME\" INTEGER NOT NULL ," + // 2: time
                 "\"STUDENT_ID\" INTEGER NOT NULL ," + // 3: studentId
-                "\"SVM_TRAINING_EXECUTED\" INTEGER NOT NULL );"); // 4: svmTrainingExecuted
+                "\"MEAN_FEATURE_VECTOR\" TEXT);"); // 4: meanFeatureVector
     }
 
     /** Drops the underlying database table. */
@@ -80,7 +80,11 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         stmt.bindLong(2, entity.getDeviceId());
         stmt.bindLong(3, timeConverter.convertToDatabaseValue(entity.getTime()));
         stmt.bindLong(4, entity.getStudentId());
-        stmt.bindLong(5, entity.getSvmTrainingExecuted() ? 1L: 0L);
+ 
+        String meanFeatureVector = entity.getMeanFeatureVector();
+        if (meanFeatureVector != null) {
+            stmt.bindString(5, meanFeatureVector);
+        }
     }
 
     @Override
@@ -94,7 +98,11 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         stmt.bindLong(2, entity.getDeviceId());
         stmt.bindLong(3, timeConverter.convertToDatabaseValue(entity.getTime()));
         stmt.bindLong(4, entity.getStudentId());
-        stmt.bindLong(5, entity.getSvmTrainingExecuted() ? 1L: 0L);
+ 
+        String meanFeatureVector = entity.getMeanFeatureVector();
+        if (meanFeatureVector != null) {
+            stmt.bindString(5, meanFeatureVector);
+        }
     }
 
     @Override
@@ -115,7 +123,7 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
             cursor.getLong(offset + 1), // deviceId
             timeConverter.convertToEntityProperty(cursor.getLong(offset + 2)), // time
             cursor.getLong(offset + 3), // studentId
-            cursor.getShort(offset + 4) != 0 // svmTrainingExecuted
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4) // meanFeatureVector
         );
         return entity;
     }
@@ -126,7 +134,7 @@ public class StudentImageCollectionEventDao extends AbstractDao<StudentImageColl
         entity.setDeviceId(cursor.getLong(offset + 1));
         entity.setTime(timeConverter.convertToEntityProperty(cursor.getLong(offset + 2)));
         entity.setStudentId(cursor.getLong(offset + 3));
-        entity.setSvmTrainingExecuted(cursor.getShort(offset + 4) != 0);
+        entity.setMeanFeatureVector(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
      }
     
     @Override

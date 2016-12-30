@@ -23,14 +23,14 @@ public class StudentImageFeature {
     private Calendar timeCreated;
 
     @NotNull
-    private String svmVector;
+    private String featureVector;
 
-    @Generated(hash = 1220454956)
+    @Generated(hash = 828845722)
     public StudentImageFeature(Long id, @NotNull Calendar timeCreated,
-            @NotNull String svmVector) {
+            @NotNull String featureVector) {
         this.id = id;
         this.timeCreated = timeCreated;
-        this.svmVector = svmVector;
+        this.featureVector = featureVector;
     }
 
     @Generated(hash = 472695614)
@@ -53,11 +53,11 @@ public class StudentImageFeature {
         this.timeCreated = timeCreated;
     }
 
-    public String getSvmVector() {
-        return this.svmVector;
+    public String getFeatureVector() {
+        return this.featureVector;
     }
 
-    public void setSvmVector(String svmVector) {
-        this.svmVector = svmVector;
+    public void setFeatureVector(String featureVector) {
+        this.featureVector = featureVector;
     }
 }
