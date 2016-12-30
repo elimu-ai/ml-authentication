@@ -5,6 +5,10 @@ import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
 
+import org.literacyapp.LiteracyApplication;
+import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.model.Device;
 import org.literacyapp.model.enums.Locale;
 
 import java.io.UnsupportedEncodingException;
@@ -56,5 +60,21 @@ public class DeviceInfoHelper {
             locale = Locale.SW;
         }
         return locale;
+    }
+
+    public static Device getDevice(Context context){
+        LiteracyApplication literacyApplication = (LiteracyApplication) context;
+        DaoSession daoSession = literacyApplication.getDaoSession();
+
+        DeviceDao deviceDao = daoSession.getDeviceDao();
+        String deviceId = getDeviceId(context);
+        Device device = deviceDao.queryBuilder().where(DeviceDao.Properties.DeviceId.eq(deviceId)).unique();
+
+        if (device == null) {
+            device = new Device();
+            device.setDeviceId(deviceId);
+            deviceDao.insert(device);
+        }
+        return device;
     }
 }
