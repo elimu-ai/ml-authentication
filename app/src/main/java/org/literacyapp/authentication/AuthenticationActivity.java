@@ -125,8 +125,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             prepareForAuthentication();
 
             if (!recognitionThread.isAlive() && recognitionThreadStarted) {
-                String svmProbability = svm.recognizeProbability(recognitionThread.getSvmString());
-                Student student = getStudentFromProbability(svmProbability);
+                Student student = recognitionThread.getStudent();
                 numberOfTries++;
                 recognitionThreadStarted = false;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
@@ -171,7 +170,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                                 if (mediaPlayerAnimalSound != null){
                                     mediaPlayerAnimalSound.start();
                                 }
-                                recognitionThread = new RecognitionThread(svm, tensorFlow);
+                                recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
                                 recognitionThread.setImg(img);
                                 recognitionThread.start();
                                 recognitionThreadStarted = true;
@@ -229,42 +228,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             });
 
-            recognitionThread = new RecognitionThread(svm, tensorFlow);
+            recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
             startTimeFallback = new Date().getTime();
-        }
-    }
-
-    /**
-     * Determines if and which Student has been recognized. The Student is only returned if the probability is above 90%
-     * @param svmProbability
-     * @return
-     */
-    private synchronized Student getStudentFromProbability(String svmProbability){
-        // Example string for svmProbability: labels 1 2\n2 0.458817 0.541183
-        StringTokenizer stringTokenizerSvmProbability = new StringTokenizer(svmProbability, "\n");
-        // Example string for header: labels 1 2
-        String header = stringTokenizerSvmProbability.nextToken();
-        // Example string for content: 2 0.458817 0.541183
-        String content = stringTokenizerSvmProbability.nextToken();
-
-        StringTokenizer stringTokenizerHeader = new StringTokenizer(header, " ");
-        // Skip first token
-        stringTokenizerHeader.nextToken();
-        StringTokenizer stringTokenizerContent = new StringTokenizer(content, " ");
-        // First token shows the label with the highest probability
-        int eventIdWithHighestProbability = Integer.valueOf(stringTokenizerContent.nextToken());
-
-        HashMap<Integer, Double> probabilityMap = new HashMap<Integer, Double>();
-        while(stringTokenizerHeader.hasMoreTokens()){
-            probabilityMap.put(Integer.valueOf(stringTokenizerHeader.nextToken()), Double.valueOf(stringTokenizerContent.nextToken()));
-        }
-
-        if (probabilityMap.get(eventIdWithHighestProbability) > 0.9){
-            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEventDao.load((long) eventIdWithHighestProbability);
-            Student student = studentImageCollectionEvent.getStudent();
-            return student;
-        } else {
-            return null;
         }
     }
 

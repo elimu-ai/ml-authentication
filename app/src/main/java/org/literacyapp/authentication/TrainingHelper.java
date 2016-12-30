@@ -40,6 +40,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
+import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
 import ch.zhaw.facerecognitionlibrary.PreProcessor.StandardPostprocessing.Resize;
 import ch.zhaw.facerecognitionlibrary.Recognition.Recognition;
 import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
@@ -364,5 +366,40 @@ public class TrainingHelper {
 
     public SupportVectorMachine getSvm() {
         return svm;
+    }
+
+    public synchronized void findAndMergeSimilarStudents(){
+        PreProcessorFactory ppF = new PreProcessorFactory(context);
+        List<Student> students = studentDao.loadAll();
+        for (Student student : students){
+            Mat avatarImage = Imgcodecs.imread(student.getAvatar());
+            List<Mat> faceImages = ppF.getCroppedImage(avatarImage);
+            if (faceImages != null && faceImages.size() == 1) {
+                Mat faceImage = faceImages.get(0);
+                if (faceImage != null) {
+                    Rect[] faces = ppF.getFacesForRecognition();
+                    if (faces != null && faces.length == 1) {
+                        RecognitionThread recognitionThread = new RecognitionThread(svm, getInitializedTensorFlow(), studentImageCollectionEventDao);
+                        recognitionThread.setImg(faceImage);
+                        recognitionThread.start();
+                        try {
+                            recognitionThread.join();
+                            Student recognizedStudent = recognitionThread.getStudent();
+                            if (recognizedStudent != null){
+                                mergeSimilarStudents(student, recognizedStudent);
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
+    private synchronized void mergeSimilarStudents(Student student1, Student student2){
+
     }
 }
