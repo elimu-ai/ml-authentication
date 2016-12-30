@@ -57,6 +57,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private RecognitionThread recognitionThread;
     private GifImageView authenticationAnimation;
     private boolean recognitionThreadStarted;
+    private boolean mediaPlayerAnimalSoundReleased;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -127,7 +128,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             if (!recognitionThread.isAlive() && recognitionThreadStarted) {
                 Student student = recognitionThread.getStudent();
                 numberOfTries++;
-                recognitionThreadStarted = false;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
                 if (student != null) {
                     new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
@@ -135,6 +135,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
                     startStudentImageCollectionActivity(true);
                 }
+                recognitionThreadStarted = false;
             }
 
             Mat imgCopy = new Mat();
@@ -167,7 +168,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
                         if (isFaceInsideFrame){
                             if (!recognitionThread.isAlive() && !recognitionThreadStarted){
-                                if (mediaPlayerAnimalSound != null){
+                                if (!mediaPlayerAnimalSoundReleased){
                                     mediaPlayerAnimalSound.start();
                                 }
                                 recognitionThread = new RecognitionThread(svm, tensorFlow, studentImageCollectionEventDao);
@@ -206,6 +207,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         animalOverlay = animalOverlayHelper.getAnimalOverlay("");
         if (animalOverlay != null) {
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), "raw", getPackageName()));
+            mediaPlayerAnimalSoundReleased = false;
         }
         preview.enableView();
         mediaPlayerInstruction.start();
@@ -267,5 +269,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerInstruction.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
+        mediaPlayerAnimalSoundReleased = true;
     }
 }
