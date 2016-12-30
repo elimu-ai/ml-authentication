@@ -1,4 +1,4 @@
-package org.literacyapp.model;
+package org.literacyapp.model.analytics;
 
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
@@ -14,6 +14,8 @@ import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
+import org.literacyapp.model.Device;
+import org.literacyapp.model.Student;
 
 /**
  * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}
