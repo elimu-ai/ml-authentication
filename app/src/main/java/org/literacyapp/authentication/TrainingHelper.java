@@ -1,9 +1,7 @@
 package org.literacyapp.authentication;
 
 import android.content.Context;
-import android.os.Debug;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -14,19 +12,15 @@ import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.util.AiHelper;
-import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,8 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import ch.zhaw.facerecognitionlibrary.PreProcessor.StandardPostprocessing.Resize;
-import ch.zhaw.facerecognitionlibrary.Recognition.Recognition;
 import ch.zhaw.facerecognitionlibrary.Recognition.SupportVectorMachine;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 

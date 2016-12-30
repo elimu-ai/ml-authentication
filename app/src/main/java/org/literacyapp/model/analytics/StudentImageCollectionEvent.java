@@ -1,21 +1,21 @@
 package org.literacyapp.model.analytics;
 
+import org.greenrobot.greendao.DaoException;
 import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToOne;
-import org.literacyapp.dao.converter.CalendarConverter;
-
-import java.util.Calendar;
-import org.greenrobot.greendao.annotation.Generated;
-import org.greenrobot.greendao.DaoException;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.DeviceDao;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
+import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.Student;
+
+import java.util.Calendar;
 
 /**
  * Based on {@link org.literacyapp.model.gson.analytics.StudentImageCollectionEventGson}

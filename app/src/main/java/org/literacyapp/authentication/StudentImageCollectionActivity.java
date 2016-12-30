@@ -18,7 +18,7 @@ import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.StudentImage;
-import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;

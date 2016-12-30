@@ -12,6 +12,7 @@ import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.dao.StudentImageFeatureDao;
 import org.literacyapp.dao.converter.CalendarConverter;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 
 import java.util.Calendar;
 

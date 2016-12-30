@@ -16,7 +16,7 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImageCollectionEvent;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentUpdateHelper;
