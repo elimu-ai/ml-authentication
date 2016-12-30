@@ -95,8 +95,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         animalOverlayName = getIntent().getStringExtra(AuthenticationActivity.ANIMAL_OVERLAY_IDENTIFIER);
 
-        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
-
         preview = (JavaCameraView) findViewById(R.id.CameraView);
 
         preview.setCameraIndex(1);
@@ -230,6 +228,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
+            mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
             mediaPlayerInstruction.start();
         }
         startTimeFallback = new Date().getTime();

@@ -89,8 +89,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         preview.setVisibility(SurfaceView.VISIBLE);
         preview.setCvCameraViewListener(this);
 
-        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
-
         final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
         svm = trainingHelper.getSvm();
 
@@ -209,6 +207,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
+        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
         mediaPlayerInstruction.start();
         tensorFlowLoadingThread.start();
         startTimeFallback = new Date().getTime();
