@@ -12,6 +12,7 @@ import org.greenrobot.greendao.internal.DaoConfig;
 import org.greenrobot.greendao.database.Database;
 import org.greenrobot.greendao.database.DatabaseStatement;
 
+import java.util.Calendar;
 import org.literacyapp.dao.converter.CalendarConverter;
 import org.literacyapp.model.Device;
 import org.literacyapp.model.Student;
