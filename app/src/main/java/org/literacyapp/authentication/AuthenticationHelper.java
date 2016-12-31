@@ -58,8 +58,15 @@ public class AuthenticationHelper {
                 }
             }
             Log.i(context.getClass().getName(), "addExponentialDelayIfSameStudent: countOfRecurrentLogins: " + countOfRecurrentLogins);
+
+            // Creates a stepFunction which will return the minutes according to the countOfRecurrentLogins as follows:
+            // 0 <= countOfRecurrentLogins < 5: 30 minutes
+            // 5 <= countOfRecurrentLogins < 10: 60 minutes
+            // 10 <= countOfRecurrentLogins < 15: 120 minutes
+            // and so on...
             StepFunction stepFunction = new StepFunction(countSteps, exponentialDelayStepsInMinutes);
             int exponentialDelayBetweenAuthentications = (int) stepFunction.value(countOfRecurrentLogins);
+
             Log.i(context.getClass().getName(), "addExponentialDelayIfSameStudent: exponentialDelayBetweenAuthentications: " + exponentialDelayBetweenAuthentications);
             BootReceiver.scheduleAuthentication(context, exponentialDelayBetweenAuthentications);
         }
