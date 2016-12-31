@@ -87,7 +87,7 @@ public class AuthenticationJobService extends JobService {
             long lastAuthenticationTime = authenticationEvent.getTime().getTime().getTime();
             long minimumTimeInMilliseconds = BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS * 60 * 1000;
             long currentTime = new Date().getTime();
-            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + lastAuthenticationTime + " minimumTimeInMilliseconds: " + minimumTimeInMilliseconds + " currentTime: " + currentTime);
+            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + new Date(lastAuthenticationTime) + " minimumTimeInMilliseconds: " + new Date(minimumTimeInMilliseconds) + " currentTime: " + new Date(currentTime));
             if ((lastAuthenticationTime + minimumTimeInMilliseconds) > currentTime){
                 didTheMinimumTimePassSinceLastAuthentication = false;
             }
