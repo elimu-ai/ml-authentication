@@ -30,16 +30,23 @@ public class RecognitionThread extends Thread {
     private Mat img;
     private Student student;
     private Gson gson;
+    private boolean featuresAlreadyExtracted;
 
     public RecognitionThread(TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao) {
         this.tensorFlow = tensorFlow;
         this.studentImageCollectionEventDao = studentImageCollectionEventDao;
         gson = new Gson();
+        featuresAlreadyExtracted = false;
     }
 
     @Override
     public void run() {
-        Mat featureVectorToRecognize = getFeatureVector(img);
+        Mat featureVectorToRecognize;
+        if (!featuresAlreadyExtracted){
+            featureVectorToRecognize = getFeatureVector(img);
+        } else {
+            featureVectorToRecognize = img;
+        }
         student = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
     }
 
@@ -58,6 +65,10 @@ public class RecognitionThread extends Thread {
 
     public Student getStudent() {
         return student;
+    }
+
+    public void setFeaturesAlreadyExtracted(boolean featuresAlreadyExtracted) {
+        this.featuresAlreadyExtracted = featuresAlreadyExtracted;
     }
 
     /**

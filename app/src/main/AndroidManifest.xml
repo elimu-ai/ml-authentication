@@ -52,7 +52,7 @@
             android:name=".content.task.StarActivity"
             android:screenOrientation="fullSensor" />
         <activity android:name=".content.task.LessonCompleteActivity" />
-        <activity android:name=".authentication.StudentImageCollectionActivity"/>
+        <activity android:name=".authentication.StudentImageCollectionActivity" />
         <activity
             android:name=".content.letter.LettersActivity"
             android:icon="@mipmap/ic_launcher_literacy"
@@ -95,7 +95,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.literacyapp.CategoryActivity" />
         </activity>
-        <activity android:name=".authentication.datacollection.StudentImageCollectionActivity"/>
+        <activity android:name=".authentication.datacollection.StudentImageCollectionActivity" />
 
         <service
             android:name=".service.ScreenOnService"
@@ -127,7 +127,11 @@
             android:name=".authentication.fallback.StudentSelectionActivity"
             android:label="@string/title_activity_student_selection"
             android:theme="@style/AppTheme" />
-        <activity android:name=".authentication.AuthenticationActivity"/>
+        <activity android:name=".authentication.AuthenticationActivity" />
+
+        <service
+            android:name=".service.synchronization.MergeSimilarStudentsJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

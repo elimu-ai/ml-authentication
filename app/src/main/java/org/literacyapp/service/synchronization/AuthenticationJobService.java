@@ -31,7 +31,7 @@ public class AuthenticationJobService extends JobService {
         Log.i(getClass().getName(), "onStartJob");
         if (!isScreenTurnedOff()){
             if (didTheMinimumTimePassSinceLastAuthentication()){
-                if (!rescheduleIfTrainingJobServiceIsRunning()){
+                if (!rescheduleIfCpuIntensiveServicesAreRunning()){
                     Intent authenticationIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                     authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(authenticationIntent);
@@ -53,14 +53,21 @@ public class AuthenticationJobService extends JobService {
         return false;
     }
 
-    private boolean rescheduleIfTrainingJobServiceIsRunning(){
+    private boolean rescheduleIfCpuIntensiveServicesAreRunning(){
         boolean isFaceRecognitionTrainingJobServiceRunning = FaceRecognitionTrainingJobService.isRunning;
         Log.i(getClass().getName(), "isFaceRecognitionTrainingJobServiceRunning: " + isFaceRecognitionTrainingJobServiceRunning);
-        if (isFaceRecognitionTrainingJobServiceRunning){
+
+        boolean isMergeSimilarStudentsJobServiceRunning = MergeSimilarStudentsJobService.isRunning;
+        Log.i(getClass().getName(), "isMergeSimilarStudentsJobServiceRunning: " + isMergeSimilarStudentsJobServiceRunning);
+
+        boolean isCpuIntensiveServiceRunning = (isFaceRecognitionTrainingJobServiceRunning || isMergeSimilarStudentsJobServiceRunning);
+
+        if (isCpuIntensiveServiceRunning){
             BootReceiver.scheduleAuthentication(getApplicationContext(), BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS);
-            Log.i(getClass().getName(), "The AuthenticationJobService has been rescheduled, because the CPU hungry FaceRecognitionTrainingJobService is running at the moment.");
+            Log.i(getClass().getName(), "The AuthenticationJobService has been rescheduled, because a Cpu intensive service is running at the moment.");
         }
-        return isFaceRecognitionTrainingJobServiceRunning;
+
+        return isCpuIntensiveServiceRunning;
     }
 
     private boolean isScreenTurnedOff(){
