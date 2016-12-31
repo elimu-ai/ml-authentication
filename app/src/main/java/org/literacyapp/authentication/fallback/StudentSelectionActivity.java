@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.authentication.AuthenticationHelper;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.receiver.ScreenOnReceiver;
@@ -71,7 +72,7 @@ public class StudentSelectionActivity extends AppCompatActivity {
 
                     Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                     // Personalize apps/content according to Student's level
-                    new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
+                    AuthenticationHelper.updateCurrentStudent(student, getApplicationContext());
 
                     // Store time of last successful authentication
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

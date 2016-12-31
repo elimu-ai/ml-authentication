@@ -115,14 +115,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         // Create required DB Objects
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         studentImageDao = daoSession.getStudentImageDao();
-        deviceDao = daoSession.getDeviceDao();
-        String deviceId = DeviceInfoHelper.getDeviceId(getApplicationContext());
-        device = deviceDao.queryBuilder().where(DeviceDao.Properties.DeviceId.eq(deviceId)).unique();
-        if (device == null) {
-            device = new Device();
-            device.setDeviceId(deviceId);
-            deviceDao.insert(device);
-        }
+
+        device = DeviceInfoHelper.getDevice(getApplicationContext());
 
         studentImages = new ArrayList<>();
 
