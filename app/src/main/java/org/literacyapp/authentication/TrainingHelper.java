@@ -333,6 +333,7 @@ public class TrainingHelper {
      * @param tensorFlow
      */
     private synchronized void findSimilarStudentsUsingAvatarImages(PreProcessorFactory ppF, TensorFlow tensorFlow){
+        Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages");
         // Iterate through all Students
         List<Student> students = studentDao.loadAll();
         for (Student student : students){
@@ -378,6 +379,7 @@ public class TrainingHelper {
      * @param tensorFlow
      */
     private synchronized void findSimilarStudentsUsingMeanFeatureVector(PreProcessorFactory ppF, TensorFlow tensorFlow){
+        Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector");
         // Iterate through all StudentImageCollectionEvents
         List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.loadAll();
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
