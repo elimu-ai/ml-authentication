@@ -25,7 +25,7 @@ public class AuthenticationHelper {
     private static final double[] countSteps = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 };
     private static final double[] exponentialDelayStepsInMinutes = { 30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360 };
 
-    public static synchronized void updateCurrentStudent(Student student, Context context){
+    public static synchronized void updateCurrentStudent(Student student, Context context, boolean isFallback){
         LiteracyApplication literacyApplication = (LiteracyApplication) context;
         DaoSession daoSession = literacyApplication.getDaoSession();
         AuthenticationEventDao authenticationEventDao = daoSession.getAuthenticationEventDao();
@@ -39,7 +39,7 @@ public class AuthenticationHelper {
         AuthenticationEvent authenticationEvent = new AuthenticationEvent();
         authenticationEvent.setStudent(student);
         authenticationEvent.setTime(Calendar.getInstance());
-        authenticationEvent.setIsFallback(false);
+        authenticationEvent.setIsFallback(isFallback);
         authenticationEvent.setDevice(device);
         authenticationEventDao.insert(authenticationEvent);
         Log.i(context.getClass().getName(), "AuthenticationEvent: " + authenticationEvent.getId() + " has been stored with the properties Student: " + student.getUniqueId() + " IsFallback: " + authenticationEvent.getIsFallback());

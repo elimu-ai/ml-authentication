@@ -130,7 +130,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 numberOfTries++;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
                 if (student != null) {
-                    AuthenticationHelper.updateCurrentStudent(student, getApplicationContext());
+                    AuthenticationHelper.updateCurrentStudent(student, getApplicationContext(), false);
                     finish();
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
                     startStudentImageCollectionActivity(true);
