@@ -22,8 +22,8 @@ import java.util.List;
  */
 
 public class AuthenticationHelper {
-    private static final double[] countSteps = { 0, 5, 10, 15, 20 };
-    private static final double[] exponentialDelayStepsInMinutes = { 30, 60, 120, 240, 360 };
+    private static final double[] countSteps = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 };
+    private static final double[] exponentialDelayStepsInMinutes = { 30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360 };
 
     public static synchronized void updateCurrentStudent(Student student, Context context){
         LiteracyApplication literacyApplication = (LiteracyApplication) context;
