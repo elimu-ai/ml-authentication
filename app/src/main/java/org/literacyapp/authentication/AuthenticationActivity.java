@@ -13,12 +13,12 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MultimediaHelper;
-import org.literacyapp.util.StudentUpdateHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
@@ -26,6 +26,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private GifImageView authenticationAnimation;
     private boolean recognitionThreadStarted;
     private boolean activityStopped;
+    private AuthenticationEventDao authenticationEventDao;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -74,6 +76,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         DaoSession daoSession = literacyApplication.getDaoSession();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+        authenticationEventDao = daoSession.getAuthenticationEventDao();
 
         if (!readyForAuthentication()){
             startStudentImageCollectionActivity(false);
@@ -127,7 +130,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 numberOfTries++;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
                 if (student != null) {
-                    new StudentUpdateHelper(getApplicationContext(), student).updateStudent();
+                    AuthenticationHelper.updateCurrentStudent(student, getApplicationContext());
                     finish();
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
                     startStudentImageCollectionActivity(true);
