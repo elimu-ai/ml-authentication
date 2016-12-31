@@ -72,7 +72,7 @@ public class StudentSelectionActivity extends AppCompatActivity {
 
                     Log.i(getClass().getName(), "student.getUniqueId(): " + student.getUniqueId());
                     // Personalize apps/content according to Student's level
-                    AuthenticationHelper.updateCurrentStudent(student, getApplicationContext());
+                    AuthenticationHelper.updateCurrentStudent(student, getApplicationContext(), true);
 
                     // Store time of last successful authentication
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
