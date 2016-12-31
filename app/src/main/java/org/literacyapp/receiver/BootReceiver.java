@@ -13,9 +13,11 @@ import org.literacyapp.service.ContentSynchronizationJobService;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.service.ScreenOnService;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
+import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
 
 public class BootReceiver extends BroadcastReceiver {
     public static final int MINUTES_BETWEEN_AUTHENTICATIONS = 30;
+    private static final int MINUTES_BETWEEN_FACE_RECOGNITION_TRAININGS = 15;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -37,8 +39,11 @@ public class BootReceiver extends BroadcastReceiver {
         // Initiate background job for face recognition training
         scheduleFaceRecognitionTranining(context);
 
-        // Initiate authentication job for face recognition authentication
+        // Initiate background job for face recognition authentication
         scheduleAuthentication(context, MINUTES_BETWEEN_AUTHENTICATIONS);
+
+        // Initiate background job for merging similar students
+        scheduleMergeSimilarStudents(context);
 
         // Start service for detecting when the screen is turned on
         Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
@@ -50,7 +55,7 @@ public class BootReceiver extends BroadcastReceiver {
     public static void scheduleFaceRecognitionTranining(Context context){
         ComponentName componentNameFaceRecognitionTranining = new ComponentName(context, FaceRecognitionTrainingJobService.class);
         JobInfo.Builder builderFaceRecognitionTranining = new JobInfo.Builder(LiteracyApplication.FACE_RECOGNITION_TRAINING_JOB_ID, componentNameFaceRecognitionTranining);
-        int faceRecognitionTrainingPeriodic = 15 * 60 * 1000;
+        int faceRecognitionTrainingPeriodic = MINUTES_BETWEEN_FACE_RECOGNITION_TRAININGS * 60 * 1000;
         builderFaceRecognitionTranining.setPeriodic(faceRecognitionTrainingPeriodic); // Every 15 minutes
         JobInfo faceRecognitionTrainingJobInfo = builderFaceRecognitionTranining.build();
         JobScheduler jobSchedulerFaceRecognitionTranining = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -67,5 +72,16 @@ public class BootReceiver extends BroadcastReceiver {
         JobScheduler jobSchedulerAuthentication = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobSchedulerAuthentication.schedule(authenticationJobInfo);
         Log.i(context.getClass().getName(), "AUTHENTICATION_JOB with ID " + LiteracyApplication.AUTHENTICATION_JOB_ID + " has been scheduled with periodic time = " + authenticationPeriodic);
+    }
+
+    public static void scheduleMergeSimilarStudents(Context context){
+        ComponentName componentNameMergeSimilarStudents = new ComponentName(context, MergeSimilarStudentsJobService.class);
+        JobInfo.Builder builderMergeSimilarStudents = new JobInfo.Builder(LiteracyApplication.MERGE_SIMILAR_STUDENTS_JOB_ID, componentNameMergeSimilarStudents);
+        boolean requiresCharging = true;
+        builderMergeSimilarStudents.setRequiresCharging(requiresCharging);
+        JobInfo mergeSimilarStudentsJobInfo = builderMergeSimilarStudents.build();
+        JobScheduler jobSchedulerMergeSimilarStudents = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobSchedulerMergeSimilarStudents.schedule(mergeSimilarStudentsJobInfo);
+        Log.i(context.getClass().getName(), "MERGE_SIMILAR_STUDENTS_JOB with ID " + LiteracyApplication.MERGE_SIMILAR_STUDENTS_JOB_ID + " has been scheduled with requiresCharging = " + requiresCharging);
     }
 }
