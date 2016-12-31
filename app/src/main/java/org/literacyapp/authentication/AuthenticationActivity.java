@@ -56,7 +56,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private GifImageView authenticationAnimation;
     private boolean recognitionThreadStarted;
     private boolean activityStopped;
-    AuthenticationEventDao authenticationEventDao;
+    private AuthenticationEventDao authenticationEventDao;
 
     static {
         if (!OpenCVLoader.initDebug()) {
