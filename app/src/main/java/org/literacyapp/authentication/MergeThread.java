@@ -134,7 +134,12 @@ public class MergeThread extends Thread {
                 Student recognizedStudent = recognitionThread.getStudent();
                 if (recognizedStudent != null){
                     Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
-                    mergeSimilarStudents(student, recognizedStudent);
+                    if (recognizedStudent.getUniqueId().equals(student.getUniqueId())){
+                        Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: Merging will be skipped because the students are identical.");
+                    } else {
+                        Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: Merging will be started for student: " + student.getUniqueId() + " recognizedStudent: " + recognizedStudent.getUniqueId());
+                        mergeSimilarStudents(student, recognizedStudent);
+                    }
                 } else {
                     Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " was not recognized");
                 }
