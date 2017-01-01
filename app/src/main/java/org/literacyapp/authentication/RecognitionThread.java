@@ -97,6 +97,8 @@ public class RecognitionThread extends Thread {
                 if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
                     studentsInThreshold.add(currentStudent);
                 }
+            } else {
+                Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: currentStudent: " + currentStudent.getUniqueId() + " was skipped because it is identical with the student: " + student.getUniqueId());
             }
         }
         int numberOfStudentsInThreshold = studentsInThreshold.size();
