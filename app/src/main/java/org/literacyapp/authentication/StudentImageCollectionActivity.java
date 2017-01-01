@@ -69,7 +69,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private boolean activityStopped;
 
     // Image collection parameters
-    private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
     private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
@@ -175,10 +174,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                                     mediaPlayerAnimalSound.start();
 
                                     studentImages.add(img);
-
-                                    if(DIAGNOSE_MODE) {
-                                        MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
-                                    }
 
                                     // Stop after NUMBER_OF_IMAGES (settings option)
                                     if(imagesProcessed == NUMBER_OF_IMAGES){
