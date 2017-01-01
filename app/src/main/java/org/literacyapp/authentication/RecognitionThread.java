@@ -81,37 +81,34 @@ public class RecognitionThread extends Thread {
      * @return
      */
     private synchronized List<Student> getMostSimilarStudentIfInThreshold(Mat featureVectorToRecognize){
-        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
+        List<StudentImageCollectionEvent> studentImageCollectionEvents = getStudentImageCollectionEvents();
         List<Student> studentsInThreshold = new ArrayList<>();
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
             Student currentStudent = studentImageCollectionEvent.getStudent();
-            // Skip if the students are identical (same UniqueId)
-            if (!areStudentsIdentical(currentStudent)){
-                List<Float> featureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
-                Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
-                double dotProduct = featureVector.dot(featureVectorToRecognize);
-                double normFeatureVector = Core.norm(featureVector, Core.NORM_L2);
-                double normFeatureVectorToRecognize = Core.norm(featureVectorToRecognize, Core.NORM_L2);
-                double cosineSimilarity = dotProduct / (normFeatureVector * normFeatureVectorToRecognize);
-                double absoluteCosineSimilarity = Math.abs(cosineSimilarity);
-                Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + currentStudent.getUniqueId());
-                if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
-                    studentsInThreshold.add(currentStudent);
-                }
-            } else {
-                Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: currentStudent: " + currentStudent.getUniqueId() + " was skipped because it is identical with the student: " + student.getUniqueId());
+            List<Float> featureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
+            Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
+            double dotProduct = featureVector.dot(featureVectorToRecognize);
+            double normFeatureVector = Core.norm(featureVector, Core.NORM_L2);
+            double normFeatureVectorToRecognize = Core.norm(featureVectorToRecognize, Core.NORM_L2);
+            double cosineSimilarity = dotProduct / (normFeatureVector * normFeatureVectorToRecognize);
+            double absoluteCosineSimilarity = Math.abs(cosineSimilarity);
+            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + currentStudent.getUniqueId());
+            if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
+                studentsInThreshold.add(currentStudent);
             }
         }
         return studentsInThreshold;
     }
 
-    private boolean areStudentsIdentical(Student currentStudent){
-        boolean areStudentsIdentical = false;
+    private List<StudentImageCollectionEvent> getStudentImageCollectionEvents(){
         if (student != null){
-            if (currentStudent.getUniqueId().equals(student.getUniqueId())){
-                areStudentsIdentical = true;
-            }
+            return studentImageCollectionEventDao.queryBuilder()
+                    .where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull())
+                    .where(StudentImageCollectionEventDao.Properties.StudentId.notEq(student.getUniqueId()))
+                    .list();
+        } else {
+            return studentImageCollectionEventDao.queryBuilder()
+                    .where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
         }
-        return areStudentsIdentical;
     }
 }
