@@ -12,7 +12,9 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.AuthenticationActivity;
 import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.analytics.AuthenticationEvent;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 
@@ -28,13 +30,13 @@ public class AuthenticationJobService extends JobService {
     public boolean onStartJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStartJob");
         if (!isScreenTurnedOff()){
-            if (didTheMinimumTimePassSinceLastAuthentication()){
+            if (didTheMinimumTimePassSinceLastExecution()){
                 Intent authenticationIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
                 authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(authenticationIntent);
                 Log.i(getClass().getName(), "The Authentication has been started.");
             } else {
-                Log.i(getClass().getName(), "The Authentication was skipped because the minimum time since the last authentication did not pass yet.");
+                Log.i(getClass().getName(), "The Authentication was skipped because the minimum time since the last execution did not pass yet.");
             }
         } else {
             Log.i(getClass().getName(), "The Authentication was skipped because the screen was turned off.");
@@ -61,17 +63,13 @@ public class AuthenticationJobService extends JobService {
         return isScreenTurnedOff;
     }
 
-    private boolean didTheMinimumTimePassSinceLastAuthentication(){
+    private boolean didTheMinimumTimePassSinceLastAuthentication(AuthenticationEventDao authenticationEventDao, long minimumTimeInMilliseconds){
         boolean didTheMinimumTimePassSinceLastAuthentication = true;
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
-        DaoSession daoSession = literacyApplication.getDaoSession();
-        AuthenticationEventDao authenticationEventDao = daoSession.getAuthenticationEventDao();
         // Get only the last AuthenticationEvent
         List<AuthenticationEvent> authenticationEvents = authenticationEventDao.queryBuilder().orderDesc(AuthenticationEventDao.Properties.Time).limit(1).list();
         if (authenticationEvents.size() > 0){
             AuthenticationEvent authenticationEvent = authenticationEvents.get(0);
             long lastAuthenticationTime = authenticationEvent.getTime().getTime().getTime();
-            long minimumTimeInMilliseconds = BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS * 60 * 1000;
             long currentTime = new Date().getTime();
             Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + new Date(lastAuthenticationTime) + " minimumTimeInMinutes: " + (minimumTimeInMilliseconds / 1000 / 60) + " currentTime: " + new Date(currentTime));
             if ((lastAuthenticationTime + minimumTimeInMilliseconds) > currentTime){
@@ -79,5 +77,32 @@ public class AuthenticationJobService extends JobService {
             }
         }
         return didTheMinimumTimePassSinceLastAuthentication;
+    }
+
+    private boolean didTheMinimumTimePassSinceLastCollection(StudentImageCollectionEventDao studentImageCollectionEventDao, long minimumTimeInMilliseconds){
+        boolean didTheMinimumTimePassSinceLastCollection = true;
+        // Get only the last StudentImageCollectionEvent
+        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().orderDesc(StudentImageCollectionEventDao.Properties.Time).limit(1).list();
+        if (studentImageCollectionEvents.size() > 0){
+            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEvents.get(0);
+            long lastCollectionTime = studentImageCollectionEvent.getTime().getTime().getTime();
+            long currentTime = new Date().getTime();
+            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastCollection: lastCollectionTime: " + new Date(lastCollectionTime) + " minimumTimeInMinutes: " + (minimumTimeInMilliseconds / 1000 / 60) + " currentTime: " + new Date(currentTime));
+            if ((lastCollectionTime + minimumTimeInMilliseconds) > currentTime){
+                didTheMinimumTimePassSinceLastCollection = false;
+            }
+        }
+        return didTheMinimumTimePassSinceLastCollection;
+    }
+
+    private boolean didTheMinimumTimePassSinceLastExecution(){
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
+        DaoSession daoSession = literacyApplication.getDaoSession();
+        AuthenticationEventDao authenticationEventDao = daoSession.getAuthenticationEventDao();
+        StudentImageCollectionEventDao studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
+        long minimumTimeInMilliseconds = BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS * 60 * 1000;
+        boolean didTheMinimumTimePassSinceLastAuthentication = didTheMinimumTimePassSinceLastAuthentication(authenticationEventDao, minimumTimeInMilliseconds);
+        boolean didTheMinimumTimePassSinceLastCollection = didTheMinimumTimePassSinceLastCollection(studentImageCollectionEventDao, minimumTimeInMilliseconds);
+        return (didTheMinimumTimePassSinceLastAuthentication && didTheMinimumTimePassSinceLastCollection);
     }
 }
