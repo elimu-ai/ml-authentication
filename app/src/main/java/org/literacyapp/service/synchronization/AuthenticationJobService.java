@@ -10,14 +10,12 @@ import android.view.Display;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.AuthenticationActivity;
-import org.literacyapp.authentication.TrainingHelper;
 import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.model.analytics.AuthenticationEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -31,19 +29,17 @@ public class AuthenticationJobService extends JobService {
         Log.i(getClass().getName(), "onStartJob");
         if (!isScreenTurnedOff()){
             if (didTheMinimumTimePassSinceLastAuthentication()){
-                if (!rescheduleIfCpuIntensiveServicesAreRunning()){
-                    Intent authenticationIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
-                    authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(authenticationIntent);
-                    Log.i(getClass().getName(), "The Authentication has been started.");
-                }
+                Intent authenticationIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
+                authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(authenticationIntent);
+                Log.i(getClass().getName(), "The Authentication has been started.");
             } else {
                 Log.i(getClass().getName(), "The Authentication was skipped because the minimum time since the last authentication did not pass yet.");
             }
         } else {
             Log.i(getClass().getName(), "The Authentication was skipped because the screen was turned off.");
         }
-
+        jobFinished(jobParameters, false);
         return false;
     }
 
@@ -51,23 +47,6 @@ public class AuthenticationJobService extends JobService {
     public boolean onStopJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStopJob");
         return false;
-    }
-
-    private boolean rescheduleIfCpuIntensiveServicesAreRunning(){
-        boolean isFaceRecognitionTrainingJobServiceRunning = FaceRecognitionTrainingJobService.isRunning;
-        Log.i(getClass().getName(), "isFaceRecognitionTrainingJobServiceRunning: " + isFaceRecognitionTrainingJobServiceRunning);
-
-        boolean isMergeSimilarStudentsJobServiceRunning = MergeSimilarStudentsJobService.isRunning;
-        Log.i(getClass().getName(), "isMergeSimilarStudentsJobServiceRunning: " + isMergeSimilarStudentsJobServiceRunning);
-
-        boolean isCpuIntensiveServiceRunning = (isFaceRecognitionTrainingJobServiceRunning || isMergeSimilarStudentsJobServiceRunning);
-
-        if (isCpuIntensiveServiceRunning){
-            BootReceiver.scheduleAuthentication(getApplicationContext(), BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS);
-            Log.i(getClass().getName(), "The AuthenticationJobService has been rescheduled, because a Cpu intensive service is running at the moment.");
-        }
-
-        return isCpuIntensiveServiceRunning;
     }
 
     private boolean isScreenTurnedOff(){
@@ -94,7 +73,7 @@ public class AuthenticationJobService extends JobService {
             long lastAuthenticationTime = authenticationEvent.getTime().getTime().getTime();
             long minimumTimeInMilliseconds = BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS * 60 * 1000;
             long currentTime = new Date().getTime();
-            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + new Date(lastAuthenticationTime) + " minimumTimeInMilliseconds: " + new Date(minimumTimeInMilliseconds) + " currentTime: " + new Date(currentTime));
+            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + new Date(lastAuthenticationTime) + " minimumTimeInMinutes: " + (minimumTimeInMilliseconds / 1000 / 60) + " currentTime: " + new Date(currentTime));
             if ((lastAuthenticationTime + minimumTimeInMilliseconds) > currentTime){
                 didTheMinimumTimePassSinceLastAuthentication = false;
             }

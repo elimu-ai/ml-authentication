@@ -26,7 +26,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -90,12 +89,12 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         preview.setVisibility(SurfaceView.VISIBLE);
         preview.setCvCameraViewListener(this);
 
-        final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
+        final TrainingThread trainingThread = new TrainingThread(getApplicationContext());
 
         tensorFlowLoadingThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                tensorFlow = trainingHelper.getInitializedTensorFlow();
+                tensorFlow = trainingThread.getInitializedTensorFlow();
             }
         });
 
