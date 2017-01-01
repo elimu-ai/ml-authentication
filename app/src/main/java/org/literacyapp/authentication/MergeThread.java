@@ -122,6 +122,7 @@ public class MergeThread extends Thread {
         Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector");
         // Iterate through all StudentImageCollectionEvents, where the Student is not null
         List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.StudentId.isNotNull()).list();
+        Log.i(getClass().getName(), "studentImageCollectionEvents.size(): " + studentImageCollectionEvents.size());
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
             Student student = studentImageCollectionEvent.getStudent();
             // Take the meanFeatureVector of the StudentImageCollectionEvent
