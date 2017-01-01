@@ -123,32 +123,35 @@ public class MergeThread extends Thread {
         // Iterate through all StudentImageCollectionEvents
         List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.loadAll();
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
-            // Take the meanFeatureVector of the StudentImageCollectionEvent
-            List<Float> meanFeatureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
-            Mat meanFeatureVector = Converters.vector_float_to_Mat(meanFeatureVectorList);
-            RecognitionThread recognitionThread = new RecognitionThread(tensorFlow, studentImageCollectionEventDao);
-            recognitionThread.setImg(meanFeatureVector);
             Student student = studentImageCollectionEvent.getStudent();
-            recognitionThread.setStudent(student);
-            // To indicate, that this Mat object contains the already extracted features and therefore this step can be skipped in the RecognitionThread
-            recognitionThread.setFeaturesAlreadyExtracted(true);
-            Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: recognitionThread will be started to recognize student: " + student.getUniqueId());
-            recognitionThread.start();
-            try {
-                recognitionThread.join();
-                List<Student> recognizedStudents = recognitionThread.getRecognizedStudent();
-                if (recognizedStudents.size() > 0){
-                    for (Student recognizedStudent : recognizedStudents){
-                        if (recognizedStudent != null){
-                            Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
-                            mergeSimilarStudents(student, recognizedStudent);
+            // Skip if the student is null
+            if (student != null){
+                // Take the meanFeatureVector of the StudentImageCollectionEvent
+                List<Float> meanFeatureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
+                Mat meanFeatureVector = Converters.vector_float_to_Mat(meanFeatureVectorList);
+                RecognitionThread recognitionThread = new RecognitionThread(tensorFlow, studentImageCollectionEventDao);
+                recognitionThread.setImg(meanFeatureVector);
+                recognitionThread.setStudent(student);
+                // To indicate, that this Mat object contains the already extracted features and therefore this step can be skipped in the RecognitionThread
+                recognitionThread.setFeaturesAlreadyExtracted(true);
+                Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: recognitionThread will be started to recognize student: " + student.getUniqueId());
+                recognitionThread.start();
+                try {
+                    recognitionThread.join();
+                    List<Student> recognizedStudents = recognitionThread.getRecognizedStudent();
+                    if (recognizedStudents.size() > 0){
+                        for (Student recognizedStudent : recognizedStudents){
+                            if (recognizedStudent != null){
+                                Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
+                                mergeSimilarStudents(student, recognizedStudent);
+                            }
                         }
+                    } else {
+                        Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " was not recognized");
                     }
-                } else {
-                    Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " was not recognized");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
     }
