@@ -13,9 +13,7 @@ import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
@@ -29,6 +27,7 @@ public class RecognitionThread extends Thread {
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Mat img;
     private Student student;
+    private Student recognizedStudent;
     private Gson gson;
     private boolean featuresAlreadyExtracted;
 
@@ -47,7 +46,7 @@ public class RecognitionThread extends Thread {
         } else {
             featureVectorToRecognize = img;
         }
-        student = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
+        recognizedStudent = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
     }
 
     /**
@@ -63,8 +62,12 @@ public class RecognitionThread extends Thread {
         this.img = img;
     }
 
-    public Student getStudent() {
-        return student;
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Student getRecognizedStudent() {
+        return recognizedStudent;
     }
 
     public void setFeaturesAlreadyExtracted(boolean featuresAlreadyExtracted) {
@@ -80,17 +83,20 @@ public class RecognitionThread extends Thread {
         List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
         List<Student> studentsInThreshold = new ArrayList<>();
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
-            List<Float> featureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
-            Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
-            double dotProduct = featureVector.dot(featureVectorToRecognize);
-            double normFeatureVector = Core.norm(featureVector, Core.NORM_L2);
-            double normFeatureVectorToRecognize = Core.norm(featureVectorToRecognize, Core.NORM_L2);
-            double cosineSimilarity = dotProduct / (normFeatureVector * normFeatureVectorToRecognize);
-            double absoluteCosineSimilarity = Math.abs(cosineSimilarity);
-            Student student = studentImageCollectionEvent.getStudent();
-            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + student.getUniqueId());
-            if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
-                studentsInThreshold.add(student);
+            Student currentStudent = studentImageCollectionEvent.getStudent();
+            // Skip if the students are identical (same UniqueId)
+            if (!areStudentsIdentical(currentStudent)){
+                List<Float> featureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
+                Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
+                double dotProduct = featureVector.dot(featureVectorToRecognize);
+                double normFeatureVector = Core.norm(featureVector, Core.NORM_L2);
+                double normFeatureVectorToRecognize = Core.norm(featureVectorToRecognize, Core.NORM_L2);
+                double cosineSimilarity = dotProduct / (normFeatureVector * normFeatureVectorToRecognize);
+                double absoluteCosineSimilarity = Math.abs(cosineSimilarity);
+                Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + currentStudent.getUniqueId());
+                if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
+                    studentsInThreshold.add(currentStudent);
+                }
             }
         }
         int numberOfStudentsInThreshold = studentsInThreshold.size();
@@ -102,5 +108,15 @@ public class RecognitionThread extends Thread {
             Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: No Student was recognized, because the numberOfStudentsInThreshold was: " + numberOfStudentsInThreshold);
             return null;
         }
+    }
+
+    private boolean areStudentsIdentical(Student currentStudent){
+        boolean areStudentsIdentical = false;
+        if (student != null){
+            if (currentStudent.getUniqueId().equals(student.getUniqueId())){
+                areStudentsIdentical = true;
+            }
+        }
+        return areStudentsIdentical;
     }
 }

@@ -12,7 +12,6 @@ import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
-import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -87,14 +86,15 @@ public class MergeThread extends Thread {
                         // Proceed if exactly one face rectangle exists
                         RecognitionThread recognitionThread = new RecognitionThread(tensorFlow, studentImageCollectionEventDao);
                         recognitionThread.setImg(faceImage);
+                        recognitionThread.setStudent(student);
                         Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages: recognitionThread will be started to recognize student: " + student.getUniqueId());
                         recognitionThread.start();
                         try {
                             recognitionThread.join();
-                            Student recognizedStudent = recognitionThread.getStudent();
+                            Student recognizedStudent = recognitionThread.getRecognizedStudent();
                             if (recognizedStudent != null){
                                 Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
-                                initiateMerging(student, recognizedStudent);
+                                mergeSimilarStudents(student, recognizedStudent);
                             } else {
                                 Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages: The student " + student.getUniqueId() + " was not recognized");
                             }
@@ -124,37 +124,24 @@ public class MergeThread extends Thread {
             Mat meanFeatureVector = Converters.vector_float_to_Mat(meanFeatureVectorList);
             RecognitionThread recognitionThread = new RecognitionThread(tensorFlow, studentImageCollectionEventDao);
             recognitionThread.setImg(meanFeatureVector);
+            Student student = studentImageCollectionEvent.getStudent();
+            recognitionThread.setStudent(student);
             // To indicate, that this Mat object contains the already extracted features and therefore this step can be skipped in the RecognitionThread
             recognitionThread.setFeaturesAlreadyExtracted(true);
-            Student student = studentImageCollectionEvent.getStudent();
             Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: recognitionThread will be started to recognize student: " + student.getUniqueId());
             recognitionThread.start();
             try {
                 recognitionThread.join();
-                Student recognizedStudent = recognitionThread.getStudent();
+                Student recognizedStudent = recognitionThread.getRecognizedStudent();
                 if (recognizedStudent != null){
                     Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
-                    initiateMerging(student, recognizedStudent);
+                    mergeSimilarStudents(student, recognizedStudent);
                 } else {
                     Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " was not recognized");
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    /**
-     * If the students are not identical (same UniqueId), start merging
-     * @param student
-     * @param recognizedStudent
-     */
-    private synchronized void initiateMerging(Student student, Student recognizedStudent){
-        if (recognizedStudent.getUniqueId().equals(student.getUniqueId())){
-            Log.i(getClass().getName(), "initiateMerging: Merging will be skipped because the students are identical.");
-        } else {
-            Log.i(getClass().getName(), "initiateMerging: Merging will be started for student: " + student.getUniqueId() + " recognizedStudent: " + recognizedStudent.getUniqueId());
-            mergeSimilarStudents(student, recognizedStudent);
         }
     }
 
