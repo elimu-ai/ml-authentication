@@ -27,7 +27,7 @@ public class RecognitionThread extends Thread {
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Mat img;
     private Student student;
-    private Student recognizedStudent;
+    private List<Student> recognizedStudents;
     private Gson gson;
     private boolean featuresAlreadyExtracted;
 
@@ -36,6 +36,7 @@ public class RecognitionThread extends Thread {
         this.studentImageCollectionEventDao = studentImageCollectionEventDao;
         gson = new Gson();
         featuresAlreadyExtracted = false;
+        recognizedStudents = new ArrayList<>();
     }
 
     @Override
@@ -46,7 +47,7 @@ public class RecognitionThread extends Thread {
         } else {
             featureVectorToRecognize = img;
         }
-        recognizedStudent = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
+        recognizedStudents = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
     }
 
     /**
@@ -66,8 +67,8 @@ public class RecognitionThread extends Thread {
         this.student = student;
     }
 
-    public Student getRecognizedStudent() {
-        return recognizedStudent;
+    public List<Student> getRecognizedStudent() {
+        return recognizedStudents;
     }
 
     public void setFeaturesAlreadyExtracted(boolean featuresAlreadyExtracted) {
@@ -79,7 +80,7 @@ public class RecognitionThread extends Thread {
      * @param featureVectorToRecognize
      * @return
      */
-    private synchronized Student getMostSimilarStudentIfInThreshold(Mat featureVectorToRecognize){
+    private synchronized List<Student> getMostSimilarStudentIfInThreshold(Mat featureVectorToRecognize){
         List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
         List<Student> studentsInThreshold = new ArrayList<>();
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
@@ -101,15 +102,7 @@ public class RecognitionThread extends Thread {
                 Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: currentStudent: " + currentStudent.getUniqueId() + " was skipped because it is identical with the student: " + student.getUniqueId());
             }
         }
-        int numberOfStudentsInThreshold = studentsInThreshold.size();
-        if (numberOfStudentsInThreshold == 1){
-            Student student = studentsInThreshold.get(0);
-            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: The Student was recognized as " + student.getUniqueId());
-            return studentsInThreshold.get(0);
-        } else {
-            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: No Student was recognized, because the numberOfStudentsInThreshold was: " + numberOfStudentsInThreshold);
-            return null;
-        }
+        return studentsInThreshold;
     }
 
     private boolean areStudentsIdentical(Student currentStudent){

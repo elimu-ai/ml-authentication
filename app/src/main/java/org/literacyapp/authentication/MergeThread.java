@@ -91,10 +91,14 @@ public class MergeThread extends Thread {
                         recognitionThread.start();
                         try {
                             recognitionThread.join();
-                            Student recognizedStudent = recognitionThread.getRecognizedStudent();
-                            if (recognizedStudent != null){
-                                Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
-                                mergeSimilarStudents(student, recognizedStudent);
+                            List<Student> recognizedStudents = recognitionThread.getRecognizedStudent();
+                            if (recognizedStudents.size() > 0){
+                                for (Student recognizedStudent : recognizedStudents){
+                                    if (recognizedStudent != null){
+                                        Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
+                                        mergeSimilarStudents(student, recognizedStudent);
+                                    }
+                                }
                             } else {
                                 Log.i(getClass().getName(), "findSimilarStudentsUsingAvatarImages: The student " + student.getUniqueId() + " was not recognized");
                             }
@@ -132,10 +136,14 @@ public class MergeThread extends Thread {
             recognitionThread.start();
             try {
                 recognitionThread.join();
-                Student recognizedStudent = recognitionThread.getRecognizedStudent();
-                if (recognizedStudent != null){
-                    Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
-                    mergeSimilarStudents(student, recognizedStudent);
+                List<Student> recognizedStudents = recognitionThread.getRecognizedStudent();
+                if (recognizedStudents.size() > 0){
+                    for (Student recognizedStudent : recognizedStudents){
+                        if (recognizedStudent != null){
+                            Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " has been recognized as " + recognizedStudent.getUniqueId());
+                            mergeSimilarStudents(student, recognizedStudent);
+                        }
+                    }
                 } else {
                     Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector: The student " + student.getUniqueId() + " was not recognized");
                 }

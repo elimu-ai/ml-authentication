@@ -125,10 +125,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             prepareForAuthentication();
 
             if (!recognitionThread.isAlive() && recognitionThreadStarted) {
-                Student student = recognitionThread.getRecognizedStudent();
+                List<Student> students = recognitionThread.getRecognizedStudent();
+                Student student = new Student();
+                if (students.size() == 1){
+                    student = students.get(0);
+                }
                 numberOfTries++;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
-                if (student != null) {
+                if ((student != null) && (students.size() == 1)) {
                     AuthenticationHelper.updateCurrentStudent(student, getApplicationContext(), false);
                     finish();
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
