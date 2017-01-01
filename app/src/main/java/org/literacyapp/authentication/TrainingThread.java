@@ -288,7 +288,7 @@ public class TrainingThread extends Thread {
             Log.i(getClass().getName(), "Model download file has been created at " + modelDownloadFile.getAbsolutePath() + " with the link " + MODEL_DOWNLOAD_LINK);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         }
         return modelDownloadFile;
     }
@@ -311,9 +311,9 @@ public class TrainingThread extends Thread {
             MultimediaHelper.copyFile(inputStream, outputStream);
             Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Finished file copying.");
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(getClass().getName(), null, e);
         }
         return avatarFile;
     }
