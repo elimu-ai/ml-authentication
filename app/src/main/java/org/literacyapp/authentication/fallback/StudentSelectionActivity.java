@@ -18,12 +18,11 @@ import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.authentication.AuthenticationHelper;
+import org.literacyapp.authentication.helper.AuthenticationHelper;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.receiver.ScreenOnReceiver;
 import org.literacyapp.util.MediaPlayerHelper;
-import org.literacyapp.util.StudentUpdateHelper;
 
 import java.io.File;
 import java.util.Calendar;

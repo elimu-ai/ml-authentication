@@ -1,4 +1,4 @@
-package org.literacyapp.authentication;
+package org.literacyapp.authentication.thread;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,6 +12,7 @@ import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -27,13 +28,15 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
  */
 
 public class MergeThread extends Thread {
-    PreProcessorFactory ppF;
-    TrainingThread trainingThread;
-    StudentDao studentDao;
-    StudentImageCollectionEventDao studentImageCollectionEventDao;
-    Gson gson;
+    private PreProcessorFactory ppF;
+    private TrainingThread trainingThread;
+    private StudentDao studentDao;
+    private StudentImageCollectionEventDao studentImageCollectionEventDao;
+    private Gson gson;
+    private MergeSimilarStudentsJobService mergeService;
 
-    public MergeThread(Context context) {
+    public MergeThread(MergeSimilarStudentsJobService mergeService){
+        Context context = mergeService.getApplicationContext();
         trainingThread = new TrainingThread(context);
         ppF = new PreProcessorFactory(context);
         LiteracyApplication literacyApplication = (LiteracyApplication) context.getApplicationContext();
@@ -41,11 +44,13 @@ public class MergeThread extends Thread {
         studentDao = daoSession.getStudentDao();
         studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
         gson = new Gson();
+        this.mergeService = mergeService;
     }
 
     @Override
     public void run() {
         findAndMergeSimilarStudents();
+        mergeService.jobFinished(mergeService.getJobParameters(), false);
     }
 
     /**
@@ -121,7 +126,7 @@ public class MergeThread extends Thread {
     private synchronized void findSimilarStudentsUsingMeanFeatureVector(PreProcessorFactory ppF, TensorFlow tensorFlow){
         Log.i(getClass().getName(), "findSimilarStudentsUsingMeanFeatureVector");
         // Iterate through all StudentImageCollectionEvents, where the Student is not null
-        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.StudentId.isNotNull()).list();
+        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.StudentId.notEq(0)).list();
         Log.i(getClass().getName(), "studentImageCollectionEvents.size(): " + studentImageCollectionEvents.size());
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
             Student student = studentImageCollectionEvent.getStudent();

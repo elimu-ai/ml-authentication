@@ -1,4 +1,4 @@
-package org.literacyapp.authentication;
+package org.literacyapp.authentication.thread;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -18,6 +18,7 @@ import org.literacyapp.model.Student;
 import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.StudentImageFeature;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
@@ -56,6 +57,7 @@ public class TrainingThread extends Thread {
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private StudentDao studentDao;
     private Gson gson;
+    private FaceRecognitionTrainingJobService trainingJobService;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -67,6 +69,14 @@ public class TrainingThread extends Thread {
     public void run() {
         extractFeatures();
         trainClassifier();
+        if (trainingJobService != null){
+            trainingJobService.jobFinished(trainingJobService.getJobParameters(), false);
+        }
+    }
+
+    public TrainingThread(FaceRecognitionTrainingJobService trainingJobService){
+        this(trainingJobService.getApplicationContext());
+        this.trainingJobService = trainingJobService;
     }
 
     public TrainingThread(Context context){
@@ -79,7 +89,6 @@ public class TrainingThread extends Thread {
         studentDao = daoSession.getStudentDao();
         gson = new Gson();
     }
-
 
     /**
      * Get all the StudentImages where the features haven't been extracted yet

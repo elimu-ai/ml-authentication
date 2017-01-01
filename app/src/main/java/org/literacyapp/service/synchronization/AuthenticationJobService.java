@@ -10,6 +10,7 @@ import android.view.Display;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.AuthenticationActivity;
+import org.literacyapp.authentication.thread.AuthenticationThread;
 import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
@@ -26,83 +27,26 @@ import java.util.List;
  */
 
 public class AuthenticationJobService extends JobService {
+    private AuthenticationThread authenticationThread;
+    private JobParameters jobParameters;
+
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStartJob");
-        if (!isScreenTurnedOff()){
-            if (didTheMinimumTimePassSinceLastExecution()){
-                Intent authenticationIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
-                authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(authenticationIntent);
-                Log.i(getClass().getName(), "The Authentication has been started.");
-            } else {
-                Log.i(getClass().getName(), "The Authentication was skipped because the minimum time since the last execution did not pass yet.");
-            }
-        } else {
-            Log.i(getClass().getName(), "The Authentication was skipped because the screen was turned off.");
-        }
-        jobFinished(jobParameters, false);
+        this.jobParameters = jobParameters;
+        authenticationThread = new AuthenticationThread(this);
+        authenticationThread.start();
         return false;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStopJob");
+        authenticationThread.interrupt();
         return false;
     }
 
-    private boolean isScreenTurnedOff(){
-        boolean isScreenTurnedOff = false;
-        DisplayManager displayManager = (DisplayManager) getApplicationContext().getSystemService(Context.DISPLAY_SERVICE);
-        for (Display display : displayManager.getDisplays()) {
-            if (display.getState() != Display.STATE_ON) {
-                isScreenTurnedOff = true;
-            }
-        }
-        Log.i(getClass().getName(), "isScreenTurnedOff: " + isScreenTurnedOff);
-        return isScreenTurnedOff;
-    }
-
-    private boolean didTheMinimumTimePassSinceLastAuthentication(AuthenticationEventDao authenticationEventDao, long minimumTimeInMilliseconds){
-        boolean didTheMinimumTimePassSinceLastAuthentication = true;
-        // Get only the last AuthenticationEvent
-        List<AuthenticationEvent> authenticationEvents = authenticationEventDao.queryBuilder().orderDesc(AuthenticationEventDao.Properties.Time).limit(1).list();
-        if (authenticationEvents.size() > 0){
-            AuthenticationEvent authenticationEvent = authenticationEvents.get(0);
-            long lastAuthenticationTime = authenticationEvent.getTime().getTime().getTime();
-            long currentTime = new Date().getTime();
-            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + new Date(lastAuthenticationTime) + " minimumTimeInMinutes: " + (minimumTimeInMilliseconds / 1000 / 60) + " currentTime: " + new Date(currentTime));
-            if ((lastAuthenticationTime + minimumTimeInMilliseconds) > currentTime){
-                didTheMinimumTimePassSinceLastAuthentication = false;
-            }
-        }
-        return didTheMinimumTimePassSinceLastAuthentication;
-    }
-
-    private boolean didTheMinimumTimePassSinceLastCollection(StudentImageCollectionEventDao studentImageCollectionEventDao, long minimumTimeInMilliseconds){
-        boolean didTheMinimumTimePassSinceLastCollection = true;
-        // Get only the last StudentImageCollectionEvent
-        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().orderDesc(StudentImageCollectionEventDao.Properties.Time).limit(1).list();
-        if (studentImageCollectionEvents.size() > 0){
-            StudentImageCollectionEvent studentImageCollectionEvent = studentImageCollectionEvents.get(0);
-            long lastCollectionTime = studentImageCollectionEvent.getTime().getTime().getTime();
-            long currentTime = new Date().getTime();
-            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastCollection: lastCollectionTime: " + new Date(lastCollectionTime) + " minimumTimeInMinutes: " + (minimumTimeInMilliseconds / 1000 / 60) + " currentTime: " + new Date(currentTime));
-            if ((lastCollectionTime + minimumTimeInMilliseconds) > currentTime){
-                didTheMinimumTimePassSinceLastCollection = false;
-            }
-        }
-        return didTheMinimumTimePassSinceLastCollection;
-    }
-
-    private boolean didTheMinimumTimePassSinceLastExecution(){
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
-        DaoSession daoSession = literacyApplication.getDaoSession();
-        AuthenticationEventDao authenticationEventDao = daoSession.getAuthenticationEventDao();
-        StudentImageCollectionEventDao studentImageCollectionEventDao = daoSession.getStudentImageCollectionEventDao();
-        long minimumTimeInMilliseconds = BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS * 60 * 1000;
-        boolean didTheMinimumTimePassSinceLastAuthentication = didTheMinimumTimePassSinceLastAuthentication(authenticationEventDao, minimumTimeInMilliseconds);
-        boolean didTheMinimumTimePassSinceLastCollection = didTheMinimumTimePassSinceLastCollection(studentImageCollectionEventDao, minimumTimeInMilliseconds);
-        return (didTheMinimumTimePassSinceLastAuthentication && didTheMinimumTimePassSinceLastCollection);
+    public JobParameters getJobParameters() {
+        return jobParameters;
     }
 }

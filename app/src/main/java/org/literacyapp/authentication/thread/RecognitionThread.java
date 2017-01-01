@@ -1,12 +1,15 @@
-package org.literacyapp.authentication;
+package org.literacyapp.authentication.thread;
 
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.greendao.query.WhereCondition;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
+import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -25,15 +28,17 @@ public class RecognitionThread extends Thread {
     private static final double SIMILARITY_THRESHOLD = 0.5;
     private TensorFlow tensorFlow;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
+    private StudentDao studentDao;
     private Mat img;
     private Student student;
     private List<Student> recognizedStudents;
     private Gson gson;
     private boolean featuresAlreadyExtracted;
 
-    public RecognitionThread(TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao) {
+    public RecognitionThread(TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao, StudentDao studentDao) {
         this.tensorFlow = tensorFlow;
         this.studentImageCollectionEventDao = studentImageCollectionEventDao;
+        this.studentDao = studentDao;
         gson = new Gson();
         featuresAlreadyExtracted = false;
         recognizedStudents = new ArrayList<>();

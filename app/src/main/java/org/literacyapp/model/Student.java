@@ -8,14 +8,17 @@ import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.NotNull;
 import org.greenrobot.greendao.annotation.ToMany;
+import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.annotation.Unique;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.converter.CalendarConverter;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 
 import java.util.Calendar;
 import java.util.List;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 
 /**
  * Based on {@link org.literacyapp.model.gson.StudentGson}
