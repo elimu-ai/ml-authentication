@@ -28,17 +28,15 @@ public class RecognitionThread extends Thread {
     private static final double SIMILARITY_THRESHOLD = 0.5;
     private TensorFlow tensorFlow;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
-    private StudentDao studentDao;
     private Mat img;
     private Student student;
     private List<Student> recognizedStudents;
     private Gson gson;
     private boolean featuresAlreadyExtracted;
 
-    public RecognitionThread(TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao, StudentDao studentDao) {
+    public RecognitionThread(TensorFlow tensorFlow, StudentImageCollectionEventDao studentImageCollectionEventDao) {
         this.tensorFlow = tensorFlow;
         this.studentImageCollectionEventDao = studentImageCollectionEventDao;
-        this.studentDao = studentDao;
         gson = new Gson();
         featuresAlreadyExtracted = false;
         recognizedStudents = new ArrayList<>();
