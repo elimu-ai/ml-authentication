@@ -1,21 +1,22 @@
-package org.literacyapp.authentication;
+package org.literacyapp.authentication.thread;
 
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.greendao.query.WhereCondition;
+import org.literacyapp.dao.StudentDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.Student;
+import org.literacyapp.model.StudentImage;
 import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
@@ -29,6 +30,7 @@ public class RecognitionThread extends Thread {
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Mat img;
     private Student student;
+    private List<Student> recognizedStudents;
     private Gson gson;
     private boolean featuresAlreadyExtracted;
 
@@ -37,6 +39,7 @@ public class RecognitionThread extends Thread {
         this.studentImageCollectionEventDao = studentImageCollectionEventDao;
         gson = new Gson();
         featuresAlreadyExtracted = false;
+        recognizedStudents = new ArrayList<>();
     }
 
     @Override
@@ -47,7 +50,7 @@ public class RecognitionThread extends Thread {
         } else {
             featureVectorToRecognize = img;
         }
-        student = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
+        recognizedStudents = getMostSimilarStudentIfInThreshold(featureVectorToRecognize);
     }
 
     /**
@@ -63,8 +66,12 @@ public class RecognitionThread extends Thread {
         this.img = img;
     }
 
-    public Student getStudent() {
-        return student;
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public List<Student> getRecognizedStudent() {
+        return recognizedStudents;
     }
 
     public void setFeaturesAlreadyExtracted(boolean featuresAlreadyExtracted) {
@@ -76,10 +83,11 @@ public class RecognitionThread extends Thread {
      * @param featureVectorToRecognize
      * @return
      */
-    private synchronized Student getMostSimilarStudentIfInThreshold(Mat featureVectorToRecognize){
-        List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
+    private synchronized List<Student> getMostSimilarStudentIfInThreshold(Mat featureVectorToRecognize){
+        List<StudentImageCollectionEvent> studentImageCollectionEvents = getStudentImageCollectionEvents();
         List<Student> studentsInThreshold = new ArrayList<>();
         for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
+            Student currentStudent = studentImageCollectionEvent.getStudent();
             List<Float> featureVectorList = gson.fromJson(studentImageCollectionEvent.getMeanFeatureVector(), new TypeToken<List<Float>>(){}.getType());
             Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
             double dotProduct = featureVector.dot(featureVectorToRecognize);
@@ -87,20 +95,23 @@ public class RecognitionThread extends Thread {
             double normFeatureVectorToRecognize = Core.norm(featureVectorToRecognize, Core.NORM_L2);
             double cosineSimilarity = dotProduct / (normFeatureVector * normFeatureVectorToRecognize);
             double absoluteCosineSimilarity = Math.abs(cosineSimilarity);
-            Student student = studentImageCollectionEvent.getStudent();
-            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + student.getUniqueId());
+            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: absoluteCosineSimilarity: " + absoluteCosineSimilarity + " with Student: " + currentStudent.getUniqueId());
             if (absoluteCosineSimilarity > SIMILARITY_THRESHOLD){
-                studentsInThreshold.add(student);
+                studentsInThreshold.add(currentStudent);
             }
         }
-        int numberOfStudentsInThreshold = studentsInThreshold.size();
-        if (numberOfStudentsInThreshold == 1){
-            Student student = studentsInThreshold.get(0);
-            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: The Student was recognized as " + student.getUniqueId());
-            return studentsInThreshold.get(0);
+        return studentsInThreshold;
+    }
+
+    private List<StudentImageCollectionEvent> getStudentImageCollectionEvents(){
+        if (student != null){
+            return studentImageCollectionEventDao.queryBuilder()
+                    .where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull())
+                    .where(StudentImageCollectionEventDao.Properties.StudentId.notEq(student.getUniqueId()))
+                    .list();
         } else {
-            Log.i(getClass().getName(), "getMostSimilarStudentIfInThreshold: No Student was recognized, because the numberOfStudentsInThreshold was: " + numberOfStudentsInThreshold);
-            return null;
+            return studentImageCollectionEventDao.queryBuilder()
+                    .where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNotNull()).list();
         }
     }
 }

@@ -12,6 +12,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
@@ -69,7 +70,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private boolean activityStopped;
 
     // Image collection parameters
-    private static final boolean DIAGNOSE_MODE = true;
     private static final long TIMER_DIFF = 200;
     private static final int NUMBER_OF_IMAGES = 20;
     private int imagesProcessed;
@@ -175,10 +175,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                                     mediaPlayerAnimalSound.start();
 
                                     studentImages.add(img);
-
-                                    if(DIAGNOSE_MODE) {
-                                        MatOperation.drawRectangleAndLabelOnPreview(imgRgba, face, "Face detected", true);
-                                    }
 
                                     // Stop after NUMBER_OF_IMAGES (settings option)
                                     if(imagesProcessed == NUMBER_OF_IMAGES){

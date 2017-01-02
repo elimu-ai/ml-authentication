@@ -1,4 +1,4 @@
-package org.literacyapp.authentication;
+package org.literacyapp.authentication.helper;
 
 import android.content.Context;
 import android.util.Log;
