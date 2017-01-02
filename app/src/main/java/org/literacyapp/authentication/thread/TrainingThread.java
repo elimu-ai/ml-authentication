@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.greenrobot.greendao.query.Join;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentDao;
@@ -228,31 +229,40 @@ public class TrainingThread extends Thread {
      */
     public synchronized void trainClassifier(){
         Log.i(getClass().getName(), "trainClassifier");
-        // Initiate training if a StudentImageCollectionEvent has not been trained yet
+        // Initiate training if a StudentImageCollectionEvent has not been trained yet but all corresponding StudentImage's features have been extracted
         List<StudentImageCollectionEvent> studentImageCollectionEvents = studentImageCollectionEventDao.queryBuilder().where(StudentImageCollectionEventDao.Properties.MeanFeatureVector.isNull()).list();
         Log.i(getClass().getName(), "Count of StudentImageCollectionEvents where MeanFeatureVector is null: " + studentImageCollectionEvents.size());
         if (studentImageCollectionEvents.size() > 0){
             for (StudentImageCollectionEvent studentImageCollectionEvent : studentImageCollectionEvents){
-                Mat allFeatureVectors = new Mat();
-                List<StudentImage> studentImages = studentImageCollectionEvent.getStudentImages();
-                for (StudentImage studentImage : studentImages){
-                    List<Float> featureVectorList = gson.fromJson(studentImage.getStudentImageFeature().getFeatureVector(), new TypeToken<List<Float>>(){}.getType());
-                    Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
-                    allFeatureVectors.push_back(featureVector.reshape(1, 1));
+                Long studentImagesWithoutExtractedFeatures = studentImageDao.queryBuilder()
+                        .where(StudentImageDao.Properties.StudentImageCollectionEventId.eq(studentImageCollectionEvent.getId()))
+                        .where(StudentImageDao.Properties.StudentImageFeatureId.eq(0))
+                        .count();
+                // Skip calculation of meanFeatureVector if not all features have been extracted yet
+                if (studentImagesWithoutExtractedFeatures == 0){
+                    Mat allFeatureVectors = new Mat();
+                    List<StudentImage> studentImages = studentImageCollectionEvent.getStudentImages();
+                    for (StudentImage studentImage : studentImages){
+                        List<Float> featureVectorList = gson.fromJson(studentImage.getStudentImageFeature().getFeatureVector(), new TypeToken<List<Float>>(){}.getType());
+                        Mat featureVector = Converters.vector_float_to_Mat(featureVectorList);
+                        allFeatureVectors.push_back(featureVector.reshape(1, 1));
+                    }
+
+                    Mat meanFeatureVector = new Mat();
+                    Core.reduce(allFeatureVectors, meanFeatureVector, 0, Core.REDUCE_AVG);
+                    List<Float> meanFeatureVectorList = new ArrayList<>();
+                    Converters.Mat_to_vector_float(meanFeatureVector.reshape(1, meanFeatureVector.cols()), meanFeatureVectorList);
+                    String meanFeatureVectorString = gson.toJson(meanFeatureVectorList);
+                    studentImageCollectionEvent.setMeanFeatureVector(meanFeatureVectorString);
+
+                    Student student = createStudent(studentImages);
+
+                    studentImageCollectionEvent.setStudent(student);
+                    studentImageCollectionEventDao.update(studentImageCollectionEvent);
+                    Log.i(getClass().getName(), "StudentImageCollectionEvent with Id " + studentImageCollectionEvent.getId() + " has been trained in classifier");
+                } else {
+                    Log.i(getClass().getName(), "trainClassifier: Calculation of meanFeatureVector has been skipped for the StudentImageCollectionEvent: " + studentImageCollectionEvent.getId() + " studentImagesWithoutExtractedFeatures: " + studentImagesWithoutExtractedFeatures);
                 }
-
-                Mat meanFeatureVector = new Mat();
-                Core.reduce(allFeatureVectors, meanFeatureVector, 0, Core.REDUCE_AVG);
-                List<Float> meanFeatureVectorList = new ArrayList<>();
-                Converters.Mat_to_vector_float(meanFeatureVector.reshape(1, meanFeatureVector.cols()), meanFeatureVectorList);
-                String meanFeatureVectorString = gson.toJson(meanFeatureVectorList);
-                studentImageCollectionEvent.setMeanFeatureVector(meanFeatureVectorString);
-
-                Student student = createStudent(studentImages);
-
-                studentImageCollectionEvent.setStudent(student);
-                studentImageCollectionEventDao.update(studentImageCollectionEvent);
-                Log.i(getClass().getName(), "StudentImageCollectionEvent with Id " + studentImageCollectionEvent.getId() + " has been trained in classifier");
             }
         }
     }
