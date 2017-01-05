@@ -9,8 +9,8 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1003005
-        versionName "1.3.5"
+        versionCode 1003006
+        versionName "1.3.6-SNAPSHOT"
         setProperty("archivesBaseName", "$applicationId-$versionName")
 
 //        jackOptions {
