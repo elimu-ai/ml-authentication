@@ -10,14 +10,15 @@ import android.view.Display;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.AuthenticationActivity;
-import org.literacyapp.authentication.TrainingHelper;
+import org.literacyapp.authentication.thread.AuthenticationThread;
 import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
+import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.model.analytics.AuthenticationEvent;
+import org.literacyapp.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -26,72 +27,26 @@ import java.util.List;
  */
 
 public class AuthenticationJobService extends JobService {
+    private AuthenticationThread authenticationThread;
+    private JobParameters jobParameters;
+
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStartJob");
-        if (!isScreenTurnedOff()){
-            if (didTheMinimumTimePassSinceLastAuthentication()){
-                if (!rescheduleIfTrainingJobServiceIsRunning()){
-                    Intent authenticationIntent = new Intent(getApplicationContext(), AuthenticationActivity.class);
-                    authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(authenticationIntent);
-                    Log.i(getClass().getName(), "The Authentication has been started.");
-                }
-            } else {
-                Log.i(getClass().getName(), "The Authentication was skipped because the minimum time since the last authentication did not pass yet.");
-            }
-        } else {
-            Log.i(getClass().getName(), "The Authentication was skipped because the screen was turned off.");
-        }
-
+        this.jobParameters = jobParameters;
+        authenticationThread = new AuthenticationThread(this);
+        authenticationThread.start();
         return false;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStopJob");
+        authenticationThread.interrupt();
         return false;
     }
 
-    private boolean rescheduleIfTrainingJobServiceIsRunning(){
-        boolean isFaceRecognitionTrainingJobServiceRunning = FaceRecognitionTrainingJobService.isRunning;
-        Log.i(getClass().getName(), "isFaceRecognitionTrainingJobServiceRunning: " + isFaceRecognitionTrainingJobServiceRunning);
-        if (isFaceRecognitionTrainingJobServiceRunning){
-            BootReceiver.scheduleAuthentication(getApplicationContext(), BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS);
-            Log.i(getClass().getName(), "The AuthenticationJobService has been rescheduled, because the CPU hungry FaceRecognitionTrainingJobService is running at the moment.");
-        }
-        return isFaceRecognitionTrainingJobServiceRunning;
-    }
-
-    private boolean isScreenTurnedOff(){
-        boolean isScreenTurnedOff = false;
-        DisplayManager displayManager = (DisplayManager) getApplicationContext().getSystemService(Context.DISPLAY_SERVICE);
-        for (Display display : displayManager.getDisplays()) {
-            if (display.getState() != Display.STATE_ON) {
-                isScreenTurnedOff = true;
-            }
-        }
-        Log.i(getClass().getName(), "isScreenTurnedOff: " + isScreenTurnedOff);
-        return isScreenTurnedOff;
-    }
-
-    private boolean didTheMinimumTimePassSinceLastAuthentication(){
-        boolean didTheMinimumTimePassSinceLastAuthentication = true;
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
-        DaoSession daoSession = literacyApplication.getDaoSession();
-        AuthenticationEventDao authenticationEventDao = daoSession.getAuthenticationEventDao();
-        // Get only the last AuthenticationEvent
-        List<AuthenticationEvent> authenticationEvents = authenticationEventDao.queryBuilder().orderDesc(AuthenticationEventDao.Properties.Time).limit(1).list();
-        if (authenticationEvents.size() > 0){
-            AuthenticationEvent authenticationEvent = authenticationEvents.get(0);
-            long lastAuthenticationTime = authenticationEvent.getTime().getTime().getTime();
-            long minimumTimeInMilliseconds = BootReceiver.MINUTES_BETWEEN_AUTHENTICATIONS * 60 * 1000;
-            long currentTime = new Date().getTime();
-            Log.i(getClass().getName(), "didTheMinimumTimePassSinceLastAuthentication: lastAuthenticationTime: " + new Date(lastAuthenticationTime) + " minimumTimeInMilliseconds: " + new Date(minimumTimeInMilliseconds) + " currentTime: " + new Date(currentTime));
-            if ((lastAuthenticationTime + minimumTimeInMilliseconds) > currentTime){
-                didTheMinimumTimePassSinceLastAuthentication = false;
-            }
-        }
-        return didTheMinimumTimePassSinceLastAuthentication;
+    public JobParameters getJobParameters() {
+        return jobParameters;
     }
 }

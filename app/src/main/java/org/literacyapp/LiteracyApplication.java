@@ -15,6 +15,7 @@ public class LiteracyApplication extends Application {
     public static final int FACE_RECOGNITION_TRAINING_JOB_ID = 0;
     public static final int CONTENT_SYNCRHONIZATION_JOB_ID = 1;
     public static final int AUTHENTICATION_JOB_ID = 2;
+    public static final int MERGE_SIMILAR_STUDENTS_JOB_ID = 3;
 
     public static final String PREF_APP_VERSION_CODE = "pref_app_version_code";
 

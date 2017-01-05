@@ -13,6 +13,10 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.authentication.helper.AuthenticationHelper;
+import org.literacyapp.authentication.helper.DetectionHelper;
+import org.literacyapp.authentication.thread.RecognitionThread;
+import org.literacyapp.authentication.thread.TrainingThread;
 import org.literacyapp.dao.AuthenticationEventDao;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
@@ -26,7 +30,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -90,12 +93,12 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         preview.setVisibility(SurfaceView.VISIBLE);
         preview.setCvCameraViewListener(this);
 
-        final TrainingHelper trainingHelper = new TrainingHelper(getApplicationContext());
+        final TrainingThread trainingThread = new TrainingThread(getApplicationContext());
 
         tensorFlowLoadingThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                tensorFlow = trainingHelper.getInitializedTensorFlow();
+                tensorFlow = trainingThread.getInitializedTensorFlow();
             }
         });
 
@@ -126,10 +129,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             prepareForAuthentication();
 
             if (!recognitionThread.isAlive() && recognitionThreadStarted) {
-                Student student = recognitionThread.getStudent();
+                List<Student> students = recognitionThread.getRecognizedStudent();
+                Student student = new Student();
+                if (students.size() == 1){
+                    student = students.get(0);
+                }
                 numberOfTries++;
                 Log.i(getClass().getName(), "Number of authentication/recognition tries: " + numberOfTries);
-                if (student != null) {
+                if ((student != null) && (students.size() == 1)) {
                     AuthenticationHelper.updateCurrentStudent(student, getApplicationContext(), false);
                     finish();
                 } else if (numberOfTries >= NUMBER_OF_MAXIMUM_TRIES) {
