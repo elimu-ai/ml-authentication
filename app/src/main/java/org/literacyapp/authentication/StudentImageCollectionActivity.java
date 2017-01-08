@@ -57,7 +57,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private StudentImageDao studentImageDao;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private Device device;
-    private DeviceDao deviceDao;
     private LiteracyApplication literacyApplication;
     private List<Mat> studentImages;
     private AnimalOverlayHelper animalOverlayHelper;
@@ -87,11 +86,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_authentication_student_image_collection);
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
-
-        authenticationAnimationAlreadyPlayed = getIntent().getBooleanExtra(AuthenticationActivity.AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
-        if (authenticationAnimationAlreadyPlayed){
-            authenticationAnimation.setVisibility(View.INVISIBLE);
-        }
 
         animalOverlayName = getIntent().getStringExtra(AuthenticationActivity.ANIMAL_OVERLAY_IDENTIFIER);
 
@@ -123,6 +117,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         animalOverlayHelper = new AnimalOverlayHelper(getApplicationContext());
 
         activityStopped = false;
+
+        authenticationAnimationAlreadyPlayed = getIntent().getBooleanExtra(AuthenticationActivity.AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, false);
     }
 
     @Override
@@ -137,13 +133,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                getWindow().setAttributes(DetectionHelper.adjustBrightness(imgRgba, getWindow().getAttributes()));
-            }
-        });
 
         long currentTime = new Date().getTime();
 
@@ -230,6 +219,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         }
         startTimeFallback = new Date().getTime();
         startTimeAuthenticationAnimation = new Date().getTime();
+        if (authenticationAnimationAlreadyPlayed){
+            prepareForAuthentication();
+        }
     }
 
     private void prepareForAuthentication(){
@@ -288,8 +280,10 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayerInstruction.stop();
-        mediaPlayerInstruction.release();
+        if (!authenticationAnimationAlreadyPlayed){
+            mediaPlayerInstruction.stop();
+            mediaPlayerInstruction.release();
+        }
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
