@@ -14,16 +14,23 @@
         opencv:show_fps="false"
         opencv:camera_id="any" />
 
-    <pl.droidsonroids.gif.GifImageView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/authentication_animation"
-        android:src="@drawable/authentication_instruction_640"
-        android:background="@android:color/white"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/landscape_2560_1800"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true" />
 
     <ImageView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="gone"
         android:id="@+id/animalOverlay" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/authentication_animation"
+        android:src="@drawable/authentication_instruction_640"
+        android:background="@android:color/white"/>
 </RelativeLayout>
