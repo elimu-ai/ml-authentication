@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
+import org.literacyapp.MainActivity;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
@@ -30,6 +31,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +62,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private boolean recognitionThreadStarted;
     private boolean activityStopped;
     private AuthenticationEventDao authenticationEventDao;
+    private int screenBrightnessMode;
+    private int screenBrightness;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -71,6 +75,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
+
+        screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
+        screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -122,6 +129,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
+
+        DetectionHelper.adjustScreenBrightness(getApplicationContext(), imgRgba);
 
         long currentTime = new Date().getTime();
 
@@ -276,5 +285,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
+        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness);
     }
 }

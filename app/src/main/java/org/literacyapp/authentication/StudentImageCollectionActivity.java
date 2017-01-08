@@ -67,6 +67,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private boolean authenticationAnimationAlreadyPlayed;
     private String animalOverlayName;
     private boolean activityStopped;
+    private int screenBrightnessMode;
+    private int screenBrightness;
 
     // Image collection parameters
     private static final long TIMER_DIFF = 200;
@@ -84,6 +86,10 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
+
+        screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
+        screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
 
@@ -133,6 +139,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
+
+        DetectionHelper.adjustScreenBrightness(getApplicationContext(), imgRgba);
 
         long currentTime = new Date().getTime();
 
@@ -287,5 +295,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
+
+        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness);
     }
 }
