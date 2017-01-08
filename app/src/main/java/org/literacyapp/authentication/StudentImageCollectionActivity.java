@@ -136,7 +136,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        Mat imgRgba = inputFrame.rgba();
+        final Mat imgRgba = inputFrame.rgba();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getWindow().setAttributes(DetectionHelper.adjustBrightness(imgRgba, getWindow().getAttributes()));
+            }
+        });
 
         long currentTime = new Date().getTime();
 
