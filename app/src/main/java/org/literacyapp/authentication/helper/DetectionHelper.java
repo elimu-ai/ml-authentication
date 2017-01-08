@@ -42,6 +42,8 @@ public class DetectionHelper {
     private static final int SCREEN_BRIGHTNESS_INCREASE = 20;
     private static final int SCREEN_BRIGHTNESS_MAX = 255;
     private static final float IMAGE_BRIGHTNESS_THRESHOLD = 0.5f;
+    private static final int SCREEN_BRIGHTNESS_DEFAULT = 85;
+    private static final int SCREEN_BRIGHTNESS_MODE_DEFAULT = Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
 
     public static boolean isFaceInsideFrame(AnimalOverlay animalOverlay, Mat img, Rect face){
         if (animalOverlay != null){
@@ -157,7 +159,7 @@ public class DetectionHelper {
             return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
         } catch (Settings.SettingNotFoundException e) {
             Log.e(DetectionHelper.class.getName(), null, e);
-            return -1;
+            return SCREEN_BRIGHTNESS_DEFAULT;
         }
     }
 
@@ -166,7 +168,7 @@ public class DetectionHelper {
             return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);
         } catch (Settings.SettingNotFoundException e) {
             Log.e(DetectionHelper.class.getName(), null, e);
-            return -1;
+            return SCREEN_BRIGHTNESS_MODE_DEFAULT;
         }
     }
 
