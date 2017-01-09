@@ -167,7 +167,6 @@ public class TrainingThread extends Thread {
                 logMessage = logMessage + " from " + MODEL_DOWNLOAD_LINK;
             }
             Log.e(getClass().getName(), logMessage);
-            Toast.makeText(context, logMessage, Toast.LENGTH_LONG).show();
 
             return null;
         }
