@@ -8,12 +8,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
+
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Obtain permission to change system settings
+        try {
+            runAsRoot(new String[] {"pm grant org.literacyapp android.permission.WRITE_SECURE_SETTINGS"});
+        } catch (IOException | InterruptedException e) {
+            Log.e(getClass().getName(), null, e);
+        }
+
         if (letterDao.loadAll().isEmpty()) {
             // Download content
             boolean isWifiEnabled = ConnectivityHelper.isWifiEnabled(getApplicationContext());
@@ -68,10 +82,6 @@ public class MainActivity extends AppCompatActivity {
             Intent categoryIntent = new Intent(this, CategoryActivity.class);
             startActivity(categoryIntent);
             finish();
-
-//            Intent cameraViewIntent = new Intent(this, CameraViewActivity.class);
-//            startActivity(cameraViewIntent);
-//            finish();
         }
     }
 
@@ -94,6 +104,38 @@ public class MainActivity extends AppCompatActivity {
                 // Close application
                 finish();
             }
+        }
+    }
+
+    public void runAsRoot(String[] commands) throws IOException, InterruptedException {
+        Log.i(getClass().getName(), "runAsRoot");
+
+        Process process = Runtime.getRuntime().exec("su");
+
+        DataOutputStream dataOutputStream = new DataOutputStream(process.getOutputStream());
+        for (String command : commands) {
+            Log.i(getClass().getName(), "command: " + command);
+            dataOutputStream.writeBytes(command + "\n");
+        }
+        dataOutputStream.writeBytes("exit\n");
+        dataOutputStream.flush();
+
+        process.waitFor();
+        int exitValue = process.exitValue();
+        Log.i(getClass().getName(), "exitValue: " + exitValue);
+
+        InputStream inputStreamSuccess = process.getInputStream();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamSuccess));
+        String successMessage = bufferedReader.readLine();
+        Log.i(getClass().getName(), "successMessage: " + successMessage);
+
+        InputStream inputStreamError = process.getErrorStream();
+        bufferedReader = new BufferedReader(new InputStreamReader(inputStreamError));
+        String errorMessage = bufferedReader.readLine();
+        if (TextUtils.isEmpty(errorMessage)) {
+            Log.i(getClass().getName(), "errorMessage: " + errorMessage);
+        } else {
+            Log.e(getClass().getName(), "errorMessage: " + errorMessage);
         }
     }
 }

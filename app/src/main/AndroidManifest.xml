@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
 
     <!-- &lt;!&ndash; https://developer.android.com/guide/topics/graphics/opengl.html &ndash;&gt; -->
     <!-- &lt;!&ndash; OpenGL ES 3.1 - supported by Android 5.0 (API level 21) and higher &ndash;&gt; -->
