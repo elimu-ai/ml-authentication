@@ -11,7 +11,6 @@ import android.util.Log;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.service.ContentSynchronizationJobService;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
-import org.literacyapp.service.ScreenOnService;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
 import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
 
@@ -45,12 +44,6 @@ public class BootReceiver extends BroadcastReceiver {
 
         // Initiate background job for merging similar students
         scheduleMergeSimilarStudents(context);
-
-        // Start service for detecting when the screen is turned on
-        Intent screenOnServiceIntent = new Intent(context, ScreenOnService.class);
-        context.startService(screenOnServiceIntent);
-
-        // TODO: trigger the same code as in ScreenOnReceiver
     }
 
     public static void scheduleFaceRecognitionTranining(Context context){
