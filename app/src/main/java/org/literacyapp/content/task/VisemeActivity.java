@@ -31,7 +31,7 @@ public class VisemeActivity extends AppCompatActivity {
     private ImageView visemeImageView;
     private TextView visemeTextView;
 
-    private ImageButton nextButton;
+    private ImageButton visemeNextButton;
 
     private LetterDao letterDao;
     private AudioDao audioDao;
@@ -46,7 +46,7 @@ public class VisemeActivity extends AppCompatActivity {
         visemeImageView = (ImageView) findViewById(R.id.visemeImageView);
         visemeTextView = (TextView) findViewById(R.id.visemeTextView);
 
-        nextButton = (ImageButton) findViewById(R.id.visemeImageButton);
+        visemeNextButton = (ImageButton) findViewById(R.id.visemeNextButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
@@ -84,12 +84,12 @@ public class VisemeActivity extends AppCompatActivity {
             }
         });
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        visemeNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                Intent graphemeIntent = new Intent(getApplicationContext(), GraphemeActivity.class);
+                Intent graphemeIntent = new Intent(getApplicationContext(), LetterGraphemeActivity.class);
                 graphemeIntent.putExtra("letter", letter.getText());
                 startActivity(graphemeIntent);
 
@@ -102,6 +102,7 @@ public class VisemeActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "playLetterSound");
 
         // Look up corresponding Audio
+        Log.d(getClass().getName(), "Looking up \"letter_sound_" + letter.getText() + "\"");
         final Audio audio = audioDao.queryBuilder()
                 .where(AudioDao.Properties.Transcription.eq(letter.getText()))
                 .unique();

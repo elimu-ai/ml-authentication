@@ -1,4 +1,4 @@
-package org.literacyapp.content.multimedia.video;
+package org.literacyapp.content.task;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
