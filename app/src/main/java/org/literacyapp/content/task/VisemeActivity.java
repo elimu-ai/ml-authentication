@@ -31,7 +31,7 @@ public class VisemeActivity extends AppCompatActivity {
     private ImageView visemeImageView;
     private TextView visemeTextView;
 
-    private ImageButton nextButton;
+    private ImageButton visemeNextButton;
 
     private LetterDao letterDao;
     private AudioDao audioDao;
@@ -46,7 +46,7 @@ public class VisemeActivity extends AppCompatActivity {
         visemeImageView = (ImageView) findViewById(R.id.visemeImageView);
         visemeTextView = (TextView) findViewById(R.id.visemeTextView);
 
-        nextButton = (ImageButton) findViewById(R.id.visemeImageButton);
+        visemeNextButton = (ImageButton) findViewById(R.id.visemeNextButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
@@ -84,7 +84,7 @@ public class VisemeActivity extends AppCompatActivity {
             }
         });
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
+        visemeNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");

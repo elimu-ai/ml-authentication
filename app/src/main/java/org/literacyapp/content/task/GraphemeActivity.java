@@ -1,5 +1,6 @@
 package org.literacyapp.content.task;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
@@ -14,24 +15,33 @@ import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.content.multimedia.video.VideoActivity;
 import org.literacyapp.dao.AudioDao;
+import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.LetterDao;
+import org.literacyapp.dao.VideoDao;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.multimedia.Audio;
+import org.literacyapp.model.content.multimedia.JoinVideosWithLetters;
+import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphemeActivity extends AppCompatActivity {
 
     private ImageView graphemeImageView;
 
-    private ImageButton graphemeImageButton;
+    private ImageButton graphemeNextButton;
 
     private LetterDao letterDao;
     private AudioDao audioDao;
+    private VideoDao videoDao;
+    private JoinVideosWithLettersDao joinVideosWithLettersDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +52,13 @@ public class GraphemeActivity extends AppCompatActivity {
 
         graphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 
-        graphemeImageButton = (ImageButton) findViewById(R.id.graphemeImageButton);
+        graphemeNextButton = (ImageButton) findViewById(R.id.graphemeNextButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
+        videoDao = literacyApplication.getDaoSession().getVideoDao();
+        joinVideosWithLettersDao = literacyApplication.getDaoSession().getJoinVideosWithLettersDao();
     }
 
     @Override
@@ -75,13 +87,31 @@ public class GraphemeActivity extends AppCompatActivity {
             }
         });
 
-        graphemeImageButton.setOnClickListener(new View.OnClickListener() {
+        graphemeNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                // Play video(s) containing letter
-                // TODO
+                // Look up video(s) containing letter
+                List<Video> videosContainingLetter = new ArrayList<Video>();
+                List<JoinVideosWithLetters> joinVideosWithLettersList = joinVideosWithLettersDao.queryBuilder()
+                        .where(JoinVideosWithLettersDao.Properties.LetterId.eq(letter.getId()))
+                        .list();
+                Log.d(getClass().getName(), "joinVideosWithLettersList.size(): " + joinVideosWithLettersList.size());
+                if (!joinVideosWithLettersList.isEmpty()) {
+                    for (JoinVideosWithLetters joinVideosWithLetters : joinVideosWithLettersList) {
+                        Video video = videoDao.load(joinVideosWithLetters.getVideoId());
+                        Log.d(getClass().getName(), "Adding video with id " + video.getId());
+                        videosContainingLetter.add(video);
+                    }
+                }
+                Log.d(getClass().getName(), "videosContainingLetter.size(): " + videosContainingLetter.size());
+                if (!videosContainingLetter.isEmpty()) {
+                    // Redirect to video(s)
+                    Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+                    intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, videosContainingLetter.get(0).getId());
+                    startActivity(intent);
+                }
 
                 finish();
             }

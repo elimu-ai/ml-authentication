@@ -15,7 +15,7 @@
         android:layout_centerInParent="true"
         android:src="@drawable/animated_letter_a" />
 
-    <ImageButton android:id="@+id/graphemeImageButton"
+    <ImageButton android:id="@+id/graphemeNextButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="fitXY"
