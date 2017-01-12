@@ -22,11 +22,6 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -174,6 +169,8 @@ public class DetectionHelper {
 
     public static synchronized void setScreenBrightnessAndMode(Context context, int screenBrightnessMode, int screenBrightness){
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, screenBrightnessMode);
+        Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: SCREEN_BRIGHTNESS_MODE set to " + screenBrightnessMode);
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screenBrightness);
+        Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: SCREEN_BRIGHTNESS set to " + screenBrightness);
     }
 }
