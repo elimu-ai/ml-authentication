@@ -89,7 +89,7 @@ public class VisemeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                Intent graphemeIntent = new Intent(getApplicationContext(), GraphemeActivity.class);
+                Intent graphemeIntent = new Intent(getApplicationContext(), LetterGraphemeActivity.class);
                 graphemeIntent.putExtra("letter", letter.getText());
                 startActivity(graphemeIntent);
 
@@ -102,6 +102,7 @@ public class VisemeActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "playLetterSound");
 
         // Look up corresponding Audio
+        Log.d(getClass().getName(), "Looking up \"letter_sound_" + letter.getText() + "\"");
         final Audio audio = audioDao.queryBuilder()
                 .where(AudioDao.Properties.Transcription.eq(letter.getText()))
                 .unique();

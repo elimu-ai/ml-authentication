@@ -41,13 +41,19 @@
             android:name=".content.task.TagItemsActivity"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".content.multimedia.video.VideoActivity"
+            android:name=".content.task.VideoActivity"
             android:screenOrientation="fullSensor" />
         <activity
-            android:name=".content.task.GraphemeActivity"
+            android:name=".content.task.LetterGraphemeActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".content.task.NumberGraphemeActivity"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".content.task.VisemeActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".content.task.NumberActivity"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".content.task.StarActivity"
@@ -132,7 +138,14 @@
             <!--</intent-filter>-->
         </activity>
         <activity android:name=".authentication.AuthenticationActivity"
-            android:screenOrientation="landscape"/>
+            android:screenOrientation="landscape">
+
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
 
         <service
             android:name=".service.synchronization.MergeSimilarStudentsJobService"
