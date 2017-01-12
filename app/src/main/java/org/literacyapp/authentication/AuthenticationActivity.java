@@ -64,6 +64,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private AuthenticationEventDao authenticationEventDao;
     private int screenBrightnessMode;
     private int screenBrightness;
+    private int displayTemperatureNight;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -78,6 +79,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
         screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
         screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+        displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -285,6 +287,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
-        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness);
+        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
     }
 }

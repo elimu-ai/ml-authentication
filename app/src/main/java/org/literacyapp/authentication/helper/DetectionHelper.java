@@ -22,6 +22,11 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +44,8 @@ public class DetectionHelper {
     private static final float IMAGE_BRIGHTNESS_THRESHOLD = 0.5f;
     private static final int SCREEN_BRIGHTNESS_DEFAULT = 85;
     private static final int SCREEN_BRIGHTNESS_MODE_DEFAULT = Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+    private static final int DISPLAY_TEMPERATURE_NIGHT_DEFAULT = 2500;
+    private static final int DISPLAY_TEMPERATURE_NIGHT_BRIGHTER = 4500;
 
     public static boolean isFaceInsideFrame(AnimalOverlay animalOverlay, Mat img, Rect face){
         if (animalOverlay != null){
@@ -121,18 +128,15 @@ public class DetectionHelper {
         if (currentImageBrightness < IMAGE_BRIGHTNESS_THRESHOLD){
             setScreenBrightnessMode(context);
             setScreenBrightness(context, currentImageBrightness);
+            setDisplayTemperatureNight();
         }
     }
 
     private static synchronized void setScreenBrightnessMode(Context context){
-        try {
-            int screenBrightnessMode = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);
-            if (screenBrightnessMode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL){
-                Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-                Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: Screen brightness mode set to manual.");
-            }
-        } catch (Settings.SettingNotFoundException e) {
-            Log.e(DetectionHelper.class.getName(), null, e);
+        int screenBrightnessMode = getScreenBrightnessMode(context);
+        if (screenBrightnessMode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL){
+            Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: Screen brightness mode set to manual.");
         }
     }
 
@@ -145,6 +149,20 @@ public class DetectionHelper {
                 Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: Screen brightness has been increased: currentImageBrightness: " + currentImageBrightness + " currentScreenBrightness: " + currentScreenBrightness + " increasedScreenBrightness: " + increasedScreenBrightness);
             }
         } catch (Settings.SettingNotFoundException e) {
+            Log.e(DetectionHelper.class.getName(), null, e);
+        }
+    }
+
+    private static synchronized void setDisplayTemperatureNight(){
+        try {
+            int displayTemperatureNight = getDisplayTemperatureNight();
+            if (displayTemperatureNight <= DISPLAY_TEMPERATURE_NIGHT_DEFAULT){
+                runAsRoot(new String[] {"settings --cm put system display_temperature_night " + DISPLAY_TEMPERATURE_NIGHT_BRIGHTER});
+                Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: display_temperature_night set to " + DISPLAY_TEMPERATURE_NIGHT_BRIGHTER);
+            }
+        } catch (IOException e) {
+            Log.e(DetectionHelper.class.getName(), null, e);
+        } catch (InterruptedException e) {
             Log.e(DetectionHelper.class.getName(), null, e);
         }
     }
@@ -167,10 +185,64 @@ public class DetectionHelper {
         }
     }
 
-    public static synchronized void setScreenBrightnessAndMode(Context context, int screenBrightnessMode, int screenBrightness){
+    public static synchronized int getDisplayTemperatureNight(){
+        try {
+            String display_temperature_night = runAsRoot(new String[] {"settings --cm get system display_temperature_night"});
+            return Integer.valueOf(display_temperature_night);
+        } catch (IOException e) {
+            Log.e(DetectionHelper.class.getName(), null, e);
+            return DISPLAY_TEMPERATURE_NIGHT_DEFAULT;
+        } catch (InterruptedException e) {
+            Log.e(DetectionHelper.class.getName(), null, e);
+            return DISPLAY_TEMPERATURE_NIGHT_DEFAULT;
+        }
+    }
+
+    public static synchronized void setScreenBrightnessAndMode(Context context, int screenBrightnessMode, int screenBrightness, int displayTemperatureNight){
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, screenBrightnessMode);
         Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: SCREEN_BRIGHTNESS_MODE set to " + screenBrightnessMode);
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screenBrightness);
         Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: SCREEN_BRIGHTNESS set to " + screenBrightness);
+        try {
+            runAsRoot(new String[] {"settings --cm put system display_temperature_night " + displayTemperatureNight});
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: display_temperature_night set to " + displayTemperatureNight);
+    }
+
+    public static String runAsRoot(String[] commands) throws IOException, InterruptedException {
+        Log.i(DetectionHelper.class.getName(), "runAsRoot");
+
+        Process process = Runtime.getRuntime().exec("su");
+
+        DataOutputStream dataOutputStream = new DataOutputStream(process.getOutputStream());
+        for (String command : commands) {
+            Log.i(DetectionHelper.class.getName(), "command: " + command);
+            dataOutputStream.writeBytes(command + "\n");
+        }
+        dataOutputStream.writeBytes("exit\n");
+        dataOutputStream.flush();
+
+        process.waitFor();
+        int exitValue = process.exitValue();
+        Log.i(DetectionHelper.class.getName(), "exitValue: " + exitValue);
+
+        InputStream inputStreamSuccess = process.getInputStream();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamSuccess));
+        String successMessage = bufferedReader.readLine();
+        Log.i(DetectionHelper.class.getName(), "successMessage: " + successMessage);
+
+        InputStream inputStreamError = process.getErrorStream();
+        bufferedReader = new BufferedReader(new InputStreamReader(inputStreamError));
+        String errorMessage = bufferedReader.readLine();
+        if (TextUtils.isEmpty(errorMessage)) {
+            Log.i(DetectionHelper.class.getName(), "errorMessage: " + errorMessage);
+        } else {
+            Log.e(DetectionHelper.class.getName(), "errorMessage: " + errorMessage);
+        }
+        return successMessage;
     }
 }

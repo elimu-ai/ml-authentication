@@ -69,6 +69,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private boolean activityStopped;
     private int screenBrightnessMode;
     private int screenBrightness;
+    private int displayTemperatureNight;
 
     // Image collection parameters
     private static final long TIMER_DIFF = 200;
@@ -89,6 +90,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
         screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+        displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -296,6 +298,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.release();
         activityStopped = true;
 
-        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness);
+        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
     }
 }
