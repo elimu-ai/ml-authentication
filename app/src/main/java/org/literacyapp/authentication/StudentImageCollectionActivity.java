@@ -14,7 +14,6 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
@@ -142,7 +141,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
 
-        DetectionHelper.adjustScreenBrightness(getApplicationContext(), imgRgba);
+        DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
 
         long currentTime = new Date().getTime();
 
@@ -298,6 +297,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.release();
         activityStopped = true;
 
-        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
     }
 }

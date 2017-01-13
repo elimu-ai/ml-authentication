@@ -5,16 +5,14 @@ import android.content.Intent;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.MainActivity;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.fallback.StudentRegistrationActivity;
 import org.literacyapp.authentication.fallback.StudentSelectionActivity;
 import org.literacyapp.dao.DaoSession;
 import org.literacyapp.dao.StudentDao;
+import org.literacyapp.util.RootHelper;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -39,7 +37,7 @@ import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
 public class DetectionHelper {
     private static final Scalar RED_COLOR = new Scalar(255, 0, 0, 255);
     private static final int MAX_TIME_BEFORE_FALLBACK = 15000;
-    private static final int SCREEN_BRIGHTNESS_INCREASE = 20;
+    private static final int SCREEN_BRIGHTNESS_INCREASE_RATE = 20;
     private static final int SCREEN_BRIGHTNESS_MAX = 255;
     private static final float IMAGE_BRIGHTNESS_THRESHOLD = 0.5f;
     private static final int SCREEN_BRIGHTNESS_DEFAULT = 85;
@@ -123,42 +121,59 @@ public class DetectionHelper {
         }
     }
 
-    public static synchronized void adjustScreenBrightness(Context context, Mat img){
+    /**
+     * Check if the image brightness is above the threshold. If not, increase the screen brightness
+     * @param context
+     * @param img
+     */
+    public static synchronized void setIncreasedScreenBrightness(Context context, Mat img){
         double currentImageBrightness = getImageBrightness(img);
         if (currentImageBrightness < IMAGE_BRIGHTNESS_THRESHOLD){
-            setScreenBrightnessMode(context);
-            setScreenBrightness(context, currentImageBrightness);
-            setDisplayTemperatureNight();
+            setScreenBrightnessModeManual(context);
+            setIncreasedScreenBrightness(context, currentImageBrightness);
+            setIncreasedDisplayTemperatureNight();
         }
     }
 
-    private static synchronized void setScreenBrightnessMode(Context context){
+    /**
+     * Set Screen Brightness Mode to manual mode if not already set
+     * @param context
+     */
+    private static synchronized void setScreenBrightnessModeManual(Context context){
         int screenBrightnessMode = getScreenBrightnessMode(context);
         if (screenBrightnessMode != Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL){
             Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-            Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: Screen brightness mode set to manual.");
+            Log.i(DetectionHelper.class.getName(), "setScreenBrightnessModeManual: Screen brightness mode set to manual.");
         }
     }
 
-    private static synchronized void setScreenBrightness(Context context, double currentImageBrightness){
+    /**
+     * Increase screen brightness by a certain rate
+     * @param context
+     * @param currentImageBrightness
+     */
+    private static synchronized void setIncreasedScreenBrightness(Context context, double currentImageBrightness){
         try {
             int currentScreenBrightness = Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
-            int increasedScreenBrightness = currentScreenBrightness + SCREEN_BRIGHTNESS_INCREASE;
+            int increasedScreenBrightness = currentScreenBrightness + SCREEN_BRIGHTNESS_INCREASE_RATE;
             if (increasedScreenBrightness <= SCREEN_BRIGHTNESS_MAX){
                 Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, increasedScreenBrightness);
-                Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: Screen brightness has been increased: currentImageBrightness: " + currentImageBrightness + " currentScreenBrightness: " + currentScreenBrightness + " increasedScreenBrightness: " + increasedScreenBrightness);
+                Log.i(DetectionHelper.class.getName(), "setIncreasedScreenBrightness: Screen brightness has been increased: currentImageBrightness: " + currentImageBrightness + " currentScreenBrightness: " + currentScreenBrightness + " increasedScreenBrightness: " + increasedScreenBrightness);
             }
         } catch (Settings.SettingNotFoundException e) {
             Log.e(DetectionHelper.class.getName(), null, e);
         }
     }
 
-    private static synchronized void setDisplayTemperatureNight(){
+    /**
+     * Increase display temperature night if not already increased
+     */
+    private static synchronized void setIncreasedDisplayTemperatureNight(){
         try {
             int displayTemperatureNight = getDisplayTemperatureNight();
-            if (displayTemperatureNight <= DISPLAY_TEMPERATURE_NIGHT_DEFAULT){
-                runAsRoot(new String[] {"settings --cm put system display_temperature_night " + DISPLAY_TEMPERATURE_NIGHT_BRIGHTER});
-                Log.i(DetectionHelper.class.getName(), "adjustScreenBrightness: display_temperature_night set to " + DISPLAY_TEMPERATURE_NIGHT_BRIGHTER);
+            if (displayTemperatureNight <= DISPLAY_TEMPERATURE_NIGHT_BRIGHTER){
+                RootHelper.runAsRoot(new String[] {"settings --cm put system display_temperature_night " + DISPLAY_TEMPERATURE_NIGHT_BRIGHTER});
+                Log.i(DetectionHelper.class.getName(), "setIncreasedDisplayTemperatureNight: display_temperature_night set to " + DISPLAY_TEMPERATURE_NIGHT_BRIGHTER);
             }
         } catch (IOException e) {
             Log.e(DetectionHelper.class.getName(), null, e);
@@ -187,7 +202,7 @@ public class DetectionHelper {
 
     public static synchronized int getDisplayTemperatureNight(){
         try {
-            String display_temperature_night = runAsRoot(new String[] {"settings --cm get system display_temperature_night"});
+            String display_temperature_night = RootHelper.runAsRoot(new String[] {"settings --cm get system display_temperature_night"});
             return Integer.valueOf(display_temperature_night);
         } catch (IOException e) {
             Log.e(DetectionHelper.class.getName(), null, e);
@@ -198,51 +213,18 @@ public class DetectionHelper {
         }
     }
 
-    public static synchronized void setScreenBrightnessAndMode(Context context, int screenBrightnessMode, int screenBrightness, int displayTemperatureNight){
+    public static synchronized void setDefaultScreenBrightnessAndMode(Context context, int screenBrightnessMode, int screenBrightness, int displayTemperatureNight){
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, screenBrightnessMode);
-        Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: SCREEN_BRIGHTNESS_MODE set to " + screenBrightnessMode);
+        Log.i(DetectionHelper.class.getName(), "setDefaultScreenBrightnessAndMode: SCREEN_BRIGHTNESS_MODE set to " + screenBrightnessMode);
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screenBrightness);
-        Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: SCREEN_BRIGHTNESS set to " + screenBrightness);
+        Log.i(DetectionHelper.class.getName(), "setDefaultScreenBrightnessAndMode: SCREEN_BRIGHTNESS set to " + screenBrightness);
         try {
-            runAsRoot(new String[] {"settings --cm put system display_temperature_night " + displayTemperatureNight});
+            RootHelper.runAsRoot(new String[] {"settings --cm put system display_temperature_night " + displayTemperatureNight});
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        Log.i(DetectionHelper.class.getName(), "setScreenBrightnessAndMode: display_temperature_night set to " + displayTemperatureNight);
-    }
-
-    public static String runAsRoot(String[] commands) throws IOException, InterruptedException {
-        Log.i(DetectionHelper.class.getName(), "runAsRoot");
-
-        Process process = Runtime.getRuntime().exec("su");
-
-        DataOutputStream dataOutputStream = new DataOutputStream(process.getOutputStream());
-        for (String command : commands) {
-            Log.i(DetectionHelper.class.getName(), "command: " + command);
-            dataOutputStream.writeBytes(command + "\n");
-        }
-        dataOutputStream.writeBytes("exit\n");
-        dataOutputStream.flush();
-
-        process.waitFor();
-        int exitValue = process.exitValue();
-        Log.i(DetectionHelper.class.getName(), "exitValue: " + exitValue);
-
-        InputStream inputStreamSuccess = process.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamSuccess));
-        String successMessage = bufferedReader.readLine();
-        Log.i(DetectionHelper.class.getName(), "successMessage: " + successMessage);
-
-        InputStream inputStreamError = process.getErrorStream();
-        bufferedReader = new BufferedReader(new InputStreamReader(inputStreamError));
-        String errorMessage = bufferedReader.readLine();
-        if (TextUtils.isEmpty(errorMessage)) {
-            Log.i(DetectionHelper.class.getName(), "errorMessage: " + errorMessage);
-        } else {
-            Log.e(DetectionHelper.class.getName(), "errorMessage: " + errorMessage);
-        }
-        return successMessage;
+        Log.i(DetectionHelper.class.getName(), "setDefaultScreenBrightnessAndMode: display_temperature_night set to " + displayTemperatureNight);
     }
 }

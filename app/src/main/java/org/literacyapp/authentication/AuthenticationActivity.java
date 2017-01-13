@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.MainActivity;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
@@ -31,7 +30,6 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -132,7 +130,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
 
-        DetectionHelper.adjustScreenBrightness(getApplicationContext(), imgRgba);
+        DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
 
         long currentTime = new Date().getTime();
 
@@ -287,6 +285,6 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
-        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
     }
 }
