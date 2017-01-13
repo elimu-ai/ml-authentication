@@ -14,7 +14,6 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.DeviceDao;
 import org.literacyapp.dao.StudentImageCollectionEventDao;
 import org.literacyapp.dao.StudentImageDao;
 import org.literacyapp.model.Device;
@@ -69,6 +68,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private boolean activityStopped;
     private int screenBrightnessMode;
     private int screenBrightness;
+    private int displayTemperatureNight;
 
     // Image collection parameters
     private static final long TIMER_DIFF = 200;
@@ -89,6 +89,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
         screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
         screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+        displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -140,7 +141,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
 
-        DetectionHelper.adjustScreenBrightness(getApplicationContext(), imgRgba);
+        DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
 
         long currentTime = new Date().getTime();
 
@@ -296,6 +297,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.release();
         activityStopped = true;
 
-        DetectionHelper.setScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness);
+        DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
     }
 }
