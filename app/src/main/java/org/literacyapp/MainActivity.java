@@ -16,6 +16,7 @@ import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.dao.LetterDao;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
+import org.literacyapp.util.RootHelper;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Obtain permission to change system settings
         try {
-            DetectionHelper.runAsRoot(new String[] {"pm grant org.literacyapp android.permission.WRITE_SECURE_SETTINGS"});
+            RootHelper.runAsRoot(new String[] {"pm grant org.literacyapp android.permission.WRITE_SECURE_SETTINGS"});
         } catch (IOException | InterruptedException e) {
             Log.e(getClass().getName(), null, e);
         }
