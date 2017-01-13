@@ -9,9 +9,8 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1003006
-        versionName "1.3.6-SNAPSHOT"
-        setProperty("archivesBaseName", "$applicationId-$versionName")
+        versionCode 1003007
+        versionName "1.3.7-SNAPSHOT"
 
 //        jackOptions {
 //            enabled true
@@ -47,6 +46,17 @@ android {
         }
         release {
             signingConfig signingConfigs.release
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                    output.outputFile.name
+                            .replace("app-", "${variant.applicationId}-")
+                            .replace(".apk", "-${variant.versionCode}.apk")
+            )
         }
     }
 

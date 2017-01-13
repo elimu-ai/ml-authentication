@@ -7,30 +7,15 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".content.task.VisemeActivity">
+    tools:context=".content.task.NumberGraphemeActivity">
 
-    <ImageView android:id="@+id/visemeImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/viseme_penguin_neutral_to_t_animated_vector" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView android:id="@+id/graphemeImageView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:background="#FFF">
+        android:layout_centerInParent="true"
+        android:src="@drawable/animated_number_2" />
 
-        <TextView
-            android:id="@+id/visemeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="t"
-            android:textSize="172sp"
-            android:elegantTextHeight="true" />
-    </LinearLayout>
-
-    <ImageButton android:id="@+id/visemeNextButton"
+    <ImageButton android:id="@+id/graphemeNextButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="fitXY"
@@ -38,5 +23,5 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_arrow_forward_black_24dp"
         style="?android:attr/buttonBarButtonStyle"
-        android:tint="@color/colorAccent" />
+        android:tint="@color/blue" />
 </RelativeLayout>

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.content.task.VideoActivity;
 import org.literacyapp.dao.VideoDao;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.content.Letter;

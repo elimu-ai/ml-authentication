@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".content.task.GraphemeActivity">
+    tools:context=".content.task.LetterGraphemeActivity">
 
     <ImageView android:id="@+id/graphemeImageView"
         android:layout_width="wrap_content"
@@ -15,7 +15,7 @@
         android:layout_centerInParent="true"
         android:src="@drawable/animated_letter_a" />
 
-    <ImageButton android:id="@+id/graphemeImageButton"
+    <ImageButton android:id="@+id/graphemeNextButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="fitXY"

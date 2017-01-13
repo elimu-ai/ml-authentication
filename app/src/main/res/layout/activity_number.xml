@@ -9,10 +9,10 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".content.task.VisemeActivity">
 
-    <ImageView android:id="@+id/visemeImageView"
+    <ImageView android:id="@+id/numberImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/viseme_penguin_neutral_to_t_animated_vector" />
+        android:src="@drawable/akili_neutral" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,15 +22,15 @@
         android:background="#FFF">
 
         <TextView
-            android:id="@+id/visemeTextView"
+            android:id="@+id/numberTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="t"
+            android:text="1"
             android:textSize="172sp"
             android:elegantTextHeight="true" />
     </LinearLayout>
 
-    <ImageButton android:id="@+id/visemeNextButton"
+    <ImageButton android:id="@+id/numberNextButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="fitXY"
