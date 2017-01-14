@@ -99,7 +99,7 @@ public class LettersActivity extends AppCompatActivity {
         // Look up corresponding Audio
         Log.d(getClass().getName(), "Looking up \"letter_sound_" + letter.getText() + "\"");
         final Audio audio = audioDao.queryBuilder()
-                .where(AudioDao.Properties.Transcription.eq(letter.getText()))
+                .where(AudioDao.Properties.Transcription.eq("letter_sound_" + letter.getText()))
                 .unique();
         Log.i(getClass().getName(), "audio: " + audio);
         if (audio != null) {
@@ -117,7 +117,7 @@ public class LettersActivity extends AppCompatActivity {
             mediaPlayer.start();
         } else {
             // Audio not found. Fall-back to application resource.
-            String audioFileName = "letter_" + letter.getText();
+            String audioFileName = "letter_sound_" + letter.getText();
             int resourceId = getResources().getIdentifier(audioFileName, "raw", getPackageName());
             try {
                 if (resourceId != 0) {
