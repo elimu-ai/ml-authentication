@@ -3,7 +3,9 @@
         android:height="1776dp"
         android:viewportWidth="1200.0"
         android:viewportHeight="1776.0">
+
     <path
+        android:name="stroke1"
         android:pathData="M353.6,379.7C697.9,380.9 949,376.3 1037.5,372.9C798.9,671.1 691.7,885.3 594.6,1213.7"
         android:strokeLineCap="round"
         android:strokeColor="#000000"
