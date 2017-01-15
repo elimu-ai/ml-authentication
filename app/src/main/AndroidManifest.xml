@@ -59,8 +59,9 @@
             android:name=".content.task.StarActivity"
             android:screenOrientation="fullSensor" />
         <activity android:name=".content.task.LessonCompleteActivity" />
-        <activity android:name=".authentication.StudentImageCollectionActivity"
-            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".authentication.StudentImageCollectionActivity"
+            android:screenOrientation="landscape" />
         <activity
             android:name=".content.letter.LettersActivity"
             android:icon="@mipmap/ic_launcher_literacy"
@@ -121,35 +122,43 @@
         <activity
             android:name=".authentication.fallback.StudentAuthenticationActivity"
             android:icon="@mipmap/ic_launcher_authentication">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".authentication.fallback.StudentSelectionActivity"
             android:label="@string/title_activity_student_selection"
             android:theme="@style/AppTheme">
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".authentication.AuthenticationActivity"
+        <activity
+            android:name=".authentication.AuthenticationActivity"
             android:screenOrientation="landscape">
 
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
 
         <service
             android:name=".service.synchronization.MergeSimilarStudentsJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity android:name=".content.task.LoadingActivity"></activity>
     </application>
 
 </manifest>

@@ -51,7 +51,7 @@ public class NumberGraphemeActivity extends AppCompatActivity {
 
         graphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 
-        graphemeNextButton = (ImageButton) findViewById(R.id.graphemeNextButton);
+        graphemeNextButton = (ImageButton) findViewById(R.id.loadingNextButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         numberDao = literacyApplication.getDaoSession().getNumberDao();
@@ -64,6 +64,8 @@ public class NumberGraphemeActivity extends AppCompatActivity {
     protected void onStart() {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
+
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.activity_instruction_number_grapheme);
 
         Integer numberExtra = getIntent().getIntExtra("number", -1);
         Log.i(getClass().getName(), "numberExtra: " + numberExtra);

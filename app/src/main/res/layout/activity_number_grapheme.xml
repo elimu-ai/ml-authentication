@@ -15,7 +15,7 @@
         android:layout_centerInParent="true"
         android:src="@drawable/animated_number_2" />
 
-    <ImageButton android:id="@+id/graphemeNextButton"
+    <ImageButton android:id="@+id/loadingNextButton"
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:scaleType="fitXY"
