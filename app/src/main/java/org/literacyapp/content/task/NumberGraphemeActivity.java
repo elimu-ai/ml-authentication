@@ -65,6 +65,8 @@ public class NumberGraphemeActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.activity_instruction_number_grapheme);
+
         Integer numberExtra = getIntent().getIntExtra("number", -1);
         Log.i(getClass().getName(), "numberExtra: " + numberExtra);
 

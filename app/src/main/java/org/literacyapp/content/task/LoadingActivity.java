@@ -33,6 +33,7 @@ public class LoadingActivity extends AppCompatActivity {
                 "loading_fly",
                 "loading_jellyfish",
                 "loading_sky",
+                "loading_space",
                 "loading_spring",
                 "loading_sun"
         };

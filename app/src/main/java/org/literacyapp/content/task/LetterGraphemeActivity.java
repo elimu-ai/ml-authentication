@@ -65,6 +65,8 @@ public class LetterGraphemeActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.activity_instruction_letter_grapheme);
+
         String letterExtra = getIntent().getStringExtra("letter");
         Log.i(getClass().getName(), "letterExtra: " + letterExtra);
 
