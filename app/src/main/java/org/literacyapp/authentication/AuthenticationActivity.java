@@ -223,7 +223,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
-        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
+        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.auth_tablet_placement);
         mediaPlayerInstruction.start();
         tensorFlowLoadingThread.start();
         startTimeFallback = new Date().getTime();

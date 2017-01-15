@@ -81,7 +81,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                     cameraButton.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_registration_take_a_picture);
+                            MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_fallback_registration_button);
                         }
                     }, 1000);
                 }
@@ -102,7 +102,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
             cameraButton.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_registration);
+                    MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_fallback_registration_picture);
                 }
             }, 1000);
 
@@ -162,7 +162,7 @@ public class StudentRegistrationActivity extends AppCompatActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_registration_good_job);
+                            MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_fallback_registration_complete);
 
                             new Handler().postDelayed(new Runnable() {
                                 @Override

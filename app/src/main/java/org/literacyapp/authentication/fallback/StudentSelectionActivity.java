@@ -99,12 +99,12 @@ public class StudentSelectionActivity extends AppCompatActivity {
         fab.postDelayed(new Runnable() {
             @Override
             public void run() {
-                MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_selection_can_you_find_yourself);
+                MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_fallback_selection);
 
                 fab.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        MediaPlayerHelper.play(getApplicationContext(), R.raw.instruction_student_selection_cannot);
+                        MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_fallback_selection_hint);
 
                         fab.postDelayed(new Runnable() {
                             @Override

@@ -223,7 +223,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
-            mediaPlayerInstruction = MediaPlayer.create(this, R.raw.face_instruction);
+            mediaPlayerInstruction = MediaPlayer.create(this, R.raw.auth_tablet_placement);
             mediaPlayerInstruction.start();
         }
         startTimeFallback = new Date().getTime();

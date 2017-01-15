@@ -109,13 +109,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction);
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_tablet_placement);
         Toast.makeText(getApplicationContext(), "Take your tablet and turn your face towards the picture", Toast.LENGTH_LONG).show();
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_press_button);
+                MediaPlayerHelper.play(getApplicationContext(), R.raw.auth_fallback_registration_button);
                 Toast.makeText(getApplicationContext(), "Press the button to take a picture", Toast.LENGTH_LONG).show();
             }
         }, 6000);
@@ -309,19 +309,19 @@ public class StudentImageCollectionActivity extends AppCompatActivity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (imageCounter == 1) {
-                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_4_more);
-                        Toast.makeText(getApplicationContext(), "Take 4 more pictures", Toast.LENGTH_LONG).show();
-                    } else if (imageCounter == 2) {
-                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_3_more);
-                        Toast.makeText(getApplicationContext(), "Take 3 more pictures", Toast.LENGTH_LONG).show();
-                    } else if (imageCounter == 3) {
-                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_2_more);
-                        Toast.makeText(getApplicationContext(), "Take 2 more pictures", Toast.LENGTH_LONG).show();
-                    } else if (imageCounter == 4) {
-                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_1_more);
-                        Toast.makeText(getApplicationContext(), "Take 1 more picture", Toast.LENGTH_LONG).show();
-                    }
+//                    if (imageCounter == 1) {
+//                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_4_more);
+//                        Toast.makeText(getApplicationContext(), "Take 4 more pictures", Toast.LENGTH_LONG).show();
+//                    } else if (imageCounter == 2) {
+//                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_3_more);
+//                        Toast.makeText(getApplicationContext(), "Take 3 more pictures", Toast.LENGTH_LONG).show();
+//                    } else if (imageCounter == 3) {
+//                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_2_more);
+//                        Toast.makeText(getApplicationContext(), "Take 2 more pictures", Toast.LENGTH_LONG).show();
+//                    } else if (imageCounter == 4) {
+//                        MediaPlayerHelper.play(getApplicationContext(), R.raw.face_instruction_1_more);
+//                        Toast.makeText(getApplicationContext(), "Take 1 more picture", Toast.LENGTH_LONG).show();
+//                    }
                 }
             }, 2000);
         } else {
