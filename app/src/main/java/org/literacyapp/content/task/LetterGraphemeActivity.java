@@ -51,7 +51,7 @@ public class LetterGraphemeActivity extends AppCompatActivity {
 
         graphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 
-        graphemeNextButton = (ImageButton) findViewById(R.id.graphemeNextButton);
+        graphemeNextButton = (ImageButton) findViewById(R.id.loadingNextButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();

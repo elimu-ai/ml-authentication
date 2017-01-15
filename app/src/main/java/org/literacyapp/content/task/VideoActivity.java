@@ -1,5 +1,6 @@
 package org.literacyapp.content.task;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -56,9 +57,15 @@ public class VideoActivity extends AppCompatActivity {
             @Override
             public void onCompletion(MediaPlayer mediaPlayer) {
                 Log.i(getClass().getName(), "onCompletion");
-                finish();
 
                 // TODO: track VideoCompletedEvent
+
+                Intent loadingIntent = new Intent(getApplicationContext(), LoadingActivity.class);
+//                String letter = "a"; // TODO: fetch dynamically
+//                loadingIntent.putExtra(LoadingActivity.EXTRA_KEY_LETTER, letter);
+                startActivity(loadingIntent);
+
+                finish();
             }
         });
     }
