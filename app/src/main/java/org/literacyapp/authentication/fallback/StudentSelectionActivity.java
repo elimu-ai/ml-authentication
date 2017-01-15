@@ -84,6 +84,15 @@ public class StudentSelectionActivity extends AppCompatActivity {
             studentSelectionGridLayout.addView(studentView);
         }
 
+        // Prevent a single avatar from stretching across the entire screen.
+        if (students.size() < 3) {
+            View extraView1 = LayoutInflater.from(this).inflate(R.layout.content_student_selection_extra_view, studentSelectionGridLayout, false);
+            studentSelectionGridLayout.addView(extraView1);
+
+            View extraView2 = LayoutInflater.from(this).inflate(R.layout.content_student_selection_extra_view, studentSelectionGridLayout, false);
+            studentSelectionGridLayout.addView(extraView2);
+        }
+
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
