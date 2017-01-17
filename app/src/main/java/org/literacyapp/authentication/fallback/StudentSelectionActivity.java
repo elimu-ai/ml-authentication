@@ -101,6 +101,7 @@ public class StudentSelectionActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getApplicationContext(), StudentRegistrationActivity.class);
                 startActivity(intent);
+
                 finish();
             }
         });
