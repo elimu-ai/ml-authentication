@@ -3,15 +3,10 @@ package org.literacyapp.authentication.helper;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
-import android.text.TextUtils;
 import android.util.Log;
 
-import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
-import org.literacyapp.authentication.fallback.StudentRegistrationActivity;
-import org.literacyapp.authentication.fallback.StudentSelectionActivity;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentDao;
+import org.literacyapp.authentication.fallback.StudentAuthenticationActivity;
 import org.literacyapp.util.RootHelper;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -20,11 +15,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,24 +67,11 @@ public class DetectionHelper {
     }
 
     public static synchronized void startFallbackActivity(Context context, String classNameForLogging){
-        // Initialize DB Session
-        LiteracyApplication literacyApplication = (LiteracyApplication) context;
-        DaoSession daoSession = literacyApplication.getDaoSession();
+        Log.i(DetectionHelper.class.getName(), "startFallbackActivity");
 
-        // Create required DB Objects
-        StudentDao studentDao = daoSession.getStudentDao();
-
-        if (studentDao.count() > 0){
-            Intent studentSelectionIntent = new Intent(context, StudentSelectionActivity.class);
-            studentSelectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-            Log.i(classNameForLogging, "StudentSelectionActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and some Students are already existing.");
-            context.startActivity(studentSelectionIntent);
-        } else {
-            Intent studentRegistrationIntent = new Intent(context, StudentRegistrationActivity.class);
-            studentRegistrationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
-            Log.i(classNameForLogging, "StudentRegistrationActivity will be started, because no faces were found in the last " + MAX_TIME_BEFORE_FALLBACK / 1000 + " seconds and no Students are existing yet.");
-            context.startActivity(studentRegistrationIntent);
-        }
+        Intent intent = new Intent(context, StudentAuthenticationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
     // http://answers.opencv.org/question/24260/how-to-determine-an-image-with-strong-or-weak-illumination-in-opencv/?answer=24342#post-id-24342
