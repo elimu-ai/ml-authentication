@@ -60,7 +60,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private List<Mat> studentImages;
     private AnimalOverlayHelper animalOverlayHelper;
     private AnimalOverlay animalOverlay;
-    private MediaPlayer mediaPlayerInstruction;
+    private MediaPlayer mediaPlayerTabletPlacement;
+    private MediaPlayer mediaPlayerTabletPlacementOverlay;
     private MediaPlayer mediaPlayerAnimalSound;
     private GifImageView authenticationAnimation;
     private boolean authenticationAnimationAlreadyPlayed;
@@ -204,6 +205,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
             if (faceDetected && !isFaceInsideFrame){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+                MultimediaHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
 
             EnvironmentSettings.freeMemory();
@@ -223,9 +225,10 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
-            mediaPlayerInstruction = MediaPlayer.create(this, R.raw.auth_tablet_placement);
-            mediaPlayerInstruction.start();
+            mediaPlayerTabletPlacement = MultimediaHelper.getMediaPlayerTabletPlacement(getApplicationContext());
+            mediaPlayerTabletPlacement.start();
         }
+        mediaPlayerTabletPlacementOverlay = MultimediaHelper.getMediaPlayerTabletPlacementOverlay(getApplicationContext());
         startTimeFallback = new Date().getTime();
         startTimeAuthenticationAnimation = new Date().getTime();
         if (authenticationAnimationAlreadyPlayed){
@@ -290,9 +293,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     protected void onStop() {
         super.onStop();
         if (!authenticationAnimationAlreadyPlayed){
-            mediaPlayerInstruction.stop();
-            mediaPlayerInstruction.release();
+            mediaPlayerTabletPlacement.stop();
+            mediaPlayerTabletPlacement.release();
         }
+        mediaPlayerTabletPlacementOverlay.stop();
+        mediaPlayerTabletPlacementOverlay.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;

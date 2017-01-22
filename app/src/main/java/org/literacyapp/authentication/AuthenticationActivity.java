@@ -50,7 +50,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private StudentImageCollectionEventDao studentImageCollectionEventDao;
     private int numberOfTries;
     private AnimalOverlay animalOverlay;
-    private MediaPlayer mediaPlayerInstruction;
+    private MediaPlayer mediaPlayerTabletPlacement;
+    private MediaPlayer mediaPlayerTabletPlacementOverlay;
     private MediaPlayer mediaPlayerAnimalSound;
     private long startTimeFallback;
     private long startTimeAuthenticationAnimation;
@@ -197,6 +198,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
             if (faceDetected && !isFaceInsideFrame){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
+                MultimediaHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
 
             if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
@@ -223,8 +225,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
             mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
-        mediaPlayerInstruction = MediaPlayer.create(this, R.raw.auth_tablet_placement);
-        mediaPlayerInstruction.start();
+        mediaPlayerTabletPlacement = MultimediaHelper.getMediaPlayerTabletPlacement(getApplicationContext());
+        mediaPlayerTabletPlacement.start();
+        mediaPlayerTabletPlacementOverlay = MultimediaHelper.getMediaPlayerTabletPlacementOverlay(getApplicationContext());
         tensorFlowLoadingThread.start();
         startTimeFallback = new Date().getTime();
         startTimeAuthenticationAnimation = new Date().getTime();
@@ -280,8 +283,10 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     protected void onStop() {
         super.onStop();
-        mediaPlayerInstruction.stop();
-        mediaPlayerInstruction.release();
+        mediaPlayerTabletPlacement.stop();
+        mediaPlayerTabletPlacement.release();
+        mediaPlayerTabletPlacementOverlay.stop();
+        mediaPlayerTabletPlacementOverlay.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
