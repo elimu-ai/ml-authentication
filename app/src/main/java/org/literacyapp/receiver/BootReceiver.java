@@ -73,11 +73,13 @@ public class BootReceiver extends BroadcastReceiver {
         JobInfo.Builder builderMergeSimilarStudents = new JobInfo.Builder(LiteracyApplication.MERGE_SIMILAR_STUDENTS_JOB_ID, componentNameMergeSimilarStudents);
         boolean requiresCharging = true;
         builderMergeSimilarStudents.setRequiresCharging(requiresCharging);
+        boolean requiresDeviceIdle = true;
+        builderMergeSimilarStudents.setRequiresDeviceIdle(requiresDeviceIdle);
         int mergeSimilarStudentsPeriodic = HOURS_BETWEEN_MERGING_SIMILAR_STUDENTS * 60 * 60 * 1000;
         builderMergeSimilarStudents.setPeriodic(mergeSimilarStudentsPeriodic);
         JobInfo mergeSimilarStudentsJobInfo = builderMergeSimilarStudents.build();
         JobScheduler jobSchedulerMergeSimilarStudents = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobSchedulerMergeSimilarStudents.schedule(mergeSimilarStudentsJobInfo);
-        Log.i(context.getClass().getName(), "MERGE_SIMILAR_STUDENTS_JOB with ID " + LiteracyApplication.MERGE_SIMILAR_STUDENTS_JOB_ID + " has been scheduled with periodic time = " + mergeSimilarStudentsPeriodic + " requiresCharging = " + requiresCharging);
+        Log.i(context.getClass().getName(), "MERGE_SIMILAR_STUDENTS_JOB with ID " + LiteracyApplication.MERGE_SIMILAR_STUDENTS_JOB_ID + " has been scheduled with periodic time = " + mergeSimilarStudentsPeriodic + " requiresCharging = " + requiresCharging + " requiresDeviceIdle = " + requiresDeviceIdle);
     }
 }
