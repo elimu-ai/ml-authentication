@@ -1,9 +1,11 @@
 package org.literacyapp.util;
 
 import android.content.Context;
+import android.media.MediaPlayer;
 import android.os.Environment;
 import android.widget.ImageView;
 
+import org.literacyapp.R;
 import org.literacyapp.dao.converter.StringSetConverter;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.model.content.multimedia.Image;
@@ -129,6 +131,26 @@ public class MultimediaHelper {
             default:
                 animationImageView.setImageResource(context.getResources().getIdentifier(AUTHENTICATION_INSTRUCTION_BOY, RESOURCES_DRAWABLE_FOLDER, context.getPackageName()));
                 break;
+        }
+    }
+
+    public static MediaPlayer getMediaPlayerTabletPlacement(Context context){
+        return MediaPlayer.create(context, R.raw.auth_tablet_placement);
+    }
+
+    public static MediaPlayer getMediaPlayerTabletPlacementOverlay(Context context){
+        return MediaPlayer.create(context, R.raw.auth_tablet_placement_overlay);
+    }
+
+    public static synchronized void playTabletPlacementOverlay(MediaPlayer mediaPlayerTabletPlacement, MediaPlayer mediaPlayerTabletPlacementOverlay, MediaPlayer mediaPlayerAnimalSound){
+        if (mediaPlayerTabletPlacement != null){
+            if ((!mediaPlayerTabletPlacement.isPlaying()) && (!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
+                mediaPlayerTabletPlacementOverlay.start();
+            }
+        } else {
+            if ((!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
+                mediaPlayerTabletPlacementOverlay.start();
+            }
         }
     }
 }
