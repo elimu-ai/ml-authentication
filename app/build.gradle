@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1004000
-        versionName "1.4.0-SNAPSHOT"
+        versionName "1.4.0"
 
 //        jackOptions {
 //            enabled true
