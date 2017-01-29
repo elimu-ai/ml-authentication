@@ -16,20 +16,14 @@ import android.widget.ImageView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.AudioDao;
-import org.literacyapp.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.dao.NumberDao;
-import org.literacyapp.dao.VideoDao;
 import org.literacyapp.model.content.Number;
 import org.literacyapp.model.content.multimedia.Audio;
-import org.literacyapp.model.content.multimedia.JoinVideosWithNumbers;
-import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NumberGraphemeActivity extends AppCompatActivity {
 
@@ -39,8 +33,6 @@ public class NumberGraphemeActivity extends AppCompatActivity {
 
     private NumberDao numberDao;
     private AudioDao audioDao;
-    private VideoDao videoDao;
-    private JoinVideosWithNumbersDao joinVideosWithNumbersDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +48,6 @@ public class NumberGraphemeActivity extends AppCompatActivity {
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         numberDao = literacyApplication.getDaoSession().getNumberDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
-        videoDao = literacyApplication.getDaoSession().getVideoDao();
-        joinVideosWithNumbersDao = literacyApplication.getDaoSession().getJoinVideosWithNumbersDao();
     }
 
     @Override
@@ -93,28 +83,9 @@ public class NumberGraphemeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                // Look up video(s) containing number
-                List<Video> videosContainingNumber = new ArrayList<Video>();
-                List<JoinVideosWithNumbers> joinVideosWithNumbersList = joinVideosWithNumbersDao.queryBuilder()
-                        .where(JoinVideosWithNumbersDao.Properties.NumberId.eq(number.getId()))
-                        .list();
-                Log.d(getClass().getName(), "joinVideosWithNumbersList.size(): " + joinVideosWithNumbersList.size());
-                if (!joinVideosWithNumbersList.isEmpty()) {
-                    for (JoinVideosWithNumbers joinVideosWithNumbers : joinVideosWithNumbersList) {
-                        Video video = videoDao.load(joinVideosWithNumbers.getVideoId());
-                        Log.d(getClass().getName(), "Adding video with id " + video.getId());
-                        videosContainingNumber.add(video);
-                    }
-                }
-                Log.d(getClass().getName(), "videosContainingNumber.size(): " + videosContainingNumber.size());
-                if (!videosContainingNumber.isEmpty()) {
-                    // Redirect to video(s)
-                    Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
-                    int randomIndex = (int) (Math.random() * videosContainingNumber.size());
-                    Video video = videosContainingNumber.get(randomIndex); // TODO: iterate all videos
-                    intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(getApplicationContext(), SelectNumberActivity.class);
+                intent.putExtra("number", number.getValue());
+                startActivity(intent);
 
                 finish();
             }

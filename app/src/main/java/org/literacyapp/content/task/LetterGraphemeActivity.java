@@ -16,9 +16,7 @@ import android.widget.ImageView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.dao.AudioDao;
-import org.literacyapp.dao.JoinVideosWithLettersDao;
 import org.literacyapp.dao.LetterDao;
-import org.literacyapp.dao.VideoDao;
 import org.literacyapp.model.content.Letter;
 import org.literacyapp.model.content.multimedia.Audio;
 import org.literacyapp.util.MediaPlayerHelper;
@@ -35,8 +33,6 @@ public class LetterGraphemeActivity extends AppCompatActivity {
 
     private LetterDao letterDao;
     private AudioDao audioDao;
-    private VideoDao videoDao;
-    private JoinVideosWithLettersDao joinVideosWithLettersDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +48,6 @@ public class LetterGraphemeActivity extends AppCompatActivity {
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
-        videoDao = literacyApplication.getDaoSession().getVideoDao();
-        joinVideosWithLettersDao = literacyApplication.getDaoSession().getJoinVideosWithLettersDao();
     }
 
     @Override
@@ -88,29 +82,6 @@ public class LetterGraphemeActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
-
-//                // Look up video(s) containing letter
-//                List<Video> videosContainingLetter = new ArrayList<Video>();
-//                List<JoinVideosWithLetters> joinVideosWithLettersList = joinVideosWithLettersDao.queryBuilder()
-//                        .where(JoinVideosWithLettersDao.Properties.LetterId.eq(letter.getId()))
-//                        .list();
-//                Log.d(getClass().getName(), "joinVideosWithLettersList.size(): " + joinVideosWithLettersList.size());
-//                if (!joinVideosWithLettersList.isEmpty()) {
-//                    for (JoinVideosWithLetters joinVideosWithLetters : joinVideosWithLettersList) {
-//                        Video video = videoDao.load(joinVideosWithLetters.getVideoId());
-//                        Log.d(getClass().getName(), "Adding video with id " + video.getId());
-//                        videosContainingLetter.add(video);
-//                    }
-//                }
-//                Log.d(getClass().getName(), "videosContainingLetter.size(): " + videosContainingLetter.size());
-//                if (!videosContainingLetter.isEmpty()) {
-//                    // Redirect to video(s)
-//                    Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
-//                    int randomIndex = (int) (Math.random() * videosContainingLetter.size());
-//                    Video video = videosContainingLetter.get(randomIndex); // TODO: iterate all videos
-//                    intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
-//                    startActivity(intent);
-//                }
 
                 Intent intent = new Intent(getApplicationContext(), SelectLetterActivity.class);
                 intent.putExtra("letter", letter.getText());
