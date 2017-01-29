@@ -23,5 +23,5 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_arrow_forward_black_24dp"
         style="?android:attr/buttonBarButtonStyle"
-        android:tint="@color/blue" />
+        android:tint="@color/colorAccent" />
 </RelativeLayout>

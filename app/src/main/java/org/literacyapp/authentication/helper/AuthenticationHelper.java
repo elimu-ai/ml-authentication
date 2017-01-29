@@ -22,10 +22,13 @@ import java.util.List;
  */
 
 public class AuthenticationHelper {
+
     private static final double[] countSteps = { 0, 5, 10, 15, 20, 25, 30, 35, 40, 45 };
     private static final double[] exponentialDelayStepsInMinutes = { 30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360 };
 
-    public static synchronized void updateCurrentStudent(Student student, Context context, boolean isFallback){
+    public static synchronized void updateCurrentStudent(Student student, Context context, boolean isFallback) {
+        Log.i(context.getClass().getName(), "updateCurrentStudent");
+
         LiteracyApplication literacyApplication = (LiteracyApplication) context;
         DaoSession daoSession = literacyApplication.getDaoSession();
         AuthenticationEventDao authenticationEventDao = daoSession.getAuthenticationEventDao();
@@ -46,6 +49,8 @@ public class AuthenticationHelper {
     }
 
     private static void addExponentialDelayIfSameStudent(Context context, AuthenticationEventDao authenticationEventDao, Student newStudent){
+        Log.i(context.getClass().getName(), "addExponentialDelayIfSameStudent");
+
         List<AuthenticationEvent> authenticationEvents = authenticationEventDao.queryBuilder().orderDesc(AuthenticationEventDao.Properties.Time).list();
         if (authenticationEvents.size() > 0){
             int countOfRecurrentLogins = 0;
