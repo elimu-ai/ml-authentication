@@ -142,7 +142,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
 
-        DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+        //   Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
+        //   M.Schälchli 20170129
+        //   DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
 
         long currentTime = new Date().getTime();
 
