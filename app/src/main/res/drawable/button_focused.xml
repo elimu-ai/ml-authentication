@@ -3,10 +3,10 @@
     android:shape="oval">
 
     <corners android:radius="1000dp" />
-    <solid android:color="@color/colorPrimary" />
+    <solid android:color="@color/colorAccent" />
     <stroke
         android:width="4dip"
-        android:color="@color/colorPrimaryDark" />
+        android:color="@color/colorAccentDark" />
     <padding
         android:bottom="4dp"
         android:left="4dp"
