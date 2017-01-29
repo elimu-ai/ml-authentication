@@ -258,6 +258,9 @@ public class SelectLetterActivity extends AppCompatActivity {
                     Video video = videosContainingLetter.get(randomIndex); // TODO: iterate all videos
                     intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
                     startActivity(intent);
+                } else {
+                    Intent loadingIntent = new Intent(getApplicationContext(), LoadingActivity.class);
+                    startActivity(loadingIntent);
                 }
 
                 finish();

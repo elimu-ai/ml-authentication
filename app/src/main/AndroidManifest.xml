@@ -59,6 +59,9 @@
             android:name=".content.task.SelectLetterActivity"
             android:screenOrientation="fullSensor" />
         <activity
+            android:name=".content.task.SelectNumberActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
             android:name=".content.task.StarActivity"
             android:screenOrientation="fullSensor" />
         <activity android:name=".content.task.LessonCompleteActivity" />
