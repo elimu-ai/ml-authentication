@@ -7,6 +7,7 @@ import java.util.Map;
  */
 
 public class AnimalOverlaysMap {
+
     private Map<String, AnimalOverlay> animalOverlays;
 
     public Map<String, AnimalOverlay> getAnimalOverlays() {

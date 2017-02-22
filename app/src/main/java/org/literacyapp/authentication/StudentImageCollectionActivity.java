@@ -13,12 +13,12 @@ import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.model.Device;
-import org.literacyapp.model.StudentImage;
-import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.dao.StudentImageDao;
+import org.literacyapp.contentprovider.model.Device;
+import org.literacyapp.contentprovider.model.StudentImage;
+import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
@@ -48,6 +48,7 @@ import pl.droidsonroids.gif.GifImageView;
  */
 
 public class StudentImageCollectionActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+
     private JavaCameraView preview;
     private PreProcessorFactory ppF;
     private long lastTime;

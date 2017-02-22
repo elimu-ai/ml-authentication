@@ -7,11 +7,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.dao.StudentDao;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
@@ -28,6 +28,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
  */
 
 public class MergeThread extends Thread {
+
     private PreProcessorFactory ppF;
     private TrainingThread trainingThread;
     private StudentDao studentDao;

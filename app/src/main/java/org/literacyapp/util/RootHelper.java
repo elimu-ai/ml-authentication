@@ -9,10 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * Created by sladomic on 13.01.17.
- */
-
 public class RootHelper {
     public static String runAsRoot(String[] commands) throws IOException, InterruptedException {
         Log.i(RootHelper.class.getName(), "runAsRoot");

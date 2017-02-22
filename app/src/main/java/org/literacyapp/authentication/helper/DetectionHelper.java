@@ -26,6 +26,7 @@ import ch.zhaw.facerecognitionlibrary.Helpers.MatOperation;
  */
 
 public class DetectionHelper {
+
     private static final Scalar RED_COLOR = new Scalar(255, 0, 0, 255);
     private static final int MAX_TIME_BEFORE_FALLBACK = 15000;
     private static final int SCREEN_BRIGHTNESS_INCREASE_RATE = 20;

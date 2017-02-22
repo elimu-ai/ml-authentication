@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 23
@@ -7,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1004003
-        versionName "1.4.3"
+        versionCode 1005002
+        versionName "1.5.2"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -21,6 +22,22 @@ android {
     }
 }
 
+greendao {
+    schemaVersion android.defaultConfig.versionCode
+    daoPackage 'org.literacyapp.contentprovider.dao'
+    targetGenDir '../contentprovider/src/main/java'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+    }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -29,5 +46,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
 
+    compile 'org.literacyapp:literacyapp-model:1.1.33'
+    compile 'org.greenrobot:greendao:3.2.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
 }

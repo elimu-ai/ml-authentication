@@ -8,11 +8,11 @@ import android.view.Display;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.authentication.AuthenticationActivity;
-import org.literacyapp.dao.AuthenticationEventDao;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.model.analytics.AuthenticationEvent;
-import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.contentprovider.dao.AuthenticationEventDao;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.model.analytics.AuthenticationEvent;
+import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
 
@@ -24,6 +24,7 @@ import java.util.List;
  */
 
 public class AuthenticationThread extends Thread {
+
     private Context context;
     private AuthenticationJobService authenticationJobService;
 

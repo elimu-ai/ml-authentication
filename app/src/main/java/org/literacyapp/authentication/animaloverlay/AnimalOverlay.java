@@ -1,12 +1,11 @@
 package org.literacyapp.authentication.animaloverlay;
 
-import java.io.File;
-
 /**
  * Created by sladomic on 27.12.16.
  */
 
 public class AnimalOverlay {
+
     private String name;
     private int frameStartX;
     private int frameStartY;

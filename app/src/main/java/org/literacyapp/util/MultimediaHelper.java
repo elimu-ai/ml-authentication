@@ -6,22 +6,20 @@ import android.os.Environment;
 import android.widget.ImageView;
 
 import org.literacyapp.R;
-import org.literacyapp.dao.converter.StringSetConverter;
-import org.literacyapp.model.content.multimedia.Audio;
-import org.literacyapp.model.content.multimedia.Image;
-import org.literacyapp.model.content.multimedia.Video;
+import org.literacyapp.contentprovider.model.content.multimedia.Audio;
+import org.literacyapp.contentprovider.model.content.multimedia.Image;
+import org.literacyapp.contentprovider.model.content.multimedia.Video;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import pl.droidsonroids.gif.GifImageView;
-
 /**
  * Helper class for determining folder paths of multimedia content.
  */
 public class MultimediaHelper {
+
     private static final String AUTHENTICATION_INSTRUCTION_BOY = "authentication_instruction_640";
     private static final String AUTHENTICATION_INSTRUCTION_GIRL = "authentication_instruction_girl_640";
     public static final String RESOURCES_DRAWABLE_FOLDER = "drawable";

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import org.literacyapp.dao.StudentDao;
+import org.literacyapp.contentprovider.dao.StudentDao;
 
 import java.io.File;
 

@@ -5,12 +5,9 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.greenrobot.greendao.query.WhereCondition;
-import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImage;
-import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.utils.Converters;
@@ -25,6 +22,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
  */
 
 public class RecognitionThread extends Thread {
+
     private static final double SIMILARITY_THRESHOLD = 0.5;
     private TensorFlow tensorFlow;
     private StudentImageCollectionEventDao studentImageCollectionEventDao;

@@ -15,6 +15,7 @@ import org.literacyapp.service.synchronization.AuthenticationJobService;
 import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
 
 public class BootReceiver extends BroadcastReceiver {
+
     public static final int MINUTES_BETWEEN_AUTHENTICATIONS = 30;
     private static final int MINUTES_BETWEEN_FACE_RECOGNITION_TRAININGS = 15;
     private static final int HOURS_BETWEEN_MERGING_SIMILAR_STUDENTS = 24;

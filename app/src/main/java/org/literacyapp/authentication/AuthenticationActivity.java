@@ -17,10 +17,10 @@ import org.literacyapp.authentication.helper.AuthenticationHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.authentication.thread.RecognitionThread;
 import org.literacyapp.authentication.thread.TrainingThread;
-import org.literacyapp.dao.AuthenticationEventDao;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.model.Student;
+import org.literacyapp.contentprovider.dao.AuthenticationEventDao;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.CameraBridgeViewBase;
@@ -39,6 +39,7 @@ import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 import pl.droidsonroids.gif.GifImageView;
 
 public class AuthenticationActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2 {
+
     public static final long AUTHENTICATION_ANIMATION_TIME = 5000;
     public static final String AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER = "AuthenticationAnimationAlreadyPlayed";
     public static final String ANIMAL_OVERLAY_IDENTIFIER = "AnimalOverlayName";
