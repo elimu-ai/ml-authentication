@@ -3,22 +3,20 @@ package org.literacyapp.authentication.thread;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.greenrobot.greendao.query.Join;
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageCollectionEventDao;
-import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.dao.StudentImageFeatureDao;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.StudentImage;
-import org.literacyapp.model.StudentImageFeature;
-import org.literacyapp.model.analytics.StudentImageCollectionEvent;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.dao.StudentDao;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.dao.StudentImageDao;
+import org.literacyapp.contentprovider.dao.StudentImageFeatureDao;
+import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.StudentImage;
+import org.literacyapp.contentprovider.model.StudentImageFeature;
+import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.AiHelper;
 import org.literacyapp.util.MultimediaHelper;
@@ -26,7 +24,6 @@ import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.utils.Converters;
 
@@ -42,14 +39,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import ch.zhaw.facerecognitionlibrary.PreProcessor.PreProcessorFactory;
 import ch.zhaw.facerecognitionlibrary.Recognition.TensorFlow;
 
-/**
- * Created by sladomic on 26.11.16.
- */
-
 public class TrainingThread extends Thread {
+
     private static final String MODEL_DOWNLOAD_LINK = "https://drive.google.com/open?id=0B3jQsJcchixPek9lU3BaOHpCUGc";
     private Context context;
     private DaoSession daoSession;

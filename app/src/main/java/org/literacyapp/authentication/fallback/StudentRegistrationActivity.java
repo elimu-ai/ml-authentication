@@ -21,9 +21,9 @@ import com.skyfishjy.library.RippleBackground;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.model.Student;
+import org.literacyapp.contentprovider.dao.StudentDao;
+import org.literacyapp.contentprovider.dao.StudentImageDao;
+import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.receiver.ScreenOnReceiver;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.StudentHelper;

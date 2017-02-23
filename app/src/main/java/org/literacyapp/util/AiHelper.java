@@ -4,10 +4,6 @@ import android.os.Environment;
 
 import java.io.File;
 
-/**
- * Created by sladomic on 26.11.16.
- */
-
 public class AiHelper {
 
     public static File getAiDirectory() {

@@ -8,21 +8,15 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.literacyapp.authentication.helper.DetectionHelper;
-import org.literacyapp.dao.LetterDao;
+import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.RootHelper;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
-        letterDao = literacyApplication.getDaoSession().getLetterDao();
     }
 
     @Override
@@ -65,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException | InterruptedException e) {
             Log.e(getClass().getName(), null, e);
         }
+
+        LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
+        letterDao = literacyApplication.getDaoSession().getLetterDao();
+
+//        ContentProvider.initializeDb(this);
+//        List<Letter> letters = ContentProvider.getAvailableLetters();
+//        Log.i(getClass().getName(), "letters: " + letters);
 
         if (letterDao.loadAll().isEmpty()) {
             // Download content

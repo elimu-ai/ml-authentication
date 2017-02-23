@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.content.Letter;
+import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.logic.CurriculumHelper;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.content.Letter;
-import org.literacyapp.model.content.Number;
 import org.literacyapp.model.enums.content.LiteracySkill;
 import org.literacyapp.model.enums.content.NumeracySkill;
 

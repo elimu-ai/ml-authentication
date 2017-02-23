@@ -4,11 +4,11 @@ import android.content.Context;
 import android.util.Log;
 
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.dao.LetterDao;
-import org.literacyapp.dao.NumberDao;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.content.Letter;
-import org.literacyapp.model.content.Number;
+import org.literacyapp.contentprovider.dao.LetterDao;
+import org.literacyapp.contentprovider.dao.NumberDao;
+import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.content.Letter;
+import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.model.enums.content.LiteracySkill;
 import org.literacyapp.model.enums.content.NumeracySkill;
 

@@ -6,9 +6,9 @@ import android.provider.Settings;
 import android.util.Log;
 
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.DeviceDao;
-import org.literacyapp.model.Device;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.dao.DeviceDao;
+import org.literacyapp.contentprovider.model.Device;
 import org.literacyapp.model.enums.Locale;
 
 import java.io.UnsupportedEncodingException;

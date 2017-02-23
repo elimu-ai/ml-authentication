@@ -5,11 +5,11 @@ import android.util.Log;
 
 import org.apache.commons.math3.analysis.function.StepFunction;
 import org.literacyapp.LiteracyApplication;
-import org.literacyapp.dao.AuthenticationEventDao;
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.model.Device;
-import org.literacyapp.model.Student;
-import org.literacyapp.model.analytics.AuthenticationEvent;
+import org.literacyapp.contentprovider.dao.AuthenticationEventDao;
+import org.literacyapp.contentprovider.dao.DaoSession;
+import org.literacyapp.contentprovider.model.Device;
+import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.analytics.AuthenticationEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.StudentUpdateHelper;

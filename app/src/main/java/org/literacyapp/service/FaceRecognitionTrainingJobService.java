@@ -6,11 +6,8 @@ import android.util.Log;
 
 import org.literacyapp.authentication.thread.TrainingThread;
 
-/**
- * Created by sladomic on 26.11.16.
- */
-
 public class FaceRecognitionTrainingJobService extends JobService {
+
     private TrainingThread trainingThread;
     private JobParameters jobParameters;
 

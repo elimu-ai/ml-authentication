@@ -18,6 +18,7 @@ import java.util.Set;
  */
 
 public class AnimalOverlayHelper {
+
     private static final String ANIMAL_OVERLAYS_CONFIG_JSON = "AnimalOverlaysConfig.json";
     private Context context;
 

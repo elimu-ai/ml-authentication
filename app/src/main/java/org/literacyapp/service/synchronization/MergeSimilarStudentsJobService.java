@@ -7,6 +7,7 @@ import android.util.Log;
 import org.literacyapp.authentication.thread.MergeThread;
 
 public class MergeSimilarStudentsJobService extends JobService {
+
     private MergeThread mergeThread;
     private JobParameters jobParameters;
 

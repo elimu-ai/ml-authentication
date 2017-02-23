@@ -7,9 +7,9 @@ import android.util.Log;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.dao.StudentDao;
-import org.literacyapp.dao.StudentImageDao;
-import org.literacyapp.model.Student;
+import org.literacyapp.contentprovider.dao.StudentDao;
+import org.literacyapp.contentprovider.dao.StudentImageDao;
+import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.util.StudentHelper;
 
 import java.io.File;

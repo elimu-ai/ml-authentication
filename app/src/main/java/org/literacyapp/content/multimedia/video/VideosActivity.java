@@ -15,11 +15,11 @@ import android.widget.ImageView;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.content.task.VideoActivity;
-import org.literacyapp.dao.VideoDao;
+import org.literacyapp.contentprovider.dao.VideoDao;
+import org.literacyapp.contentprovider.model.content.Letter;
+import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.logic.CurriculumHelper;
-import org.literacyapp.model.content.Letter;
-import org.literacyapp.model.content.Number;
-import org.literacyapp.model.content.multimedia.Video;
 import org.literacyapp.util.MultimediaHelper;
 
 import java.io.File;

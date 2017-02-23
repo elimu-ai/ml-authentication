@@ -3,15 +3,17 @@ package org.literacyapp;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import org.literacyapp.dao.DaoSession;
-import org.literacyapp.dao.CustomDaoMaster;
+import org.literacyapp.contentprovider.dao.CustomDaoMaster;
+import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.util.VersionHelper;
 
 public class LiteracyApplication extends Application {
+
     public static final int FACE_RECOGNITION_TRAINING_JOB_ID = 0;
     public static final int CONTENT_SYNCRHONIZATION_JOB_ID = 1;
     public static final int AUTHENTICATION_JOB_ID = 2;
@@ -27,12 +29,6 @@ public class LiteracyApplication extends Application {
     public void onCreate() {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate();
-
-        // Initialize greenDAO database
-        CustomDaoMaster.DevOpenHelper openHelper = new CustomDaoMaster.DevOpenHelper(getApplicationContext(), "literacyapp-db", null);
-        SQLiteDatabase db = openHelper.getWritableDatabase();
-        CustomDaoMaster daoMaster = new CustomDaoMaster(db);
-        daoSession = daoMaster.newSession();
 
         // Check if the application's versionCode was upgraded
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -61,9 +57,17 @@ public class LiteracyApplication extends Application {
     }
 
     public DaoSession getDaoSession() {
+        if (daoSession == null) {
+            // Initialize greenDAO database
+            String dbName = Environment.getExternalStorageDirectory() + "/.literacyapp/database/literacyapp-db";
+            CustomDaoMaster.DevOpenHelper openHelper = new CustomDaoMaster.DevOpenHelper(getApplicationContext(), dbName, null);
+            SQLiteDatabase db = openHelper.getWritableDatabase();
+            CustomDaoMaster daoMaster = new CustomDaoMaster(db);
+            daoSession = daoMaster.newSession();
+        }
+
         return daoSession;
     }
-
 
     public TextToSpeech getTts() {
         return tts;
