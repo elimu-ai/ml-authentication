@@ -9,7 +9,7 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1005004
+        versionCode 1005004 // Must match contentprovider.greendao.schemaVersion in contentprovider/build.gradle
         versionName "1.5.4"
 
 //        jackOptions {
