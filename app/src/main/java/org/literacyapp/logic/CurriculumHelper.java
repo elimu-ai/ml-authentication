@@ -38,7 +38,7 @@ public class CurriculumHelper {
      * default list.
      */
     public List<Letter> getAvailableLetters(Student student) {
-        Log.i(getClass().getName(), "getAvailableLetters");
+        Log.i(getClass().getName(), "getUnlockedLetters");
 
         List<Letter> letters = new ArrayList<>();
 
@@ -72,7 +72,7 @@ public class CurriculumHelper {
      * default list.
      */
     public List<Number> getAvailableNumbers(Student student) {
-        Log.i(getClass().getName(), "getAvailableNumbers");
+        Log.i(getClass().getName(), "getUnlockedNumbers");
 
         List<Number> numbers = new ArrayList<>();
 
