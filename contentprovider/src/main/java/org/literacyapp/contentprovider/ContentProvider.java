@@ -6,7 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.literacyapp.contentprovider.dao.AudioDao;
-import org.literacyapp.contentprovider.dao.CustomDaoMaster;
+import org.literacyapp.contentprovider.dao.DaoMaster;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.ImageDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
@@ -29,9 +29,9 @@ import java.util.List;
  */
 public class ContentProvider {
 
-    public static final int INITIAL_LETTER_COUNT = 3;
+    private static final int INITIAL_LETTER_COUNT = 3;
 
-    public static final int INITIAL_NUMBER_COUNT = 3;
+    private static final int INITIAL_NUMBER_COUNT = 3;
 
     private static DaoSession daoSession;
 
@@ -40,16 +40,16 @@ public class ContentProvider {
 
         // Initialize greenDAO database
         String dbName = Environment.getExternalStorageDirectory() + "/.literacyapp/database/literacyapp-db";
-        CustomDaoMaster.DevOpenHelper openHelper = new CustomDaoMaster.DevOpenHelper(context, dbName, null);
+        DaoMaster.DevOpenHelper openHelper = new DaoMaster.DevOpenHelper(context, dbName);
         SQLiteDatabase db = openHelper.getReadableDatabase(); // read-only
-        CustomDaoMaster daoMaster = new CustomDaoMaster(db);
+        DaoMaster daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
 
         return daoSession;
     }
 
-    public static List<Letter> getAvailableLetters() {
-        Log.i(ContentProvider.class.getName(), "getAvailableLetters");
+    public static List<Letter> getUnlockedLetters() {
+        Log.i(ContentProvider.class.getName(), "getUnlockedLetters");
 
         // TODO: get current Student
         Student student = null;
@@ -85,8 +85,18 @@ public class ContentProvider {
         return letters;
     }
 
-    public static List<Number> getAvailableNumbers() {
-        Log.i(ContentProvider.class.getName(), "getAvailableNumbers");
+    public static List<Letter> getAllLetters() {
+        Log.i(ContentProvider.class.getName(), "getAllLetters");
+
+        LetterDao letterDao = daoSession.getLetterDao();
+
+        List<Letter> letters = letterDao.loadAll();
+
+        return letters;
+    }
+
+    public static List<Number> getUnlockedNumbers() {
+        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
 
         // TODO: get current Student
         Student student = null;
@@ -123,7 +133,7 @@ public class ContentProvider {
     }
 
     public static List<Number> getAllNumbers() {
-        Log.i(ContentProvider.class.getName(), "getAvailableNumbers");
+        Log.i(ContentProvider.class.getName(), "getAllNumbers");
 
         NumberDao numberDao = daoSession.getNumberDao();
 
@@ -132,18 +142,18 @@ public class ContentProvider {
         return numbers;
     }
 
-    public static List<Letter> getAllLetters() {
-        Log.i(ContentProvider.class.getName(), "getAvailableLetters");
-
-        LetterDao letterDao = daoSession.getLetterDao();
-
-        List<Letter> letters = letterDao.loadAll();
-
-        return letters;
-    }
+//    public static List<Word> getUnlockedWords() {
+//        Log.i(ContentProvider.class.getName(), "getUnlockedWords");
+//
+//        WordDao wordDao = daoSession.getWordDao();
+//
+//        // TODO
+//
+//        return words;
+//    }
 
     public static List<Word> getAllWords() {
-        Log.i(ContentProvider.class.getName(), "getAvailableWords");
+        Log.i(ContentProvider.class.getName(), "getAllWords");
 
         WordDao wordDao = daoSession.getWordDao();
 
@@ -152,20 +162,12 @@ public class ContentProvider {
         return words;
     }
 
-    public static List<Word> getAllWordsOrderedByFrequency() {
-        Log.i(ContentProvider.class.getName(), "getAvailableWords");
-
-        WordDao wordDao = daoSession.getWordDao();
-
-        List<Word> words = wordDao.loadAll();
-
-        return words;
-    }
+    // TODO: getUnlockedStoryBooks()
 
     // TODO: getAllStoryBooks()
 
     public static List<Audio> getAllAudios() {
-        Log.i(ContentProvider.class.getName(), "getAvailableNumbers");
+        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
 
         AudioDao audioDao = daoSession.getAudioDao();
 
@@ -175,7 +177,7 @@ public class ContentProvider {
     }
     
     public static List<Image> getAllImages() {
-        Log.i(ContentProvider.class.getName(), "getAvailableNumbers");
+        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
 
         ImageDao imageDao = daoSession.getImageDao();
         
@@ -184,12 +186,20 @@ public class ContentProvider {
         return images;
     }
 
-//    public static List<Image> getImages(Word word) {
-//        // TODO
-//    }
+    public static Image getImage(String title) {
+        Log.i(ContentProvider.class.getName(), "getImage");
+
+        ImageDao imageDao = daoSession.getImageDao();
+
+        Image image = imageDao.queryBuilder()
+                .where(ImageDao.Properties.Title.eq(title))
+                .unique();
+
+        return image;
+    }
 
     public static List<Video> getAllVideos() {
-        Log.i(ContentProvider.class.getName(), "getAvailableNumbers");
+        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
 
         VideoDao videoDao = daoSession.getVideoDao();
 
