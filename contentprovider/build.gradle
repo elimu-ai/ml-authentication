@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1005004
-        versionName "1.5.4"
+        versionCode 1000000
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,7 +27,7 @@ android {
 }
 
 greendao {
-    schemaVersion android.defaultConfig.versionCode
+    schemaVersion 1005004 // Must match android.defaultConfig.versionCode in app/build.gradle
     daoPackage 'org.literacyapp.contentprovider.dao'
     targetGenDir '../contentprovider/src/main/java'
 }
