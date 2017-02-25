@@ -175,6 +175,18 @@ public class ContentProvider {
 
         return audios;
     }
+
+    public static Audio getAudio(String title) {
+        Log.i(ContentProvider.class.getName(), "getAudio");
+
+        AudioDao audioDao = daoSession.getAudioDao();
+
+        Audio audio = audioDao.queryBuilder()
+                .where(AudioDao.Properties.Transcription.eq(title))
+                .unique();
+
+        return audio;
+    }
     
     public static List<Image> getAllImages() {
         Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
