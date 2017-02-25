@@ -11,15 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.literacyapp.contentprovider.ContentProvider;
 import org.literacyapp.contentprovider.dao.LetterDao;
-import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
 import org.literacyapp.util.RootHelper;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
 
-        ContentProvider.initializeDb(this);
-        List<Letter> letters = ContentProvider.getUnlockedLetters();
-        Log.i(getClass().getName(), "letters: " + letters);
+//        ContentProvider.initializeDb(this);
+//        List<Letter> letters = ContentProvider.getUnlockedLetters();
+//        Log.i(getClass().getName(), "letters: " + letters);
 
         if (letterDao.loadAll().isEmpty()) {
             // Download content
