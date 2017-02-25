@@ -90,7 +90,22 @@ public class ContentProvider {
 
         LetterDao letterDao = daoSession.getLetterDao();
 
-        List<Letter> letters = letterDao.loadAll();
+        List<Letter> letters = letterDao.queryBuilder()
+                .orderAsc(LetterDao.Properties.Text)
+                .list();
+
+        return letters;
+    }
+
+    public static List<Letter> getAllLettersOrderedByFrequency() {
+        Log.i(ContentProvider.class.getName(), "getAllLettersOrderedByFrequency");
+
+        LetterDao letterDao = daoSession.getLetterDao();
+
+        List<Letter> letters = letterDao.queryBuilder()
+                .orderDesc(LetterDao.Properties.UsageCount)
+                .orderAsc(LetterDao.Properties.Text)
+                .list();
 
         return letters;
     }
@@ -157,7 +172,22 @@ public class ContentProvider {
 
         WordDao wordDao = daoSession.getWordDao();
 
-        List<Word> words = wordDao.loadAll();
+        List<Word> words = wordDao.queryBuilder()
+                .orderAsc(WordDao.Properties.Text)
+                .list();
+
+        return words;
+    }
+
+    public static List<Word> getAllWordsOrderedByFrequency() {
+        Log.i(ContentProvider.class.getName(), "getAllWordsOrderedByFrequency");
+
+        WordDao wordDao = daoSession.getWordDao();
+
+        List<Word> words = wordDao.queryBuilder()
+                .orderDesc(WordDao.Properties.UsageCount)
+                .orderAsc(WordDao.Properties.Text)
+                .list();
 
         return words;
     }
@@ -167,11 +197,13 @@ public class ContentProvider {
     // TODO: getAllStoryBooks()
 
     public static List<Audio> getAllAudios() {
-        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
+        Log.i(ContentProvider.class.getName(), "getAllAudios");
 
         AudioDao audioDao = daoSession.getAudioDao();
 
-        List<Audio> audios = audioDao.loadAll();
+        List<Audio> audios = audioDao.queryBuilder()
+                .orderAsc(AudioDao.Properties.Transcription)
+                .list();
 
         return audios;
     }
@@ -189,11 +221,13 @@ public class ContentProvider {
     }
     
     public static List<Image> getAllImages() {
-        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
+        Log.i(ContentProvider.class.getName(), "getAllImages");
 
         ImageDao imageDao = daoSession.getImageDao();
         
-        List<Image> images = imageDao.loadAll();
+        List<Image> images = imageDao.queryBuilder()
+                .orderAsc(ImageDao.Properties.Title)
+                .list();
         
         return images;
     }
@@ -211,11 +245,13 @@ public class ContentProvider {
     }
 
     public static List<Video> getAllVideos() {
-        Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
+        Log.i(ContentProvider.class.getName(), "getAllVideos");
 
         VideoDao videoDao = daoSession.getVideoDao();
 
-        List<Video> videos = videoDao.loadAll();
+        List<Video> videos = videoDao.queryBuilder()
+                .orderAsc(VideoDao.Properties.Title)
+                .list();
 
         return videos;
     }
