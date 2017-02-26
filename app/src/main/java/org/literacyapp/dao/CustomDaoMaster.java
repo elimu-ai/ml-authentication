@@ -1,10 +1,32 @@
-package org.literacyapp.contentprovider.dao;
+package org.literacyapp.dao;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.greenrobot.greendao.database.Database;
+import org.literacyapp.contentprovider.dao.AudioDao;
+import org.literacyapp.contentprovider.dao.AuthenticationEventDao;
+import org.literacyapp.contentprovider.dao.DaoMaster;
+import org.literacyapp.contentprovider.dao.DbMigrationHelper;
+import org.literacyapp.contentprovider.dao.DeviceDao;
+import org.literacyapp.contentprovider.dao.JoinAudiosWithLettersDao;
+import org.literacyapp.contentprovider.dao.JoinAudiosWithNumbersDao;
+import org.literacyapp.contentprovider.dao.JoinAudiosWithWordsDao;
+import org.literacyapp.contentprovider.dao.JoinImagesWithLettersDao;
+import org.literacyapp.contentprovider.dao.JoinImagesWithNumbersDao;
+import org.literacyapp.contentprovider.dao.JoinImagesWithWordsDao;
+import org.literacyapp.contentprovider.dao.JoinStudentsWithDevicesDao;
+import org.literacyapp.contentprovider.dao.JoinVideosWithLettersDao;
+import org.literacyapp.contentprovider.dao.JoinVideosWithNumbersDao;
+import org.literacyapp.contentprovider.dao.JoinVideosWithWordsDao;
+import org.literacyapp.contentprovider.dao.LetterDao;
+import org.literacyapp.contentprovider.dao.StudentDao;
+import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
+import org.literacyapp.contentprovider.dao.StudentImageDao;
+import org.literacyapp.contentprovider.dao.StudentImageFeatureDao;
+import org.literacyapp.contentprovider.dao.VideoDao;
+import org.literacyapp.contentprovider.dao.WordDao;
 
 public class CustomDaoMaster extends DaoMaster {
 

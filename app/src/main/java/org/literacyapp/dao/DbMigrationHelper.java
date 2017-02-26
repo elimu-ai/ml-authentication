@@ -1,4 +1,4 @@
-package org.literacyapp.contentprovider.dao;
+package org.literacyapp.dao;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;
