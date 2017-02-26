@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 
-import org.literacyapp.contentprovider.dao.CustomDaoMaster;
+import org.literacyapp.dao.CustomDaoMaster;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.util.VersionHelper;
 
