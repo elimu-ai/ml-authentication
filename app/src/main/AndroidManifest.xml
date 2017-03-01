@@ -53,6 +53,9 @@
             android:name=".content.task.NumberGraphemeActivity"
             android:screenOrientation="fullSensor" />
         <activity
+            android:name=".content.task.TypeNumberActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
             android:name=".content.task.VisemeActivity"
             android:screenOrientation="fullSensor" />
         <activity
