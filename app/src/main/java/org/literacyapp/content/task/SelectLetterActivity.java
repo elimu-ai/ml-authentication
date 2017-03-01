@@ -17,14 +17,10 @@ import com.skyfishjy.library.RippleBackground;
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.contentprovider.dao.AudioDao;
-import org.literacyapp.contentprovider.dao.JoinVideosWithLettersDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
-import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
-import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithLetters;
-import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.MultimediaHelper;
@@ -45,8 +41,6 @@ public class SelectLetterActivity extends AppCompatActivity {
 
     private LetterDao letterDao;
     private AudioDao audioDao;
-    private VideoDao videoDao;
-    private JoinVideosWithLettersDao joinVideosWithLettersDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +59,6 @@ public class SelectLetterActivity extends AppCompatActivity {
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
-        videoDao = literacyApplication.getDaoSession().getVideoDao();
-        joinVideosWithLettersDao = literacyApplication.getDaoSession().getJoinVideosWithLettersDao();
     }
 
     @Override
@@ -102,7 +94,7 @@ public class SelectLetterActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     alt1Button.setTextColor(Color.WHITE);
-                    alt1Button.setBackgroundColor(Color.parseColor("#009688"));
+                    alt1Button.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     alt2Button.setEnabled(false);
                     MediaPlayerHelper.play(getApplicationContext(), R.raw.alternative_correct);
                     alt1Button.postDelayed(new Runnable() {
@@ -150,7 +142,7 @@ public class SelectLetterActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     alt2Button.setTextColor(Color.WHITE);
-                    alt2Button.setBackgroundColor(Color.parseColor("#009688"));
+                    alt2Button.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                     alt1Button.setEnabled(false);
                     MediaPlayerHelper.play(getApplicationContext(), R.raw.alternative_correct);
                     alt2Button.postDelayed(new Runnable() {
@@ -237,31 +229,9 @@ public class SelectLetterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                // Look up video(s) containing letter
-                List<Video> videosContainingLetter = new ArrayList<Video>();
-                List<JoinVideosWithLetters> joinVideosWithLettersList = joinVideosWithLettersDao.queryBuilder()
-                        .where(JoinVideosWithLettersDao.Properties.LetterId.eq(letter.getId()))
-                        .list();
-                Log.d(getClass().getName(), "joinVideosWithLettersList.size(): " + joinVideosWithLettersList.size());
-                if (!joinVideosWithLettersList.isEmpty()) {
-                    for (JoinVideosWithLetters joinVideosWithLetters : joinVideosWithLettersList) {
-                        Video video = videoDao.load(joinVideosWithLetters.getVideoId());
-                        Log.d(getClass().getName(), "Adding video with id " + video.getId());
-                        videosContainingLetter.add(video);
-                    }
-                }
-                Log.d(getClass().getName(), "videosContainingLetter.size(): " + videosContainingLetter.size());
-                if (!videosContainingLetter.isEmpty()) {
-                    // Redirect to video(s)
-                    Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
-                    int randomIndex = (int) (Math.random() * videosContainingLetter.size());
-                    Video video = videosContainingLetter.get(randomIndex); // TODO: iterate all videos
-                    intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
-                    startActivity(intent);
-                } else {
-                    Intent loadingIntent = new Intent(getApplicationContext(), LoadingActivity.class);
-                    startActivity(loadingIntent);
-                }
+                Intent intent = new Intent(getApplicationContext(), TypeLetterActivity.class);
+                intent.putExtra("letter", letter.getText());
+                startActivity(intent);
 
                 finish();
             }

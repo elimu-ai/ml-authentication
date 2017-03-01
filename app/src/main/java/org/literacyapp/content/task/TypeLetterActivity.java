@@ -2,52 +2,71 @@ package org.literacyapp.content.task;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.contentprovider.dao.AudioDao;
+import org.literacyapp.contentprovider.dao.JoinVideosWithLettersDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
+import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
+import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithLetters;
+import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TypeLetterActivity extends AppCompatActivity {
 
     private ImageView graphemeImageView;
 
-    private ImageButton graphemeNextButton;
+    private EditText editText;
+
+    private ImageButton submitButton;
 
     private LetterDao letterDao;
     private AudioDao audioDao;
+    private VideoDao videoDao;
+    private JoinVideosWithLettersDao joinVideosWithLettersDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_letter_grapheme);
+        setContentView(R.layout.activity_type_letter);
 
         graphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 
-        graphemeNextButton = (ImageButton) findViewById(R.id.loadingNextButton);
+        editText = (EditText) findViewById(R.id.text);
+
+        submitButton = (ImageButton) findViewById(R.id.submitButton);
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
+        videoDao = literacyApplication.getDaoSession().getVideoDao();
+        joinVideosWithLettersDao = literacyApplication.getDaoSession().getJoinVideosWithLettersDao();
     }
 
     @Override
@@ -55,7 +74,7 @@ public class TypeLetterActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onStart");
         super.onStart();
 
-        MediaPlayerHelper.play(getApplicationContext(), R.raw.activity_instruction_letter_grapheme);
+        MediaPlayerHelper.play(getApplicationContext(), R.raw.activity_instruction_letter_typing);
 
         String letterExtra = getIntent().getStringExtra("letter");
         Log.i(getClass().getName(), "letterExtra: " + letterExtra);
@@ -78,16 +97,86 @@ public class TypeLetterActivity extends AppCompatActivity {
             }
         });
 
-        graphemeNextButton.setOnClickListener(new View.OnClickListener() {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                Log.i(getClass().getName(), "afterTextChanged");
+
+                Log.i(getClass().getName(), "editable: " + editable);
+
+                if (!TextUtils.isEmpty(editable)) {
+                    if (!submitButton.isEnabled()) {
+                        submitButton.setEnabled(true);
+                        submitButton.setImageDrawable(getDrawable(R.drawable.ic_send_white_24dp));
+                    }
+                } else {
+                    submitButton.setEnabled(false);
+                    submitButton.setImageDrawable(getDrawable(R.drawable.ic_send_grey_24dp));
+                }
+            }
+        });
+
+        // Default to grey button
+        submitButton.setEnabled(false);
+        submitButton.setImageDrawable(getDrawable(R.drawable.ic_send_grey_24dp));
+        submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.i(getClass().getName(), "onClick");
 
-                Intent intent = new Intent(getApplicationContext(), SelectLetterActivity.class);
-                intent.putExtra("letter", letter.getText());
-                startActivity(intent);
+                String text = editText.getText().toString();
+                Log.i(getClass().getName(), "text: " + text);
 
-                finish();
+                if (letter.getText().equals(text)) {
+                    MediaPlayerHelper.play(getApplicationContext(), R.raw.alternative_correct);
+                    graphemeImageView.getDrawable().setTint(Color.WHITE);
+                    getWindow().getDecorView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+                    submitButton.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Look up video(s) containing letter
+                            List<Video> videosContainingLetter = new ArrayList<Video>();
+                            List<JoinVideosWithLetters> joinVideosWithLettersList = joinVideosWithLettersDao.queryBuilder()
+                                    .where(JoinVideosWithLettersDao.Properties.LetterId.eq(letter.getId()))
+                                    .list();
+                            Log.d(getClass().getName(), "joinVideosWithLettersList.size(): " + joinVideosWithLettersList.size());
+                            if (!joinVideosWithLettersList.isEmpty()) {
+                                for (JoinVideosWithLetters joinVideosWithLetters : joinVideosWithLettersList) {
+                                    Video video = videoDao.load(joinVideosWithLetters.getVideoId());
+                                    Log.d(getClass().getName(), "Adding video with id " + video.getId());
+                                    videosContainingLetter.add(video);
+                                }
+                            }
+                            Log.d(getClass().getName(), "videosContainingLetter.size(): " + videosContainingLetter.size());
+                            if (!videosContainingLetter.isEmpty()) {
+                                // Redirect to video(s)
+                                Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+                                int randomIndex = (int) (Math.random() * videosContainingLetter.size());
+                                Video video = videosContainingLetter.get(randomIndex); // TODO: iterate all videos
+                                intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
+                                startActivity(intent);
+                            } else {
+                                Intent loadingIntent = new Intent(getApplicationContext(), LoadingActivity.class);
+                                startActivity(loadingIntent);
+                            }
+
+                            finish();
+                        }
+                    }, 2000);
+                } else {
+                    MediaPlayerHelper.play(getApplicationContext(), R.raw.alternative_incorrect);
+                }
             }
         });
     }
