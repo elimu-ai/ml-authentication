@@ -1,0 +1,62 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <com.q42.android.scrollingimageview.ScrollingImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                scrolling_image_view:speed="1dp"
+                scrolling_image_view:src="@drawable/scrolling_background" />
+
+            <com.q42.android.scrollingimageview.ScrollingImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                scrolling_image_view:speed="1.9dp"
+                scrolling_image_view:src="@drawable/scrolling_foreground" />
+
+            <ImageView
+                android:id="@+id/vanImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:src="@drawable/van" />
+
+            <TextView
+                android:id="@+id/letterTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:text="a"
+                android:textSize="64sp"
+                android:paddingBottom="40dp"
+                android:paddingRight="40dp"
+                android:shadowColor="#FFF"
+                android:shadowRadius="1"
+                android:shadowDx="1" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageButton android:id="@+id/nextButton"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_arrow_forward_black_24dp"
+        style="?android:attr/buttonBarButtonStyle"
+        android:tint="@color/colorAccent" />
+</RelativeLayout>
