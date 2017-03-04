@@ -171,6 +171,7 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity android:name=".content.task.LoadingActivity"></activity>
+        <activity android:name=".content.task.ScrollingLetterActivity"></activity>
     </application>
 
 </manifest>

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
-import org.literacyapp.content.task.VisemeActivity;
+import org.literacyapp.content.task.ScrollingLetterActivity;
 import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.contentprovider.model.content.Letter;
@@ -75,9 +75,9 @@ public class LettersActivity extends AppCompatActivity {
                     intent.putExtra("letter", letter.getText());
                     sendBroadcast(intent);
 
-                    Intent visemeIntent = new Intent(getApplicationContext(), VisemeActivity.class);
-                    visemeIntent.putExtra("letter", letter.getText());
-                    startActivity(visemeIntent);
+                    Intent scrollingLetterIntent = new Intent(getApplicationContext(), ScrollingLetterActivity.class);
+                    scrollingLetterIntent.putExtra("letter", letter.getText());
+                    startActivity(scrollingLetterIntent);
                 }
             });
 

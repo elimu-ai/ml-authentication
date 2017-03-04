@@ -12,8 +12,6 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class LoadingActivity extends AppCompatActivity {
 
-    public static final String EXTRA_KEY_LETTER = "letter";
-
     private GifImageView loadingGifImageView;
 
     private ImageButton loadingNextButton;
