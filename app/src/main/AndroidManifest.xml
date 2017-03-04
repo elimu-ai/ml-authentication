@@ -47,7 +47,13 @@
             android:name=".content.task.LetterGraphemeActivity"
             android:screenOrientation="fullSensor" />
         <activity
+            android:name=".content.task.TypeLetterActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
             android:name=".content.task.NumberGraphemeActivity"
+            android:screenOrientation="fullSensor" />
+        <activity
+            android:name=".content.task.TypeNumberActivity"
             android:screenOrientation="fullSensor" />
         <activity
             android:name=".content.task.VisemeActivity"

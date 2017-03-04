@@ -56,7 +56,7 @@ import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
 import org.literacyapp.util.MultimediaHelper;
-import org.literacyapp.util.MultimediaLoader;
+import org.literacyapp.util.MultimediaDownloader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -280,7 +280,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Log.i(getClass().getName(), "audioFile: " + audioFile);
                     if (!audioFile.exists()) {
                         // Download bytes
-                        byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + audioGson.getDownloadUrl());
+                        byte[] bytes = MultimediaDownloader.downloadMultimedia(EnvironmentSettings.getBaseUrl() + audioGson.getDownloadUrl());
                         Log.i(getClass().getName(), "bytes.length: " + bytes.length);
                         try {
                             FileOutputStream fileOutputStream = new FileOutputStream(audioFile);
@@ -366,7 +366,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Log.i(getClass().getName(), "imageFile: " + imageFile);
                     if (!imageFile.exists()) {
                         // Download bytes
-                        byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
+                        byte[] bytes = MultimediaDownloader.downloadMultimedia(EnvironmentSettings.getBaseUrl() + imageGson.getDownloadUrl());
                         Log.i(getClass().getName(), "bytes.length: " + bytes.length);
                         try {
                             FileOutputStream fileOutputStream = new FileOutputStream(imageFile);
@@ -452,7 +452,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Log.i(getClass().getName(), "videoFile: " + videoFile);
                     if (!videoFile.exists()) {
                         // Download bytes
-                        byte[] bytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
+                        byte[] bytes = MultimediaDownloader.downloadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getDownloadUrl());
                         Log.i(getClass().getName(), "bytes.length: " + bytes.length);
                         try {
                             FileOutputStream fileOutputStream = new FileOutputStream(videoFile);
@@ -470,7 +470,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     Log.i(getClass().getName(), "thumbnailFile: " + thumbnailFile);
                     if (!thumbnailFile.exists()) {
                         // Download bytes
-                        byte[] thumbnailBytes = MultimediaLoader.loadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getThumbnailDownloadUrl());
+                        byte[] thumbnailBytes = MultimediaDownloader.downloadMultimedia(EnvironmentSettings.getBaseUrl() + videoGson.getThumbnailDownloadUrl());
                         Log.i(getClass().getName(), "thumbnailBytes.length: " + thumbnailBytes.length);
                         try {
                             FileOutputStream fileOutputStream = new FileOutputStream(thumbnailFile);
