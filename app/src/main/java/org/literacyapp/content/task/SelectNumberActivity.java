@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -120,6 +122,8 @@ public class SelectNumberActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     MediaPlayerHelper.play(getApplicationContext(), R.raw.alternative_incorrect);
+                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_shake);
+                    alt2Button.startAnimation(animation);
                     alt2Button.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -168,6 +172,8 @@ public class SelectNumberActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     MediaPlayerHelper.play(getApplicationContext(), R.raw.alternative_incorrect);
+                    Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.anim_shake);
+                    alt1Button.startAnimation(animation);
                     alt1Button.postDelayed(new Runnable() {
                         @Override
                         public void run() {
