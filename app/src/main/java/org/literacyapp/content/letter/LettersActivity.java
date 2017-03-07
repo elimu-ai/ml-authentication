@@ -15,12 +15,15 @@ import android.widget.TextView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.analytics.eventtracker.EventTracker;
 import org.literacyapp.content.task.ScrollingLetterActivity;
 import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
+import org.literacyapp.model.enums.content.LiteracySkill;
+import org.literacyapp.model.enums.content.NumeracySkill;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
@@ -67,13 +70,9 @@ public class LettersActivity extends AppCompatActivity {
 
                     playLetterSound(letter);
 
-                    Intent intent = new Intent();
-                    intent.setPackage("org.literacyapp.analytics");
-                    intent.setAction("literacyapp.intent.action.USAGE_EVENT");
-                    intent.putExtra("packageName", getPackageName());
-                    intent.putExtra("literacySkill", "LETTER_IDENTIFICATION");
-                    intent.putExtra("letter", letter.getText());
-                    sendBroadcast(intent);
+                    EventTracker.reportUsageEvent(getApplicationContext(),
+                            LiteracySkill.LETTER_IDENTIFICATION,
+                            letter.getText());
 
                     Intent scrollingLetterIntent = new Intent(getApplicationContext(), ScrollingLetterActivity.class);
                     scrollingLetterIntent.putExtra("letter", letter.getText());
