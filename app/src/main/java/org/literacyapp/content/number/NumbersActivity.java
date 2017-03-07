@@ -16,12 +16,14 @@ import android.widget.TextView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.analytics.eventtracker.EventTracker;
 import org.literacyapp.content.task.NumberActivity;
 import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
+import org.literacyapp.model.enums.content.NumeracySkill;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
@@ -80,13 +82,9 @@ public class NumbersActivity extends AppCompatActivity {
 
                     playNumberSound(number);
 
-                    Intent intent = new Intent();
-                    intent.setPackage("org.literacyapp.analytics");
-                    intent.setAction("literacyapp.intent.action.USAGE_EVENT");
-                    intent.putExtra("packageName", getPackageName());
-                    intent.putExtra("numeracySkill", "NUMBER_IDENTIFICATION");
-                    intent.putExtra("number", number.getValue());
-                    sendBroadcast(intent);
+                    EventTracker.reportUsageEvent(getApplicationContext(),
+                            NumeracySkill.NUMBER_IDENTIFICATION,
+                            number.getValue());
 
                     Intent numberIntent = new Intent(getApplicationContext(), NumberActivity.class);
                     numberIntent.putExtra("number", number.getValue());
