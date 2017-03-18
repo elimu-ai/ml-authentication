@@ -48,6 +48,17 @@ public class ContentProvider {
         return daoSession;
     }
 
+    /**
+     * Only use this method if none of the other methods return what you need, and you want to
+     * create a custom query.
+     */
+    public static DaoSession getDaoSession() {
+        return daoSession;
+    }
+
+    /**
+     * Returns a list of all letters available to the current student.
+     */
     public static List<Letter> getUnlockedLetters() {
         Log.i(ContentProvider.class.getName(), "getUnlockedLetters");
 
@@ -85,6 +96,9 @@ public class ContentProvider {
         return letters;
     }
 
+    /**
+     * Returns a list of all letters, including those not yet made available to the current student.
+     */
     public static List<Letter> getAllLetters() {
         Log.i(ContentProvider.class.getName(), "getAllLetters");
 
@@ -110,6 +124,9 @@ public class ContentProvider {
         return letters;
     }
 
+    /**
+     * Returns a list of all numbers available to the current student.
+     */
     public static List<Number> getUnlockedNumbers() {
         Log.i(ContentProvider.class.getName(), "getUnlockedNumbers");
 
@@ -147,6 +164,9 @@ public class ContentProvider {
         return numbers;
     }
 
+    /**
+     * Returns a list of all numbers, including those not yet made available to the current student.
+     */
     public static List<Number> getAllNumbers() {
         Log.i(ContentProvider.class.getName(), "getAllNumbers");
 
