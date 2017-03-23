@@ -12,6 +12,7 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
+import org.literacyapp.authentication.helper.AuthenticationInstructionHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
@@ -22,7 +23,6 @@ import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEve
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
-import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -94,7 +94,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
-        MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
+        AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
 
         animalOverlayName = getIntent().getStringExtra(AuthenticationActivity.ANIMAL_OVERLAY_IDENTIFIER);
 
@@ -208,7 +208,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
             if (faceDetected && !isFaceInsideFrame){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
-                MultimediaHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
+                AuthenticationInstructionHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
 
             EnvironmentSettings.freeMemory();
@@ -224,14 +224,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         ppF = new PreProcessorFactory(getApplicationContext());
         animalOverlay = animalOverlayHelper.getAnimalOverlay(animalOverlayName);
         if (animalOverlay != null){
-            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), AuthenticationInstructionHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
         if (!authenticationAnimationAlreadyPlayed){
-            mediaPlayerTabletPlacement = MultimediaHelper.getMediaPlayerTabletPlacement(getApplicationContext());
+            mediaPlayerTabletPlacement = AuthenticationInstructionHelper.getMediaPlayerTabletPlacement(getApplicationContext());
             mediaPlayerTabletPlacement.start();
         }
-        mediaPlayerTabletPlacementOverlay = MultimediaHelper.getMediaPlayerTabletPlacementOverlay(getApplicationContext());
+        mediaPlayerTabletPlacementOverlay = AuthenticationInstructionHelper.getMediaPlayerTabletPlacementOverlay(getApplicationContext());
         startTimeFallback = new Date().getTime();
         startTimeAuthenticationAnimation = new Date().getTime();
         if (authenticationAnimationAlreadyPlayed){
@@ -247,7 +247,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                     authenticationAnimation.setVisibility(View.INVISIBLE);
 
                     ImageView animalOverlayImageView = (ImageView)findViewById(R.id.animalOverlay);
-                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), MultimediaHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
+                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), AuthenticationInstructionHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
                     animalOverlayImageView.setVisibility(View.VISIBLE);
 
                     preview.disableView();

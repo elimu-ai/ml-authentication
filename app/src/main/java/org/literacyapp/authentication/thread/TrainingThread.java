@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.literacyapp.LiteracyApplication;
+import org.literacyapp.authentication.helper.AuthenticationInstructionHelper;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentDao;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
@@ -19,7 +20,6 @@ import org.literacyapp.contentprovider.model.StudentImageFeature;
 import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.util.AiHelper;
-import org.literacyapp.util.MultimediaHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -319,7 +319,7 @@ public class TrainingThread extends Thread {
             Log.i(getClass().getName(), "createAvatarFileFromStudentImage: OutputStream with the file: " + avatarFile.getAbsolutePath());
             OutputStream outputStream = new FileOutputStream(avatarFile);
             Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Start copying of the file...");
-            MultimediaHelper.copyFile(inputStream, outputStream);
+            AuthenticationInstructionHelper.copyFile(inputStream, outputStream);
             Log.i(getClass().getName(), "createAvatarFileFromStudentImage: Finished file copying.");
         } catch (FileNotFoundException e) {
             Log.e(getClass().getName(), null, e);

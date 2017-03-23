@@ -14,6 +14,7 @@ import org.literacyapp.R;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.AuthenticationHelper;
+import org.literacyapp.authentication.helper.AuthenticationInstructionHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
 import org.literacyapp.authentication.thread.RecognitionThread;
 import org.literacyapp.authentication.thread.TrainingThread;
@@ -22,7 +23,6 @@ import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.util.EnvironmentSettings;
-import org.literacyapp.util.MultimediaHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
@@ -82,7 +82,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
-        MultimediaHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
+        AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
 
         // Initialize DB Session
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
@@ -201,7 +201,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
             if (faceDetected && !isFaceInsideFrame){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
-                MultimediaHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
+                AuthenticationInstructionHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
 
             if (DetectionHelper.shouldFallbackActivityBeStarted(startTimeFallback, currentTime)){
@@ -225,12 +225,12 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         numberOfTries = 0;
         animalOverlay = animalOverlayHelper.getAnimalOverlay("");
         if (animalOverlay != null) {
-            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), MultimediaHelper.RESOURCES_RAW_FOLDER, getPackageName()));
+            mediaPlayerAnimalSound = MediaPlayer.create(this, getResources().getIdentifier(animalOverlay.getSoundFile(), AuthenticationInstructionHelper.RESOURCES_RAW_FOLDER, getPackageName()));
         }
         preview.enableView();
-        mediaPlayerTabletPlacement = MultimediaHelper.getMediaPlayerTabletPlacement(getApplicationContext());
+        mediaPlayerTabletPlacement = AuthenticationInstructionHelper.getMediaPlayerTabletPlacement(getApplicationContext());
         mediaPlayerTabletPlacement.start();
-        mediaPlayerTabletPlacementOverlay = MultimediaHelper.getMediaPlayerTabletPlacementOverlay(getApplicationContext());
+        mediaPlayerTabletPlacementOverlay = AuthenticationInstructionHelper.getMediaPlayerTabletPlacementOverlay(getApplicationContext());
         tensorFlowLoadingThread.start();
         startTimeFallback = new Date().getTime();
         startTimeAuthenticationAnimation = new Date().getTime();
@@ -244,7 +244,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                     authenticationAnimation.setVisibility(View.INVISIBLE);
 
                     ImageView animalOverlayImageView = (ImageView)findViewById(R.id.animalOverlay);
-                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), MultimediaHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
+                    animalOverlayImageView.setImageResource(getResources().getIdentifier(animalOverlay.getName(), AuthenticationInstructionHelper.RESOURCES_DRAWABLE_FOLDER, getPackageName()));
                     animalOverlayImageView.setVisibility(View.VISIBLE);
 
                     preview.disableView();
