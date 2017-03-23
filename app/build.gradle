@@ -10,7 +10,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1005007
-        versionName "1.5.7-SNAPSHOT"
+        versionName "1.5.7"
 
 //        jackOptions {
 //            enabled true
