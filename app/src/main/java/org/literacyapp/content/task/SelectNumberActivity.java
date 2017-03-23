@@ -25,7 +25,7 @@ import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.util.MediaPlayerHelper;
-import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.contentprovider.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
 
 import java.io.File;

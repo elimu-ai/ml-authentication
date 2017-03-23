@@ -1,4 +1,4 @@
-package org.literacyapp.util;
+package org.literacyapp.contentprovider.util;
 
 import android.os.Environment;
 

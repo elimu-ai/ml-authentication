@@ -55,7 +55,7 @@ import org.literacyapp.model.gson.content.multimedia.VideoGson;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
 import org.literacyapp.util.JsonLoader;
-import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.contentprovider.util.MultimediaHelper;
 import org.literacyapp.util.MultimediaDownloader;
 
 import java.io.File;
