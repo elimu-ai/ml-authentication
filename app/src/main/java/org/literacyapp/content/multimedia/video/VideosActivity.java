@@ -20,7 +20,7 @@ import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.logic.CurriculumHelper;
-import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.contentprovider.util.MultimediaHelper;
 
 import java.io.File;
 import java.util.Iterator;

@@ -23,9 +23,8 @@ import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.enums.content.LiteracySkill;
-import org.literacyapp.model.enums.content.NumeracySkill;
 import org.literacyapp.util.MediaPlayerHelper;
-import org.literacyapp.util.MultimediaHelper;
+import org.literacyapp.contentprovider.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
 
 import java.io.File;

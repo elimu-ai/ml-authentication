@@ -1,4 +1,4 @@
-package org.literacyapp.util;
+package org.literacyapp.authentication.helper;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -16,98 +16,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Helper class for determining folder paths of multimedia content.
+ * Helper class for fetching image overlay displayed during authentication.
  */
-public class MultimediaHelper {
+public class AuthenticationInstructionHelper {
 
     private static final String AUTHENTICATION_INSTRUCTION_BOY = "authentication_instruction_640";
     private static final String AUTHENTICATION_INSTRUCTION_GIRL = "authentication_instruction_girl_640";
     public static final String RESOURCES_DRAWABLE_FOLDER = "drawable";
     public static final String RESOURCES_RAW_FOLDER = "raw";
-
-    public static File getMultimediaDirectory() {
-        File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + "/.literacyapp/multimedia");
-        if (!multimediaDirectory.exists()) {
-            multimediaDirectory.mkdirs();
-        }
-        return multimediaDirectory;
-    }
-
-    public static File getAudioDirectory() {
-        File audioDirectory = new File(getMultimediaDirectory(), "audio");
-        if (!audioDirectory.exists()) {
-            audioDirectory.mkdir();
-        }
-        return audioDirectory;
-    }
-
-    public static File getImageDirectory() {
-        File imageDirectory = new File(getMultimediaDirectory(), "image");
-        if (!imageDirectory.exists()) {
-            imageDirectory.mkdir();
-        }
-        return imageDirectory;
-    }
-
-    public static File getVideoDirectory() {
-        File videoDirectory = new File(getMultimediaDirectory(), "video");
-        if (!videoDirectory.exists()) {
-            videoDirectory.mkdir();
-        }
-        return videoDirectory;
-    }
-
-    public static File getFile(Audio audio) {
-        File file = null;
-
-        if (audio == null) {
-            return null;
-        }
-
-        File audioDirectory = getAudioDirectory();
-        file = new File(audioDirectory, audio.getId() + "_r" + audio.getRevisionNumber() + "." + audio.getAudioFormat().toString().toLowerCase());
-
-        return file;
-    }
-
-    public static File getFile(Image image) {
-        File file = null;
-
-        if (image == null) {
-            return null;
-        }
-
-        File imageDirectory = getImageDirectory();
-        file = new File(imageDirectory, image.getId() + "_r" + image.getRevisionNumber() + "." + image.getImageFormat().toString().toLowerCase());
-
-        return file;
-    }
-
-    public static File getFile(Video video) {
-        File file = null;
-
-        if (video == null) {
-            return null;
-        }
-
-        File videoDirectory = getVideoDirectory();
-        file = new File(videoDirectory, video.getId() + "_r" + video.getRevisionNumber() + "." + video.getVideoFormat().toString().toLowerCase());
-
-        return file;
-    }
-
-    public static File getVideoThumbnail(Video video) {
-        File file = null;
-
-        if (video == null) {
-            return null;
-        }
-
-        File videoDirectory = getVideoDirectory();
-        file = new File(videoDirectory, video.getId() + "_r" + video.getRevisionNumber() + ".png");
-
-        return file;
-    }
 
     public static void copyFile(InputStream in, OutputStream out) throws IOException {
         byte[] buffer = new byte[1024];
