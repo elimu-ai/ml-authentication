@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import org.greenrobot.greendao.database.Database;
+import org.literacyapp.contentprovider.dao.AllophoneDao;
 import org.literacyapp.contentprovider.dao.DaoMaster;
 
 public class CustomDaoMaster extends DaoMaster {
@@ -30,6 +31,17 @@ public class CustomDaoMaster extends DaoMaster {
             if (oldVersion < 2000000) {
                 dropAllTables(db, true);
                 onCreate(db);
+            }
+
+//            if (oldVersion < 2000001) {
+//                // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
+//                DbMigrationHelper.migrate(db,
+//                        AllophoneDao.class // Added "usageCount" column
+//                );
+//            }
+            if (oldVersion < 2000001) {
+                db.execSQL("ALTER TABLE ALLOPHONE ADD COLUMN `USAGE_COUNT` INTEGER NOT NULL DEFAULT 0;");
+                db.execSQL("UPDATE ALLOPHONE SET `REVISION_NUMBER` = `REVISION_NUMBER` + 1;");
             }
 
 //            if (oldVersion < ???) {

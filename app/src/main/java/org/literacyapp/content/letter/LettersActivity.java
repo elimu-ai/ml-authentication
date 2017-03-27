@@ -17,8 +17,10 @@ import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
 import org.literacyapp.analytics.eventtracker.EventTracker;
 import org.literacyapp.content.task.ScrollingLetterActivity;
+import org.literacyapp.contentprovider.ContentProvider;
 import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
+import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
@@ -54,6 +56,10 @@ public class LettersActivity extends AppCompatActivity {
 
         letterGridLayout = (GridLayout) findViewById(R.id.letterGridLayout);
 
+
+        List<Allophone> allophones = ContentProvider.getAllAllophonesOrderedByFrequency();
+        Log.i(getClass().getName(), "allophones: " + allophones);
+        Log.i(getClass().getName(), "allophones.size(): " + allophones.size());
 
         List<Letter> letters = new CurriculumHelper(getApplication()).getAvailableLetters(null);
         Log.i(getClass().getName(), "letters.size(): " + letters.size());

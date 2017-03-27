@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.literacyapp.contentprovider.ContentProvider;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
@@ -60,9 +61,8 @@ public class MainActivity extends AppCompatActivity {
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
 
-//        ContentProvider.initializeDb(this);
-//        List<Letter> letters = ContentProvider.getUnlockedLetters();
-//        Log.i(getClass().getName(), "letters: " + letters);
+        // Must be called _after_ literacyApplication.getDaoSession() (using CustomDaoMaster) to prevent dropping of all tables on schema upgrade
+        ContentProvider.initializeDb(this);
 
         if (letterDao.loadAll().isEmpty()) {
             // Download content
