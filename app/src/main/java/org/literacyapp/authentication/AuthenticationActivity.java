@@ -17,6 +17,7 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.AuthenticationHelper;
 import org.literacyapp.authentication.helper.AuthenticationInstructionHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
+import org.literacyapp.authentication.thread.AuthenticationThread;
 import org.literacyapp.authentication.thread.RecognitionThread;
 import org.literacyapp.authentication.thread.TrainingThread;
 import org.literacyapp.contentprovider.dao.AuthenticationEventDao;
@@ -24,7 +25,6 @@ import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.util.EnvironmentSettings;
-import org.literacyapp.util.RootHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
@@ -67,6 +67,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private int screenBrightnessMode;
     private int screenBrightness;
     private int displayTemperatureNight;
+    private boolean isDeviceRooted;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -79,7 +80,9 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        if (RootHelper.isDeviceRooted()){
+        isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
+
+        if (isDeviceRooted){
             screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
             screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
             displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
@@ -138,7 +141,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
 
 //        Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
 //        M.Schälchli 20170129
-//        if (RootHelper.isDeviceRooted()){
+//        if (isDeviceRooted){
 //            DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
 //        }
 
@@ -266,6 +269,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private synchronized void startStudentImageCollectionActivity(boolean authenticationAnimationAlreadyPlayed){
         Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        studentImageCollectionIntent.putExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, isDeviceRooted);
         if (authenticationAnimationAlreadyPlayed){
             studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, true);
             studentImageCollectionIntent.putExtra(ANIMAL_OVERLAY_IDENTIFIER, animalOverlay.getName());
@@ -299,7 +303,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
-        if (RootHelper.isDeviceRooted()){
+        if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
         }
     }

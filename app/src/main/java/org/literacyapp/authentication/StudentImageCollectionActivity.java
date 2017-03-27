@@ -14,6 +14,7 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.AuthenticationInstructionHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
+import org.literacyapp.authentication.thread.AuthenticationThread;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
 import org.literacyapp.contentprovider.dao.StudentImageDao;
@@ -23,7 +24,6 @@ import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEve
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
-import org.literacyapp.util.RootHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -72,6 +72,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private int screenBrightnessMode;
     private int screenBrightness;
     private int displayTemperatureNight;
+    private boolean isDeviceRooted;
 
     // Image collection parameters
     private static final long TIMER_DIFF = 200;
@@ -90,7 +91,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        if (RootHelper.isDeviceRooted()){
+        isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
+
+        if (isDeviceRooted){
             screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
             screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
             displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
@@ -148,7 +151,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
 
 //        Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
 //        M.Schälchli 20170129
-//        if (RootHelper.isDeviceRooted()){
+//        if (isDeviceRooted){
 //            DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
 //        }
 
@@ -310,7 +313,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.release();
         activityStopped = true;
 
-        if (RootHelper.isDeviceRooted()){
+        if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
         }
     }
