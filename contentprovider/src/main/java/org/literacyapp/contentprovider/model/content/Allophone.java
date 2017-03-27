@@ -82,13 +82,15 @@ public class Allophone {
     @Convert(converter = ConsonantVoicingConverter.class, columnType = String.class)
     private ConsonantVoicing consonantVoicing;
 
-    @Generated(hash = 1607902866)
+    private int usageCount;
+
+    @Generated(hash = 405598671)
     public Allophone(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
             @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
             @NotNull String valueIpa, @NotNull String valueSampa, SoundType soundType,
             VowelLength vowelLength, VowelHeight vowelHeight, VowelFrontness vowelFrontness,
             LipRounding lipRounding, ConsonantType consonantType, ConsonantPlace consonantPlace,
-            ConsonantVoicing consonantVoicing) {
+            ConsonantVoicing consonantVoicing, int usageCount) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -104,6 +106,7 @@ public class Allophone {
         this.consonantType = consonantType;
         this.consonantPlace = consonantPlace;
         this.consonantVoicing = consonantVoicing;
+        this.usageCount = usageCount;
     }
 
     @Generated(hash = 1168789856)
@@ -228,5 +231,13 @@ public class Allophone {
 
     public void setConsonantVoicing(ConsonantVoicing consonantVoicing) {
         this.consonantVoicing = consonantVoicing;
+    }
+
+    public int getUsageCount() {
+        return this.usageCount;
+    }
+
+    public void setUsageCount(int usageCount) {
+        this.usageCount = usageCount;
     }
 }

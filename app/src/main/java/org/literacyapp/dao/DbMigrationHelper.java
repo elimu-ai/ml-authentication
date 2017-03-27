@@ -3,6 +3,7 @@ package org.literacyapp.dao;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import org.greenrobot.greendao.AbstractDao;
 import org.greenrobot.greendao.database.Database;
@@ -20,6 +21,8 @@ import java.util.List;
 public final class DbMigrationHelper {
 
     public static void migrate(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "migrate");
+
         generateNewTablesIfNotExists(db, daoClasses);
         generateTempTables(db, daoClasses);
         dropAllTables(db, true, daoClasses);
@@ -28,10 +31,14 @@ public final class DbMigrationHelper {
     }
 
     private static void generateNewTablesIfNotExists(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "generateNewTablesIfNotExists");
+
         reflectMethod(db, "createTable", true, daoClasses);
     }
 
     private static void generateTempTables(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "generateTempTables");
+
         for (int i = 0; i < daoClasses.length; i++) {
             DaoConfig daoConfig = new DaoConfig(db, daoClasses[i]);
             String tableName = daoConfig.tablename;
@@ -39,15 +46,20 @@ public final class DbMigrationHelper {
             StringBuilder insertTableStringBuilder = new StringBuilder();
             insertTableStringBuilder.append("CREATE TEMP TABLE ").append(tempTableName);
             insertTableStringBuilder.append(" AS SELECT * FROM ").append(tableName).append(";");
+            Log.i(DbMigrationHelper.class.getName(), "insertTableStringBuilder: " + insertTableStringBuilder);
             db.execSQL(insertTableStringBuilder.toString());
         }
     }
 
     private static void dropAllTables(Database db, boolean ifExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "dropAllTables");
+
         reflectMethod(db, "dropTable", ifExists, daoClasses);
     }
 
     private static void createAllTables(Database db, boolean ifNotExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "createAllTables");
+
         reflectMethod(db, "createTable", ifNotExists, daoClasses);
     }
 
@@ -55,6 +67,8 @@ public final class DbMigrationHelper {
      * dao class already define the sql exec method, so just invoke it
      */
     private static void reflectMethod(Database db, String methodName, boolean isExists, @NonNull Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "reflectMethod");
+
         if (daoClasses.length < 1) {
             return;
         }
@@ -73,6 +87,8 @@ public final class DbMigrationHelper {
     }
 
     private static void restoreData(Database db, Class<? extends AbstractDao<?, ?>>... daoClasses) {
+        Log.i(DbMigrationHelper.class.getName(), "restoreData");
+
         for (int i = 0; i < daoClasses.length; i++) {
             DaoConfig daoConfig = new DaoConfig(db, daoClasses[i]);
             String tableName = daoConfig.tablename;
@@ -95,6 +111,7 @@ public final class DbMigrationHelper {
                 insertTableStringBuilder.append(") SELECT ");
                 insertTableStringBuilder.append(columnSQL);
                 insertTableStringBuilder.append(" FROM ").append(tempTableName).append(";");
+                Log.i(DbMigrationHelper.class.getName(), "insertTableStringBuilder: " + insertTableStringBuilder);
                 db.execSQL(insertTableStringBuilder.toString());
             }
             StringBuilder dropTableStringBuilder = new StringBuilder();
@@ -104,6 +121,8 @@ public final class DbMigrationHelper {
     }
 
     private static List<String> getColumns(Database db, String tableName) {
+        Log.i(DbMigrationHelper.class.getName(), "getColumns");
+
         List<String> columns = null;
         Cursor cursor = null;
         try {

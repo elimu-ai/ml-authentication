@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
+import org.literacyapp.contentprovider.dao.AllophoneDao;
 import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.DaoMaster;
 import org.literacyapp.contentprovider.dao.DaoSession;
@@ -14,6 +15,7 @@ import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.model.Student;
+import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.contentprovider.model.content.Word;
@@ -54,6 +56,19 @@ public class ContentProvider {
      */
     public static DaoSession getDaoSession() {
         return daoSession;
+    }
+
+    public static List<Allophone> getAllAllophonesOrderedByFrequency() {
+        Log.i(ContentProvider.class.getName(), "getAllAllophonesOrderedByFrequency");
+
+        AllophoneDao allophoneDao = daoSession.getAllophoneDao();
+
+        List<Allophone> allophones = allophoneDao.queryBuilder()
+                .orderDesc(AllophoneDao.Properties.UsageCount)
+                .orderAsc(AllophoneDao.Properties.ValueIpa)
+                .list();
+
+        return allophones;
     }
 
     /**
