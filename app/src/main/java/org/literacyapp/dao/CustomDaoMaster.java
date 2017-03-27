@@ -41,7 +41,6 @@ public class CustomDaoMaster extends DaoMaster {
 //            }
             if (oldVersion < 2000001) {
                 db.execSQL("ALTER TABLE ALLOPHONE ADD COLUMN `USAGE_COUNT` INTEGER NOT NULL DEFAULT 0;");
-                db.execSQL("UPDATE ALLOPHONE SET `REVISION_NUMBER` = `REVISION_NUMBER` + 1;");
             }
 
 //            if (oldVersion < ???) {
