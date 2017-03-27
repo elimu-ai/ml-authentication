@@ -58,6 +58,8 @@ public class ContentProvider {
         return daoSession;
     }
 
+    // TODO: getUnlockedAllophones
+
     public static List<Allophone> getAllAllophonesOrderedByFrequency() {
         Log.i(ContentProvider.class.getName(), "getAllAllophonesOrderedByFrequency");
 
