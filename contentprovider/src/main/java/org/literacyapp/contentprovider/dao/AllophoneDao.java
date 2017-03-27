@@ -62,6 +62,7 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
         public final static Property ConsonantType = new Property(12, String.class, "consonantType", false, "CONSONANT_TYPE");
         public final static Property ConsonantPlace = new Property(13, String.class, "consonantPlace", false, "CONSONANT_PLACE");
         public final static Property ConsonantVoicing = new Property(14, String.class, "consonantVoicing", false, "CONSONANT_VOICING");
+        public final static Property UsageCount = new Property(15, int.class, "usageCount", false, "USAGE_COUNT");
     }
 
     private final LocaleConverter localeConverter = new LocaleConverter();
@@ -102,7 +103,8 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
                 "\"LIP_ROUNDING\" TEXT," + // 11: lipRounding
                 "\"CONSONANT_TYPE\" TEXT," + // 12: consonantType
                 "\"CONSONANT_PLACE\" TEXT," + // 13: consonantPlace
-                "\"CONSONANT_VOICING\" TEXT);"); // 14: consonantVoicing
+                "\"CONSONANT_VOICING\" TEXT," + // 14: consonantVoicing
+                "\"USAGE_COUNT\" INTEGER NOT NULL );"); // 15: usageCount
     }
 
     /** Drops the underlying database table. */
@@ -169,6 +171,7 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
         if (consonantVoicing != null) {
             stmt.bindString(15, consonantVoicingConverter.convertToDatabaseValue(consonantVoicing));
         }
+        stmt.bindLong(16, entity.getUsageCount());
     }
 
     @Override
@@ -229,6 +232,7 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
         if (consonantVoicing != null) {
             stmt.bindString(15, consonantVoicingConverter.convertToDatabaseValue(consonantVoicing));
         }
+        stmt.bindLong(16, entity.getUsageCount());
     }
 
     @Override
@@ -253,7 +257,8 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
             cursor.isNull(offset + 11) ? null : lipRoundingConverter.convertToEntityProperty(cursor.getString(offset + 11)), // lipRounding
             cursor.isNull(offset + 12) ? null : consonantTypeConverter.convertToEntityProperty(cursor.getString(offset + 12)), // consonantType
             cursor.isNull(offset + 13) ? null : consonantPlaceConverter.convertToEntityProperty(cursor.getString(offset + 13)), // consonantPlace
-            cursor.isNull(offset + 14) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 14)) // consonantVoicing
+            cursor.isNull(offset + 14) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 14)), // consonantVoicing
+            cursor.getInt(offset + 15) // usageCount
         );
         return entity;
     }
@@ -275,6 +280,7 @@ public class AllophoneDao extends AbstractDao<Allophone, Long> {
         entity.setConsonantType(cursor.isNull(offset + 12) ? null : consonantTypeConverter.convertToEntityProperty(cursor.getString(offset + 12)));
         entity.setConsonantPlace(cursor.isNull(offset + 13) ? null : consonantPlaceConverter.convertToEntityProperty(cursor.getString(offset + 13)));
         entity.setConsonantVoicing(cursor.isNull(offset + 14) ? null : consonantVoicingConverter.convertToEntityProperty(cursor.getString(offset + 14)));
+        entity.setUsageCount(cursor.getInt(offset + 15));
      }
     
     @Override

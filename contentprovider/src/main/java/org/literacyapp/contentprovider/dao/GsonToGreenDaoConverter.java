@@ -44,6 +44,7 @@ public class GsonToGreenDaoConverter {
             allophone.setConsonantType(allophoneGson.getConsonantType());
             allophone.setConsonantPlace(allophoneGson.getConsonantPlace());
             allophone.setConsonantVoicing(allophoneGson.getConsonantVoicing());
+            allophone.setUsageCount(allophoneGson.getUsageCount());
 
             return allophone;
         }
