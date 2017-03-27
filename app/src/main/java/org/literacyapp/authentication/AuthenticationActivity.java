@@ -3,6 +3,7 @@ package org.literacyapp.authentication;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -23,6 +24,7 @@ import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.util.EnvironmentSettings;
+import org.literacyapp.util.RootHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.OpenCVLoader;
@@ -77,9 +79,11 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
-        screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
-        displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
+        if (RootHelper.isDeviceRooted()){
+            screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
+            screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+            displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
+        }
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -132,9 +136,11 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         Mat imgRgba = inputFrame.rgba();
 
-        //   Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
-        //   M.Schälchli 20170129
-        //   DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+//        Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
+//        M.Schälchli 20170129
+//        if (RootHelper.isDeviceRooted()){
+//            DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+//        }
 
         long currentTime = new Date().getTime();
 
@@ -293,6 +299,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
         activityStopped = true;
-        DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        if (RootHelper.isDeviceRooted()){
+            DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        }
     }
 }

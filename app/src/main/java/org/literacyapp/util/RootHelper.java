@@ -42,4 +42,23 @@ public class RootHelper {
         }
         return successMessage;
     }
+
+    public static boolean isDeviceRooted() {
+        Log.i(RootHelper.class.getName(), "isDeviceRooted");
+
+        Process process = null;
+        String line = "";
+
+        try {
+            process = Runtime.getRuntime().exec("su");
+            InputStream inputStreamSuccess = process.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamSuccess));
+            line = bufferedReader.readLine();
+        } catch (IOException e) {
+            Log.e(RootHelper.class.getName(), null, e);
+            line = null;
+        }
+
+        return (line != null);
+    }
 }

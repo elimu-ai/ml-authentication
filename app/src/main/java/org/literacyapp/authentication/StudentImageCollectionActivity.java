@@ -23,6 +23,7 @@ import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEve
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.util.DeviceInfoHelper;
 import org.literacyapp.util.EnvironmentSettings;
+import org.literacyapp.util.RootHelper;
 import org.literacyapp.util.StudentHelper;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -89,9 +90,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
-        screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
-        displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
+        if (RootHelper.isDeviceRooted()){
+            screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
+            screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+            displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
+        }
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -143,9 +146,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
 
-        //   Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
-        //   M.Schälchli 20170129
-        //   DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+//        Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
+//        M.Schälchli 20170129
+//        if (RootHelper.isDeviceRooted()){
+//            DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+//        }
 
         long currentTime = new Date().getTime();
 
@@ -305,6 +310,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.release();
         activityStopped = true;
 
-        DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        if (RootHelper.isDeviceRooted()){
+            DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        }
     }
 }
