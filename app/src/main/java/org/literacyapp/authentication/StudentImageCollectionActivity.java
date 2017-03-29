@@ -14,6 +14,7 @@ import org.literacyapp.authentication.animaloverlay.AnimalOverlay;
 import org.literacyapp.authentication.animaloverlay.AnimalOverlayHelper;
 import org.literacyapp.authentication.helper.AuthenticationInstructionHelper;
 import org.literacyapp.authentication.helper.DetectionHelper;
+import org.literacyapp.authentication.thread.AuthenticationThread;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.StudentImageCollectionEventDao;
 import org.literacyapp.contentprovider.dao.StudentImageDao;
@@ -71,6 +72,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     private int screenBrightnessMode;
     private int screenBrightness;
     private int displayTemperatureNight;
+    private boolean isDeviceRooted;
 
     // Image collection parameters
     private static final long TIMER_DIFF = 200;
@@ -89,9 +91,13 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
-        screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
-        displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
+        isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
+
+        if (isDeviceRooted){
+            screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
+            screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
+            displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
+        }
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -143,9 +149,11 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         final Mat imgRgba = inputFrame.rgba();
 
-        //   Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
-        //   M.Schälchli 20170129
-        //   DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+//        Do not change screen brightness manually during test phase, due to the unknown location of the different test users.
+//        M.Schälchli 20170129
+//        if (isDeviceRooted){
+//            DetectionHelper.setIncreasedScreenBrightness(getApplicationContext(), imgRgba);
+//        }
 
         long currentTime = new Date().getTime();
 
@@ -305,6 +313,8 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.release();
         activityStopped = true;
 
-        DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        if (isDeviceRooted){
+            DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
+        }
     }
 }

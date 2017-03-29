@@ -15,6 +15,7 @@ import org.literacyapp.contentprovider.model.analytics.AuthenticationEvent;
 import org.literacyapp.contentprovider.model.analytics.StudentImageCollectionEvent;
 import org.literacyapp.receiver.BootReceiver;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
+import org.literacyapp.util.RootHelper;
 
 import java.util.Date;
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.List;
  */
 
 public class AuthenticationThread extends Thread {
+
+    public static final String IS_DEVICE_ROOTED_IDENTIFIER = "IsDeviceRooted";
 
     private Context context;
     private AuthenticationJobService authenticationJobService;
@@ -39,6 +42,7 @@ public class AuthenticationThread extends Thread {
             if (didTheMinimumTimePassSinceLastExecution()){
                 Intent authenticationIntent = new Intent(context, AuthenticationActivity.class);
                 authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                authenticationIntent.putExtra(IS_DEVICE_ROOTED_IDENTIFIER, RootHelper.isDeviceRooted());
                 context.startActivity(authenticationIntent);
                 Log.i(getClass().getName(), "The Authentication has been started.");
             } else {
