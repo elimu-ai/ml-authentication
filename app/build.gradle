@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'net.saliman.cobertura'
 
 android {
     compileSdkVersion 23
@@ -60,13 +61,21 @@ greendao {
     targetGenDir '../contentprovider/src/main/java'
 }
 
+cobertura {
+    coverageFormats = [ 'html', 'xml' ]
+}
+
 buildscript {
     repositories {
         jcenter()
         mavenCentral()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
     }
     dependencies {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
+        classpath 'net.saliman:gradle-cobertura-plugin:2.4.0'
     }
 }
 
