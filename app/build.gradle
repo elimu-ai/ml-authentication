@@ -96,7 +96,7 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
 
     compile project(':openCVLibrary310')
-    compile 'ch.zhaw:facerecognitionlibrary:1.3.3'
+    compile 'ch.zhaw:facerecognitionlibrary:1.4.0'
 
     compile 'org.literacyapp.analytics:eventtracker:1.0.0'
 
