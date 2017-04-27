@@ -13,6 +13,7 @@ import org.literacyapp.service.ContentSynchronizationJobService;
 import org.literacyapp.service.FaceRecognitionTrainingJobService;
 import org.literacyapp.service.synchronization.AuthenticationJobService;
 import org.literacyapp.service.synchronization.MergeSimilarStudentsJobService;
+import org.literacyapp.authentication.helper.StartPrefsHelper;
 
 public class BootReceiver extends BroadcastReceiver {
 
@@ -37,6 +38,14 @@ public class BootReceiver extends BroadcastReceiver {
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
 
+        if (StartPrefsHelper.scheduleAfterBoot(context)){
+            scheduleAuthenticationJobs(context);
+        } else {
+            Log.i(getClass().getName(), "Authentication jobs won't be scheduled because the 7 days after first start-up haven't passed yet.");
+        }
+    }
+
+    private static void scheduleAuthenticationJobs(Context context){
         // Initiate background job for face recognition training
         scheduleFaceRecognitionTranining(context);
 
