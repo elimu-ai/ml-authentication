@@ -7,6 +7,7 @@ import org.literacyapp.contentprovider.model.content.multimedia.Image;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
 
 import java.io.File;
+import java.util.Locale;
 
 /**
  * Helper class for determining folder paths of multimedia content.
@@ -14,7 +15,8 @@ import java.io.File;
 public class MultimediaHelper {
 
     public static File getMultimediaDirectory() {
-        File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + "/.literacyapp/multimedia");
+        String language = Locale.getDefault().getLanguage(); // E.g. "en"
+        File multimediaDirectory = new File(Environment.getExternalStorageDirectory() + "/.literacyapp/multimedia/" + language);
         if (!multimediaDirectory.exists()) {
             multimediaDirectory.mkdirs();
         }
