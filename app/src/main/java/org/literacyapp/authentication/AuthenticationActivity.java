@@ -208,7 +208,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             }
 
-            if (faceDetected && !isFaceInsideFrame){
+            if (faceDetected && !isFaceInsideFrame && !activityStopped){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
                 AuthenticationInstructionHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
