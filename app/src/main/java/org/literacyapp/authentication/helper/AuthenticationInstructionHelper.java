@@ -57,13 +57,15 @@ public class AuthenticationInstructionHelper {
     }
 
     public static synchronized void playTabletPlacementOverlay(MediaPlayer mediaPlayerTabletPlacement, MediaPlayer mediaPlayerTabletPlacementOverlay, MediaPlayer mediaPlayerAnimalSound){
-        if (mediaPlayerTabletPlacement != null){
-            if ((!mediaPlayerTabletPlacement.isPlaying()) && (!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
-                mediaPlayerTabletPlacementOverlay.start();
-            }
-        } else {
-            if ((!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
-                mediaPlayerTabletPlacementOverlay.start();
+        if ((mediaPlayerTabletPlacementOverlay != null) && (mediaPlayerAnimalSound != null)){
+            if (mediaPlayerTabletPlacement != null){
+                if ((!mediaPlayerTabletPlacement.isPlaying()) && (!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
+                    mediaPlayerTabletPlacementOverlay.start();
+                }
+            } else {
+                if ((!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
+                    mediaPlayerTabletPlacementOverlay.start();
+                }
             }
         }
     }
