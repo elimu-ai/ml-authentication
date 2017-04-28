@@ -42,7 +42,8 @@ public class AuthenticationThread extends Thread {
             if (didTheMinimumTimePassSinceLastExecution()){
                 Intent authenticationIntent = new Intent(context, AuthenticationActivity.class);
                 authenticationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                authenticationIntent.putExtra(IS_DEVICE_ROOTED_IDENTIFIER, RootHelper.isDeviceRooted());
+                //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+                //authenticationIntent.putExtra(IS_DEVICE_ROOTED_IDENTIFIER, RootHelper.isDeviceRooted());
                 context.startActivity(authenticationIntent);
                 Log.i(getClass().getName(), "The Authentication has been started.");
             } else {

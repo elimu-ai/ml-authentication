@@ -4,6 +4,7 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.util.Log;
 
+import org.literacyapp.authentication.helper.StartPrefsHelper;
 import org.literacyapp.authentication.thread.TrainingThread;
 
 public class FaceRecognitionTrainingJobService extends JobService {
@@ -14,16 +15,20 @@ public class FaceRecognitionTrainingJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStartJob");
-        this.jobParameters = jobParameters;
-        trainingThread = new TrainingThread(this);
-        trainingThread.start();
+        if (StartPrefsHelper.activateAuthentication()) {
+            this.jobParameters = jobParameters;
+            trainingThread = new TrainingThread(this);
+            trainingThread.start();
+        }
         return false;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStopJob");
-        trainingThread.interrupt();
+        if ((trainingThread != null) && (trainingThread.isAlive())) {
+            trainingThread.interrupt();
+        }
         return false;
     }
 
