@@ -296,13 +296,13 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     protected void onStop() {
         super.onStop();
+        activityStopped = true;
         mediaPlayerTabletPlacement.stop();
         mediaPlayerTabletPlacement.release();
         mediaPlayerTabletPlacementOverlay.stop();
         mediaPlayerTabletPlacementOverlay.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
-        activityStopped = true;
         if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
         }
