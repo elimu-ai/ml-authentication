@@ -91,13 +91,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
 
         if (isDeviceRooted){
             screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
             screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
             displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
-        }
+        }*/
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -313,8 +314,9 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
 
-        if (isDeviceRooted){
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
-        }
+        }*/
     }
 }

@@ -4,6 +4,7 @@ import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.util.Log;
 
+import org.literacyapp.authentication.helper.StartPrefsHelper;
 import org.literacyapp.authentication.thread.AuthenticationThread;
 
 public class AuthenticationJobService extends JobService {
@@ -14,16 +15,20 @@ public class AuthenticationJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStartJob");
-        this.jobParameters = jobParameters;
-        authenticationThread = new AuthenticationThread(this);
-        authenticationThread.start();
+        if (StartPrefsHelper.activateAuthentication()){
+            this.jobParameters = jobParameters;
+            authenticationThread = new AuthenticationThread(this);
+            authenticationThread.start();
+        }
         return false;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Log.i(getClass().getName(), "onStopJob");
-        authenticationThread.interrupt();
+        if ((authenticationThread != null) && (authenticationThread.isAlive())){
+            authenticationThread.interrupt();
+        }
         return false;
     }
 
