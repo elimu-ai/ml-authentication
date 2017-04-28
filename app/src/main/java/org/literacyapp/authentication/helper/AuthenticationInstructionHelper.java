@@ -57,13 +57,16 @@ public class AuthenticationInstructionHelper {
     }
 
     public static synchronized void playTabletPlacementOverlay(MediaPlayer mediaPlayerTabletPlacement, MediaPlayer mediaPlayerTabletPlacementOverlay, MediaPlayer mediaPlayerAnimalSound){
-        if (mediaPlayerTabletPlacement != null){
-            if ((!mediaPlayerTabletPlacement.isPlaying()) && (!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
-                mediaPlayerTabletPlacementOverlay.start();
-            }
-        } else {
-            if ((!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
-                mediaPlayerTabletPlacementOverlay.start();
+        // Check that the MediaPlayers are not null (this could happen, if the Activity has already ended, but a thread still tries to use the MediaPlayers)
+        if ((mediaPlayerTabletPlacementOverlay != null) && (mediaPlayerAnimalSound != null)){
+            if (mediaPlayerTabletPlacement != null){
+                if ((!mediaPlayerTabletPlacement.isPlaying()) && (!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
+                    mediaPlayerTabletPlacementOverlay.start();
+                }
+            } else {
+                if ((!mediaPlayerTabletPlacementOverlay.isPlaying()) && (!mediaPlayerAnimalSound.isPlaying())){
+                    mediaPlayerTabletPlacementOverlay.start();
+                }
             }
         }
     }
