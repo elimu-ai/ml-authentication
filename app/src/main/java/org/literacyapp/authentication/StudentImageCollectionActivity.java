@@ -303,6 +303,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
+        activityStopped = true;
         if (!authenticationAnimationAlreadyPlayed){
             mediaPlayerTabletPlacement.stop();
             mediaPlayerTabletPlacement.release();
@@ -311,7 +312,6 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerTabletPlacementOverlay.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
-        activityStopped = true;
 
         if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
