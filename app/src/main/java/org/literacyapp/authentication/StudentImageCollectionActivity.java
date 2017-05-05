@@ -91,13 +91,14 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication_student_image_collection);
 
-        isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
 
         if (isDeviceRooted){
             screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
             screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
             displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
-        }
+        }*/
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -214,7 +215,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
                 finish();
             }
 
-            if (faceDetected && !isFaceInsideFrame){
+            if (faceDetected && !isFaceInsideFrame && !activityStopped){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
                 AuthenticationInstructionHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
@@ -303,6 +304,7 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
     @Override
     protected void onStop() {
         super.onStop();
+        activityStopped = true;
         if (!authenticationAnimationAlreadyPlayed){
             mediaPlayerTabletPlacement.stop();
             mediaPlayerTabletPlacement.release();
@@ -311,10 +313,10 @@ public class StudentImageCollectionActivity extends AppCompatActivity implements
         mediaPlayerTabletPlacementOverlay.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
-        activityStopped = true;
 
-        if (isDeviceRooted){
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
-        }
+        }*/
     }
 }

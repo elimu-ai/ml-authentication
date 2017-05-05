@@ -51,12 +51,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Obtain permission to change system settings
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*// Obtain permission to change system settings
         try {
             RootHelper.runAsRoot(new String[] {"pm grant org.literacyapp android.permission.WRITE_SECURE_SETTINGS"});
         } catch (IOException | InterruptedException e) {
             Log.e(getClass().getName(), null, e);
-        }
+        }*/
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplication();
         letterDao = literacyApplication.getDaoSession().getLetterDao();

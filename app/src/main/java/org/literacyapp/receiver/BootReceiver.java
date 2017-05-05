@@ -38,11 +38,13 @@ public class BootReceiver extends BroadcastReceiver {
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(jobInfo);
 
-        if (StartPrefsHelper.scheduleAfterBoot(context)){
+        /*if (StartPrefsHelper.scheduleAfterBoot(context)){
             scheduleAuthenticationJobs(context);
         } else {
             Log.i(getClass().getName(), "Authentication jobs won't be scheduled because the 7 days after first start-up haven't passed yet.");
-        }
+        }*/
+
+        scheduleAuthenticationJobs(context);
     }
 
     private static void scheduleAuthenticationJobs(Context context){
@@ -52,8 +54,8 @@ public class BootReceiver extends BroadcastReceiver {
         // Initiate background job for face recognition authentication
         scheduleAuthentication(context, MINUTES_BETWEEN_AUTHENTICATIONS);
 
-        // Initiate background job for merging similar students
-        scheduleMergeSimilarStudents(context);
+        /*// Initiate background job for merging similar students
+        scheduleMergeSimilarStudents(context);*/
     }
 
     public static void scheduleFaceRecognitionTranining(Context context){

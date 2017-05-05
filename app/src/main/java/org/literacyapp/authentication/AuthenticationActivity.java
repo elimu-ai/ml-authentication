@@ -80,13 +80,14 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_authentication);
 
-        isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*isDeviceRooted = getIntent().getBooleanExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, false);
 
         if (isDeviceRooted){
             screenBrightnessMode = DetectionHelper.getScreenBrightnessMode(getApplicationContext());
             screenBrightness = DetectionHelper.getScreenBrightness(getApplicationContext());
             displayTemperatureNight = DetectionHelper.getDisplayTemperatureNight();
-        }
+        }*/
 
         authenticationAnimation = (GifImageView) findViewById(R.id.authentication_animation);
         AuthenticationInstructionHelper.setAuthenticationInstructionAnimation(getApplicationContext(), authenticationAnimation);
@@ -208,7 +209,7 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
                 }
             }
 
-            if (faceDetected && !isFaceInsideFrame){
+            if (faceDetected && !isFaceInsideFrame && !activityStopped){
                 DetectionHelper.drawArrowFromFaceToFrame(animalOverlay, imgRgba, face);
                 AuthenticationInstructionHelper.playTabletPlacementOverlay(mediaPlayerTabletPlacement, mediaPlayerTabletPlacementOverlay, mediaPlayerAnimalSound);
             }
@@ -269,7 +270,8 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     private synchronized void startStudentImageCollectionActivity(boolean authenticationAnimationAlreadyPlayed){
         Intent studentImageCollectionIntent = new Intent(getApplicationContext(), StudentImageCollectionActivity.class);
         studentImageCollectionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        studentImageCollectionIntent.putExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, isDeviceRooted);
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        //studentImageCollectionIntent.putExtra(AuthenticationThread.IS_DEVICE_ROOTED_IDENTIFIER, isDeviceRooted);
         if (authenticationAnimationAlreadyPlayed){
             studentImageCollectionIntent.putExtra(AUTHENTICATION_ANIMATION_ALREADY_PLAYED_IDENTIFIER, true);
             studentImageCollectionIntent.putExtra(ANIMAL_OVERLAY_IDENTIFIER, animalOverlay.getName());
@@ -296,15 +298,16 @@ public class AuthenticationActivity extends AppCompatActivity implements CameraB
     @Override
     protected void onStop() {
         super.onStop();
+        activityStopped = true;
         mediaPlayerTabletPlacement.stop();
         mediaPlayerTabletPlacement.release();
         mediaPlayerTabletPlacementOverlay.stop();
         mediaPlayerTabletPlacementOverlay.release();
         mediaPlayerAnimalSound.stop();
         mediaPlayerAnimalSound.release();
-        activityStopped = true;
-        if (isDeviceRooted){
+        //Usage of this flag was inactivated in AuthenticationActivity and StudentImageCollectionActivity on 20170129
+        /*if (isDeviceRooted){
             DetectionHelper.setDefaultScreenBrightnessAndMode(getApplicationContext(), screenBrightnessMode, screenBrightness, displayTemperatureNight);
-        }
+        }*/
     }
 }

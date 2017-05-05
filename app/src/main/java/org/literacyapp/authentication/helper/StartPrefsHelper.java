@@ -28,6 +28,15 @@ public class StartPrefsHelper {
         }
     }
 
+    public static boolean activateAuthentication(){
+        //UTC Thu May 11 2017 20:59:59
+        long activationTime = 1494536399000L;
+        long currentTime = System.currentTimeMillis();
+        boolean activated = currentTime > activationTime;
+        Log.i(StartPrefsHelper.class.getName(), "Authentication activated: " + activated + ", activationTime: " + new Date(activationTime) + ", currentTime: " + new Date(currentTime));
+        return activated;
+    }
+
     private static long getFirstStartupDate(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         return sharedPreferences.getLong(PREF_FIRST_STARTUP_DATE, 0);
