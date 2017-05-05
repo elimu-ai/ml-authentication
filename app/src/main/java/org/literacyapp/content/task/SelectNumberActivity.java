@@ -22,6 +22,7 @@ import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.util.MediaPlayerHelper;
@@ -275,11 +276,15 @@ public class SelectNumberActivity extends AppCompatActivity {
                     MediaPlayerHelper.play(getApplicationContext(), resourceId);
                 } else {
                     // Fall-back to TTS
-                    TtsHelper.speak(getApplicationContext(), number.getWord().getText());
+                    Word numberWord = number.getWords().get(0);
+                    // TODO: concatenate text from all number words into one String
+                    TtsHelper.speak(getApplicationContext(), numberWord.getText());
                 }
             } catch (Resources.NotFoundException e) {
                 // Fall-back to TTS
-                TtsHelper.speak(getApplicationContext(), number.getWord().getText());
+                Word numberWord = number.getWords().get(0);
+                // TODO: concatenate text from all number words into one String
+                TtsHelper.speak(getApplicationContext(), numberWord.getText());
             }
         }
     }

@@ -85,7 +85,6 @@ public class GsonToGreenDaoConverter {
 
             number.setValue(numberGson.getValue());
             number.setSymbol(numberGson.getSymbol());
-            number.setWord(getWord(numberGson.getWord()));
 
             return number;
         }
