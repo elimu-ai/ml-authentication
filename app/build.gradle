@@ -10,8 +10,8 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1005009
-        versionName "1.5.9"
+        versionCode 1006000
+        versionName "1.6.0"
 
 //        jackOptions {
 //            enabled true
@@ -56,7 +56,7 @@ android {
 }
 
 greendao {
-    schemaVersion 2000001 // Must match greendao.schemaVersion in contentprovider/build.gradle
+    schemaVersion 2000003 // Must match greendao.schemaVersion in contentprovider/build.gradle
     daoPackage 'org.literacyapp.contentprovider.dao'
     targetGenDir '../contentprovider/src/main/java'
 }

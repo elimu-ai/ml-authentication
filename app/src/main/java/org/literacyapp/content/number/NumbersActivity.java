@@ -21,6 +21,7 @@ import org.literacyapp.content.task.NumberActivity;
 import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
 import org.literacyapp.model.enums.content.NumeracySkill;
@@ -75,9 +76,11 @@ public class NumbersActivity extends AppCompatActivity {
 
                     Log.i(getClass().getName(), "number.getValue(): " + number.getValue());
                     Log.i(getClass().getName(), "number.getSymbol(): " + number.getSymbol());
-                    Log.i(getClass().getName(), "number.getWord(): " + number.getWord());
-                    if (number.getWord() != null) {
-                        Log.i(getClass().getName(), "number.getWord().getText(): " + number.getWord().getText());
+                    Log.i(getClass().getName(), "number.getWords(): " + number.getWords());
+                    if (!number.getWords().isEmpty()) {
+                        for (Word numberWord : number.getWords()) {
+                            Log.i(getClass().getName(), "numberWord.getText(): " + numberWord.getText());
+                        }
                     }
 
                     playNumberSound(number);

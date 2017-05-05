@@ -5,7 +5,9 @@ import org.greenrobot.greendao.annotation.Convert;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.JoinEntity;
 import org.greenrobot.greendao.annotation.NotNull;
+import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.NumberDao;
@@ -13,10 +15,12 @@ import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.dao.converter.CalendarConverter;
 import org.literacyapp.contentprovider.dao.converter.ContentStatusConverter;
 import org.literacyapp.contentprovider.dao.converter.LocaleConverter;
+import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Based on {@link org.literacyapp.model.gson.content.NumberGson}
@@ -46,8 +50,13 @@ public class Number {
 
     private String symbol;
 
+    @Deprecated
     @ToOne(joinProperty = "id")
     private Word word;
+
+    @ToMany
+    @JoinEntity(entity = JoinNumbersWithWords.class, sourceProperty = "numberId", targetProperty = "wordId")
+    private List<Word> words;
 
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
@@ -203,5 +212,33 @@ public class Number {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getNumberDao() : null;
+    }
+
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 295048042)
+    public List<Word> getWords() {
+        if (words == null) {
+            final DaoSession daoSession = this.daoSession;
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            WordDao targetDao = daoSession.getWordDao();
+            List<Word> wordsNew = targetDao._queryNumber_Words(id);
+            synchronized (this) {
+                if (words == null) {
+                    words = wordsNew;
+                }
+            }
+        }
+        return words;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1954400333)
+    public synchronized void resetWords() {
+        words = null;
     }
 }

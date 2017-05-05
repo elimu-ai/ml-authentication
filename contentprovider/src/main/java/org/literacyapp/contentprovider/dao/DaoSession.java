@@ -27,6 +27,7 @@ import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.contentprovider.model.content.Number;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.Device;
+import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 import org.literacyapp.contentprovider.model.JoinStudentsWithDevices;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.contentprovider.model.StudentImage;
@@ -51,6 +52,7 @@ import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.dao.DeviceDao;
+import org.literacyapp.contentprovider.dao.JoinNumbersWithWordsDao;
 import org.literacyapp.contentprovider.dao.JoinStudentsWithDevicesDao;
 import org.literacyapp.contentprovider.dao.StudentDao;
 import org.literacyapp.contentprovider.dao.StudentImageDao;
@@ -84,6 +86,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig numberDaoConfig;
     private final DaoConfig wordDaoConfig;
     private final DaoConfig deviceDaoConfig;
+    private final DaoConfig joinNumbersWithWordsDaoConfig;
     private final DaoConfig joinStudentsWithDevicesDaoConfig;
     private final DaoConfig studentDaoConfig;
     private final DaoConfig studentImageDaoConfig;
@@ -108,6 +111,7 @@ public class DaoSession extends AbstractDaoSession {
     private final NumberDao numberDao;
     private final WordDao wordDao;
     private final DeviceDao deviceDao;
+    private final JoinNumbersWithWordsDao joinNumbersWithWordsDao;
     private final JoinStudentsWithDevicesDao joinStudentsWithDevicesDao;
     private final StudentDao studentDao;
     private final StudentImageDao studentImageDao;
@@ -174,6 +178,9 @@ public class DaoSession extends AbstractDaoSession {
         deviceDaoConfig = daoConfigMap.get(DeviceDao.class).clone();
         deviceDaoConfig.initIdentityScope(type);
 
+        joinNumbersWithWordsDaoConfig = daoConfigMap.get(JoinNumbersWithWordsDao.class).clone();
+        joinNumbersWithWordsDaoConfig.initIdentityScope(type);
+
         joinStudentsWithDevicesDaoConfig = daoConfigMap.get(JoinStudentsWithDevicesDao.class).clone();
         joinStudentsWithDevicesDaoConfig.initIdentityScope(type);
 
@@ -205,6 +212,7 @@ public class DaoSession extends AbstractDaoSession {
         numberDao = new NumberDao(numberDaoConfig, this);
         wordDao = new WordDao(wordDaoConfig, this);
         deviceDao = new DeviceDao(deviceDaoConfig, this);
+        joinNumbersWithWordsDao = new JoinNumbersWithWordsDao(joinNumbersWithWordsDaoConfig, this);
         joinStudentsWithDevicesDao = new JoinStudentsWithDevicesDao(joinStudentsWithDevicesDaoConfig, this);
         studentDao = new StudentDao(studentDaoConfig, this);
         studentImageDao = new StudentImageDao(studentImageDaoConfig, this);
@@ -229,6 +237,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Number.class, numberDao);
         registerDao(Word.class, wordDao);
         registerDao(Device.class, deviceDao);
+        registerDao(JoinNumbersWithWords.class, joinNumbersWithWordsDao);
         registerDao(JoinStudentsWithDevices.class, joinStudentsWithDevicesDao);
         registerDao(Student.class, studentDao);
         registerDao(StudentImage.class, studentImageDao);
@@ -255,6 +264,7 @@ public class DaoSession extends AbstractDaoSession {
         numberDaoConfig.clearIdentityScope();
         wordDaoConfig.clearIdentityScope();
         deviceDaoConfig.clearIdentityScope();
+        joinNumbersWithWordsDaoConfig.clearIdentityScope();
         joinStudentsWithDevicesDaoConfig.clearIdentityScope();
         studentDaoConfig.clearIdentityScope();
         studentImageDaoConfig.clearIdentityScope();
@@ -335,6 +345,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public DeviceDao getDeviceDao() {
         return deviceDao;
+    }
+
+    public JoinNumbersWithWordsDao getJoinNumbersWithWordsDao() {
+        return joinNumbersWithWordsDao;
     }
 
     public JoinStudentsWithDevicesDao getJoinStudentsWithDevicesDao() {

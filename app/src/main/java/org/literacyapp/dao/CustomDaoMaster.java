@@ -7,6 +7,8 @@ import android.util.Log;
 import org.greenrobot.greendao.database.Database;
 import org.literacyapp.contentprovider.dao.AllophoneDao;
 import org.literacyapp.contentprovider.dao.DaoMaster;
+import org.literacyapp.contentprovider.dao.JoinNumbersWithWordsDao;
+import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 
 public class CustomDaoMaster extends DaoMaster {
 
@@ -41,6 +43,14 @@ public class CustomDaoMaster extends DaoMaster {
 //            }
             if (oldVersion < 2000001) {
                 db.execSQL("ALTER TABLE ALLOPHONE ADD COLUMN `USAGE_COUNT` INTEGER NOT NULL DEFAULT 0;");
+            }
+
+            if (oldVersion < 2000003) {
+                // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
+                DbMigrationHelper.migrate(db,
+                        AllophoneDao.class, // Added "words"
+                        JoinNumbersWithWordsDao.class
+                );
             }
 
 //            if (oldVersion < ???) {

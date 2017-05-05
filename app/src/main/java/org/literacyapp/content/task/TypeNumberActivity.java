@@ -25,6 +25,7 @@ import org.literacyapp.contentprovider.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithNumbers;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
@@ -261,11 +262,15 @@ public class TypeNumberActivity extends AppCompatActivity {
                     MediaPlayerHelper.play(getApplicationContext(), resourceId);
                 } else {
                     // Fall-back to TTS
-                    TtsHelper.speak(getApplicationContext(), number.getWord().getText());
+                    Word numberWord = number.getWords().get(0);
+                    // TODO: concatenate text from all number words into one String
+                    TtsHelper.speak(getApplicationContext(), numberWord.getText());
                 }
             } catch (Resources.NotFoundException e) {
                 // Fall-back to TTS
-                TtsHelper.speak(getApplicationContext(), number.getWord().getText());
+                Word numberWord = number.getWords().get(0);
+                // TODO: concatenate text from all number words into one String
+                TtsHelper.speak(getApplicationContext(), numberWord.getText());
             }
         }
     }

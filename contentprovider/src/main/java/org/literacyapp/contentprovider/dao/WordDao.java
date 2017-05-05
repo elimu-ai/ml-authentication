@@ -16,6 +16,7 @@ import java.util.Calendar;
 import org.literacyapp.contentprovider.dao.converter.CalendarConverter;
 import org.literacyapp.contentprovider.dao.converter.ContentStatusConverter;
 import org.literacyapp.contentprovider.dao.converter.LocaleConverter;
+import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinAudiosWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithWords;
@@ -53,6 +54,7 @@ public class WordDao extends AbstractDao<Word, Long> {
     private Query<Word> audio_WordsQuery;
     private Query<Word> image_WordsQuery;
     private Query<Word> video_WordsQuery;
+    private Query<Word> number_WordsQuery;
 
     public WordDao(DaoConfig config) {
         super(config);
@@ -223,6 +225,21 @@ public class WordDao extends AbstractDao<Word, Long> {
         }
         Query<Word> query = video_WordsQuery.forCurrentThread();
         query.setParameter(0, videoId);
+        return query.list();
+    }
+
+    /** Internal query to resolve the "words" to-many relationship of Number. */
+    public List<Word> _queryNumber_Words(long numberId) {
+        synchronized (this) {
+            if (number_WordsQuery == null) {
+                QueryBuilder<Word> queryBuilder = queryBuilder();
+                queryBuilder.join(JoinNumbersWithWords.class, JoinNumbersWithWordsDao.Properties.WordId)
+                    .where(JoinNumbersWithWordsDao.Properties.NumberId.eq(numberId));
+                number_WordsQuery = queryBuilder.build();
+            }
+        }
+        Query<Word> query = number_WordsQuery.forCurrentThread();
+        query.setParameter(0, numberId);
         return query.list();
     }
 
