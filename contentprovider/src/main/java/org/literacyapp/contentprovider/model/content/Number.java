@@ -50,10 +50,6 @@ public class Number {
 
     private String symbol;
 
-    @Deprecated
-    @ToOne(joinProperty = "id")
-    private Word word;
-
     @ToMany
     @JoinEntity(entity = JoinNumbersWithWords.class, sourceProperty = "numberId", targetProperty = "wordId")
     private List<Word> words;
@@ -137,38 +133,6 @@ public class Number {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
-    }
-
-    @Generated(hash = 1683684945)
-    private transient Long word__resolvedKey;
-
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 839858443)
-    public Word getWord() {
-        Long __key = this.id;
-        if (word__resolvedKey == null || !word__resolvedKey.equals(__key)) {
-            final DaoSession daoSession = this.daoSession;
-            if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
-            }
-            WordDao targetDao = daoSession.getWordDao();
-            Word wordNew = targetDao.load(__key);
-            synchronized (this) {
-                word = wordNew;
-                word__resolvedKey = __key;
-            }
-        }
-        return word;
-    }
-
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 424680845)
-    public void setWord(Word word) {
-        synchronized (this) {
-            this.word = word;
-            id = word == null ? null : word.getId();
-            word__resolvedKey = id;
-        }
     }
 
     /**
