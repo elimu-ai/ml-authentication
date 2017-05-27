@@ -85,9 +85,7 @@ public class NumbersActivity extends AppCompatActivity {
 
                     playNumberSound(number);
 
-                    EventTracker.reportUsageEvent(getApplicationContext(),
-                            NumeracySkill.NUMBER_IDENTIFICATION,
-                            number.getValue());
+                    EventTracker.reportNumberLearningEvent(getApplicationContext(), number.getValue());
 
                     Intent numberIntent = new Intent(getApplicationContext(), NumberActivity.class);
                     numberIntent.putExtra("number", number.getValue());
