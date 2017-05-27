@@ -75,9 +75,7 @@ public class LettersActivity extends AppCompatActivity {
 
                     playLetterSound(letter);
 
-                    EventTracker.reportUsageEvent(getApplicationContext(),
-                            LiteracySkill.LETTER_IDENTIFICATION,
-                            letter.getText());
+                    EventTracker.reportLetterLearningEvent(getApplicationContext(), letter.getText());
 
                     Intent scrollingLetterIntent = new Intent(getApplicationContext(), ScrollingLetterActivity.class);
                     scrollingLetterIntent.putExtra("letter", letter.getText());
