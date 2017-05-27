@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import org.literacyapp.LiteracyApplication;
 import org.literacyapp.R;
+import org.literacyapp.analytics.eventtracker.EventTracker;
 import org.literacyapp.content.task.VideoActivity;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.model.content.Letter;
@@ -105,6 +106,8 @@ public class VideosActivity extends AppCompatActivity {
 
                     Log.i(getClass().getName(), "video.getId(): " + video.getId());
                     Log.i(getClass().getName(), "video.getTitle(): " + video.getTitle());
+
+                    EventTracker.reportVideoLearningEvent(getApplicationContext(), video.getId());
 
                     Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
                     intent.putExtra(VideoActivity.EXTRA_KEY_VIDEO_ID, video.getId());
