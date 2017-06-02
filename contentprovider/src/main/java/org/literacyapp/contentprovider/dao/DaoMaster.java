@@ -38,6 +38,7 @@ public class DaoMaster extends AbstractDaoMaster {
         JoinVideosWithWordsDao.createTable(db, ifNotExists);
         VideoDao.createTable(db, ifNotExists);
         NumberDao.createTable(db, ifNotExists);
+        StoryBookDao.createTable(db, ifNotExists);
         WordDao.createTable(db, ifNotExists);
         DeviceDao.createTable(db, ifNotExists);
         JoinNumbersWithWordsDao.createTable(db, ifNotExists);
@@ -45,7 +46,6 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentDao.createTable(db, ifNotExists);
         StudentImageDao.createTable(db, ifNotExists);
         StudentImageFeatureDao.createTable(db, ifNotExists);
-        StoryBookDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -67,6 +67,7 @@ public class DaoMaster extends AbstractDaoMaster {
         JoinVideosWithWordsDao.dropTable(db, ifExists);
         VideoDao.dropTable(db, ifExists);
         NumberDao.dropTable(db, ifExists);
+        StoryBookDao.dropTable(db, ifExists);
         WordDao.dropTable(db, ifExists);
         DeviceDao.dropTable(db, ifExists);
         JoinNumbersWithWordsDao.dropTable(db, ifExists);
@@ -74,7 +75,6 @@ public class DaoMaster extends AbstractDaoMaster {
         StudentDao.dropTable(db, ifExists);
         StudentImageDao.dropTable(db, ifExists);
         StudentImageFeatureDao.dropTable(db, ifExists);
-        StoryBookDao.dropTable(db, ifExists);
     }
 
     /**
@@ -110,6 +110,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(JoinVideosWithWordsDao.class);
         registerDaoClass(VideoDao.class);
         registerDaoClass(NumberDao.class);
+        registerDaoClass(StoryBookDao.class);
         registerDaoClass(WordDao.class);
         registerDaoClass(DeviceDao.class);
         registerDaoClass(JoinNumbersWithWordsDao.class);
@@ -117,7 +118,6 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(StudentDao.class);
         registerDaoClass(StudentImageDao.class);
         registerDaoClass(StudentImageFeatureDao.class);
-        registerDaoClass(StoryBookDao.class);
     }
 
     public DaoSession newSession() {
