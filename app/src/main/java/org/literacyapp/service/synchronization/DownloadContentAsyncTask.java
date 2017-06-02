@@ -27,11 +27,13 @@ import org.literacyapp.contentprovider.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.contentprovider.dao.JoinVideosWithWordsDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
+import org.literacyapp.contentprovider.dao.StoryBookDao;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.StoryBook;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.contentprovider.model.content.multimedia.Image;
@@ -48,6 +50,7 @@ import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
+import org.literacyapp.model.gson.content.StoryBookGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.ImageGson;
@@ -72,6 +75,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
     private NumberDao numberDao;
     private LetterDao letterDao;
     private WordDao wordDao;
+    private StoryBookDao storyBookDao;
     private AudioDao audioDao;
     private ImageDao imageDao;
     private VideoDao videoDao;
@@ -96,6 +100,7 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         numberDao = literacyApplication.getDaoSession().getNumberDao();
         letterDao = literacyApplication.getDaoSession().getLetterDao();
         wordDao = literacyApplication.getDaoSession().getWordDao();
+        storyBookDao = literacyApplication.getDaoSession().getStoryBookDao();
         audioDao = literacyApplication.getDaoSession().getAudioDao();
         imageDao = literacyApplication.getDaoSession().getImageDao();
         videoDao = literacyApplication.getDaoSession().getVideoDao();
@@ -250,6 +255,41 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         wordDao.update(word);
                     } else {
                         Log.i(getClass().getName(), "Word \"" + word.getText() + "\" already exists in database with id " + word.getId() + " (revision " + word.getRevisionNumber() + ")");
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(getClass().getName(), null, e);
+        }
+
+
+        publishProgress("Downloading StoryBooks");
+        url = EnvironmentSettings.getRestUrl() + "/content/storybook/list" +
+                "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                "&locale=" + DeviceInfoHelper.getLocale(context);
+        jsonResponse = JsonLoader.loadJson(url);
+        Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            if (!"success".equals(jsonObject.getString("result"))) {
+                Log.w(getClass().getName(), "Download failed");
+            } else {
+                JSONArray jsonArray = jsonObject.getJSONArray("storyBooks");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Type type = new TypeToken<StoryBookGson>(){}.getType();
+                    StoryBookGson storyBookGson = new Gson().fromJson(jsonArray.getString(i), type);
+                    StoryBook storyBook = GsonToGreenDaoConverter.getStoryBook(storyBookGson);
+                    StoryBook existingStoryBook = storyBookDao.queryBuilder()
+                            .where(StoryBookDao.Properties.Id.eq(storyBook.getId()))
+                            .unique();
+                    if (existingStoryBook == null) {
+                        Log.i(getClass().getName(), "Storing StoryBook, id: " + storyBook.getId() + ", title: \"" + storyBook.getTitle() + "\", revisionNumber: " + storyBook.getRevisionNumber());
+                        storyBookDao.insert(storyBook);
+                    } else if (existingStoryBook.getRevisionNumber() < storyBook.getRevisionNumber()) {
+                        Log.i(getClass().getName(), "Updating StoryBook with id " + existingStoryBook.getId() + " from revisionNumber " + existingStoryBook.getRevisionNumber() + " to revisionNumber " + storyBook.getRevisionNumber());
+                        storyBookDao.update(storyBook);
+                    } else {
+                        Log.i(getClass().getName(), "StoryBook \"" + storyBook.getTitle() + "\" already exists in database with id " + storyBook.getId() + " (revision " + storyBook.getRevisionNumber() + ")");
                     }
                 }
             }

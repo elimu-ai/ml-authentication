@@ -25,6 +25,7 @@ import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithNu
 import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.StoryBook;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.Device;
 import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
@@ -50,6 +51,7 @@ import org.literacyapp.contentprovider.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.contentprovider.dao.JoinVideosWithWordsDao;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
+import org.literacyapp.contentprovider.dao.StoryBookDao;
 import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.dao.DeviceDao;
 import org.literacyapp.contentprovider.dao.JoinNumbersWithWordsDao;
@@ -84,6 +86,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig joinVideosWithWordsDaoConfig;
     private final DaoConfig videoDaoConfig;
     private final DaoConfig numberDaoConfig;
+    private final DaoConfig storyBookDaoConfig;
     private final DaoConfig wordDaoConfig;
     private final DaoConfig deviceDaoConfig;
     private final DaoConfig joinNumbersWithWordsDaoConfig;
@@ -109,6 +112,7 @@ public class DaoSession extends AbstractDaoSession {
     private final JoinVideosWithWordsDao joinVideosWithWordsDao;
     private final VideoDao videoDao;
     private final NumberDao numberDao;
+    private final StoryBookDao storyBookDao;
     private final WordDao wordDao;
     private final DeviceDao deviceDao;
     private final JoinNumbersWithWordsDao joinNumbersWithWordsDao;
@@ -172,6 +176,9 @@ public class DaoSession extends AbstractDaoSession {
         numberDaoConfig = daoConfigMap.get(NumberDao.class).clone();
         numberDaoConfig.initIdentityScope(type);
 
+        storyBookDaoConfig = daoConfigMap.get(StoryBookDao.class).clone();
+        storyBookDaoConfig.initIdentityScope(type);
+
         wordDaoConfig = daoConfigMap.get(WordDao.class).clone();
         wordDaoConfig.initIdentityScope(type);
 
@@ -210,6 +217,7 @@ public class DaoSession extends AbstractDaoSession {
         joinVideosWithWordsDao = new JoinVideosWithWordsDao(joinVideosWithWordsDaoConfig, this);
         videoDao = new VideoDao(videoDaoConfig, this);
         numberDao = new NumberDao(numberDaoConfig, this);
+        storyBookDao = new StoryBookDao(storyBookDaoConfig, this);
         wordDao = new WordDao(wordDaoConfig, this);
         deviceDao = new DeviceDao(deviceDaoConfig, this);
         joinNumbersWithWordsDao = new JoinNumbersWithWordsDao(joinNumbersWithWordsDaoConfig, this);
@@ -235,6 +243,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(JoinVideosWithWords.class, joinVideosWithWordsDao);
         registerDao(Video.class, videoDao);
         registerDao(Number.class, numberDao);
+        registerDao(StoryBook.class, storyBookDao);
         registerDao(Word.class, wordDao);
         registerDao(Device.class, deviceDao);
         registerDao(JoinNumbersWithWords.class, joinNumbersWithWordsDao);
@@ -262,6 +271,7 @@ public class DaoSession extends AbstractDaoSession {
         joinVideosWithWordsDaoConfig.clearIdentityScope();
         videoDaoConfig.clearIdentityScope();
         numberDaoConfig.clearIdentityScope();
+        storyBookDaoConfig.clearIdentityScope();
         wordDaoConfig.clearIdentityScope();
         deviceDaoConfig.clearIdentityScope();
         joinNumbersWithWordsDaoConfig.clearIdentityScope();
@@ -337,6 +347,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public NumberDao getNumberDao() {
         return numberDao;
+    }
+
+    public StoryBookDao getStoryBookDao() {
+        return storyBookDao;
     }
 
     public WordDao getWordDao() {

@@ -12,16 +12,19 @@ import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.ImageDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
+import org.literacyapp.contentprovider.dao.StoryBookDao;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.StoryBook;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.contentprovider.model.content.multimedia.Image;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
+import org.literacyapp.model.enums.GradeLevel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,7 +234,30 @@ public class ContentProvider {
 
     // TODO: getUnlockedStoryBooks()
 
-    // TODO: getAllStoryBooks()
+    public static List<StoryBook> getStoryBooks(GradeLevel... gradeLevels) {
+        Log.i(ContentProvider.class.getName(), "getAllStoryBooks");
+
+        StoryBookDao storyBookDao = daoSession.getStoryBookDao();
+
+        List<StoryBook> storyBooks = storyBookDao.queryBuilder()
+                .where(StoryBookDao.Properties.GradeLevel.in(gradeLevels))
+                .orderAsc(StoryBookDao.Properties.Title)
+                .list();
+
+        return storyBooks;
+    }
+
+    public static List<StoryBook> getAllStoryBooks() {
+        Log.i(ContentProvider.class.getName(), "getAllStoryBooks");
+
+        StoryBookDao wordDao = daoSession.getStoryBookDao();
+
+        List<StoryBook> words = wordDao.queryBuilder()
+                .orderAsc(StoryBookDao.Properties.Title)
+                .list();
+
+        return words;
+    }
 
     public static List<Audio> getAllAudios() {
         Log.i(ContentProvider.class.getName(), "getAllAudios");
