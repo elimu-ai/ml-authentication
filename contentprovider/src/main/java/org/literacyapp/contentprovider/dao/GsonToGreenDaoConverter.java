@@ -5,6 +5,7 @@ import org.literacyapp.contentprovider.model.Student;
 import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.Number;
+import org.literacyapp.contentprovider.model.content.StoryBook;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.contentprovider.model.content.multimedia.Image;
@@ -14,6 +15,7 @@ import org.literacyapp.model.gson.StudentGson;
 import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
+import org.literacyapp.model.gson.content.StoryBookGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.ImageGson;
@@ -108,6 +110,29 @@ public class GsonToGreenDaoConverter {
             word.setUsageCount(wordGson.getUsageCount());
 
             return word;
+        }
+    }
+
+    public static StoryBook getStoryBook(StoryBookGson storyBookGson) {
+        if (storyBookGson == null) {
+            return null;
+        } else {
+            StoryBook storyBook = new StoryBook();
+
+            storyBook.setId(storyBookGson.getId());
+
+            storyBook.setLocale(storyBookGson.getLocale());
+            storyBook.setTimeLastUpdate(storyBookGson.getTimeLastUpdate());
+            storyBook.setRevisionNumber(storyBookGson.getRevisionNumber());
+            storyBook.setContentStatus(storyBookGson.getContentStatus());
+
+            storyBook.setTitle(storyBookGson.getTitle());
+            storyBook.setCoverImage(getImage(storyBookGson.getCoverImage()));
+            storyBook.setGradeLevel(storyBookGson.getGradeLevel());
+
+            // TODO: pages
+
+            return storyBook;
         }
     }
 
