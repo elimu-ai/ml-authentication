@@ -35,4 +35,10 @@ if (permissionCheckWriteExternalStorage != PackageManager.PERMISSION_GRANTED) {
 ContentProvider.initializeDb(this);
 ```
 
+Also add the following to `AndroidManifest.xml`:
+
+```
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+```
+
 You will now have read-only access to the LiteracyApp database and all its content, e.g. letters, numbers, words, story books, audios, images, videos, etc. The content can be accessed via the `org.literacyapp.contentprovider.ContentProvider` helper class.
