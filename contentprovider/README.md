@@ -23,4 +23,10 @@ dependencies {
 }
 ```
 
+Add the following to the app's main activity:
+
+```
+ContentProvider.initializeDb(this);
+```
+
 You will now have read-only access to the LiteracyApp database and all its content, e.g. letters, numbers, words, story books, audios, images, videos, etc. The content can be accessed via the `org.literacyapp.contentprovider.ContentProvider` helper class.
