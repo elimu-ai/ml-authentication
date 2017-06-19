@@ -1,5 +1,6 @@
 package org.literacyapp.content.task;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,6 +19,8 @@ public class TagItemsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_tag_items);
+
+        getWindow().setStatusBarColor(Color.parseColor("#1C80CF"));
 
         mTagItemsImageView = (ImageView) findViewById(R.id.tagItemsImageView);
     }

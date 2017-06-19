@@ -1,6 +1,7 @@
 package org.literacyapp.content.task;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +30,8 @@ public class VideoActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+
+        getWindow().setStatusBarColor(Color.parseColor("#852196"));
 
         LiteracyApplication literacyApplication = (LiteracyApplication) getApplicationContext();
         videoDao = literacyApplication.getDaoSession().getVideoDao();

@@ -3,6 +3,7 @@ package org.literacyapp.content.multimedia.video;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayout;
@@ -38,6 +39,8 @@ public class VideosActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_videos);
+
+        getWindow().setStatusBarColor(Color.parseColor("#852196"));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

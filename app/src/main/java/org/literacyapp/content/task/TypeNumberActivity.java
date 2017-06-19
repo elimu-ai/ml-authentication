@@ -57,6 +57,8 @@ public class TypeNumberActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_type_number);
 
+        getWindow().setStatusBarColor(Color.parseColor("#1C80CF"));
+
         graphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 
         editText = (EditText) findViewById(R.id.text);

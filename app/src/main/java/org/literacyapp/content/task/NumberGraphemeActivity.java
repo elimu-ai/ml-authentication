@@ -2,6 +2,7 @@ package org.literacyapp.content.task;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -40,6 +41,8 @@ public class NumberGraphemeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_number_grapheme);
+
+        getWindow().setStatusBarColor(Color.parseColor("#1C80CF"));
 
         graphemeImageView = (ImageView) findViewById(R.id.graphemeImageView);
 

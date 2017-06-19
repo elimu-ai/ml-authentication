@@ -2,6 +2,7 @@ package org.literacyapp.content.task;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,6 +41,8 @@ public class NumberActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_number);
+
+        getWindow().setStatusBarColor(Color.parseColor("#1C80CF"));
 
         numberImageView = (ImageView) findViewById(R.id.numberImageView);
         numberTextView = (TextView) findViewById(R.id.numberTextView);
