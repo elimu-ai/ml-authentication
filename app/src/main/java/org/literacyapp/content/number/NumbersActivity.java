@@ -2,6 +2,7 @@ package org.literacyapp.content.number;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class NumbersActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_numbers);
+
+        getWindow().setStatusBarColor(Color.parseColor("#1C80CF"));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

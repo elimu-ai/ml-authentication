@@ -52,6 +52,8 @@ public class SelectNumberActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_select_number);
 
+        getWindow().setStatusBarColor(Color.parseColor("#1C80CF"));
+
         rippleBackground = (RippleBackground) findViewById(R.id.rippleBackground);
         listenButton = (Button) findViewById(R.id.listenButton);
         alt1Button = (Button) findViewById(R.id.alt1Button);
