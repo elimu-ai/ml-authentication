@@ -26,6 +26,12 @@ dependencies {
 Add the following to the app's main activity:
 
 ```
+int permissionCheckWriteExternalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+if (permissionCheckWriteExternalStorage != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+        return;
+}
+        
 ContentProvider.initializeDb(this);
 ```
 
