@@ -57,6 +57,7 @@ public class LettersActivity extends AppCompatActivity {
         letterGridLayout = (GridLayout) findViewById(R.id.letterGridLayout);
 
 
+        ContentProvider.initializeDb(this);
         List<Allophone> allophones = ContentProvider.getAllAllophonesOrderedByFrequency();
         Log.i(getClass().getName(), "allophones: " + allophones);
         Log.i(getClass().getName(), "allophones.size(): " + allophones.size());
