@@ -8,8 +8,10 @@ import org.greenrobot.greendao.annotation.NotNull;
 import org.literacyapp.contentprovider.dao.converter.CalendarConverter;
 import org.literacyapp.contentprovider.dao.converter.ContentStatusConverter;
 import org.literacyapp.contentprovider.dao.converter.LocaleConverter;
+import org.literacyapp.contentprovider.dao.converter.SpellingConsistencyConverter;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
+import org.literacyapp.model.enums.content.SpellingConsistency;
 
 import java.util.Calendar;
 
@@ -44,10 +46,15 @@ public class Word {
 
     private int usageCount;
 
-    @Generated(hash = 1041052912)
+    @NotNull
+    @Convert(converter = SpellingConsistencyConverter.class, columnType = String.class)
+    private SpellingConsistency spellingConsistency;
+
+    @Generated(hash = 1033240552)
     public Word(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
             @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
-            @NotNull String text, @NotNull String phonetics, int usageCount) {
+            @NotNull String text, @NotNull String phonetics, int usageCount,
+            @NotNull SpellingConsistency spellingConsistency) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -56,6 +63,7 @@ public class Word {
         this.text = text;
         this.phonetics = phonetics;
         this.usageCount = usageCount;
+        this.spellingConsistency = spellingConsistency;
     }
 
     @Generated(hash = 3342184)
@@ -124,5 +132,13 @@ public class Word {
 
     public void setUsageCount(int usageCount) {
         this.usageCount = usageCount;
+    }
+
+    public SpellingConsistency getSpellingConsistency() {
+        return this.spellingConsistency;
+    }
+
+    public void setSpellingConsistency(SpellingConsistency spellingConsistency) {
+        this.spellingConsistency = spellingConsistency;
     }
 }

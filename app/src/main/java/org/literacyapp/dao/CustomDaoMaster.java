@@ -9,6 +9,7 @@ import org.literacyapp.contentprovider.dao.AllophoneDao;
 import org.literacyapp.contentprovider.dao.DaoMaster;
 import org.literacyapp.contentprovider.dao.JoinNumbersWithWordsDao;
 import org.literacyapp.contentprovider.dao.StoryBookDao;
+import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 
 public class CustomDaoMaster extends DaoMaster {
@@ -58,6 +59,13 @@ public class CustomDaoMaster extends DaoMaster {
                 // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
                 DbMigrationHelper.migrate(db,
                         StoryBookDao.class
+                );
+            }
+
+            if (oldVersion < 2000005) {
+                // Add new tables and/or columns automatically (include only the DAO classes that have been modified)
+                DbMigrationHelper.migrate(db,
+                        WordDao.class
                 );
             }
 
