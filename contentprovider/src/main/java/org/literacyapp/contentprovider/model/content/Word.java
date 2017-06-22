@@ -46,15 +46,14 @@ public class Word {
 
     private int usageCount;
 
-    @NotNull
     @Convert(converter = SpellingConsistencyConverter.class, columnType = String.class)
     private SpellingConsistency spellingConsistency;
 
-    @Generated(hash = 1033240552)
+    @Generated(hash = 982140277)
     public Word(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
             @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
             @NotNull String text, @NotNull String phonetics, int usageCount,
-            @NotNull SpellingConsistency spellingConsistency) {
+            SpellingConsistency spellingConsistency) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
