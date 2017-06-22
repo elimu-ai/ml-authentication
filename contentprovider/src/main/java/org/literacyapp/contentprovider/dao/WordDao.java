@@ -80,7 +80,7 @@ public class WordDao extends AbstractDao<Word, Long> {
                 "\"TEXT\" TEXT NOT NULL ," + // 5: text
                 "\"PHONETICS\" TEXT NOT NULL ," + // 6: phonetics
                 "\"USAGE_COUNT\" INTEGER NOT NULL ," + // 7: usageCount
-                "\"SPELLING_CONSISTENCY\" TEXT NOT NULL );"); // 8: spellingConsistency
+                "\"SPELLING_CONSISTENCY\" TEXT);"); // 8: spellingConsistency
     }
 
     /** Drops the underlying database table. */
@@ -108,7 +108,11 @@ public class WordDao extends AbstractDao<Word, Long> {
         stmt.bindString(6, entity.getText());
         stmt.bindString(7, entity.getPhonetics());
         stmt.bindLong(8, entity.getUsageCount());
-        stmt.bindString(9, spellingConsistencyConverter.convertToDatabaseValue(entity.getSpellingConsistency()));
+ 
+        SpellingConsistency spellingConsistency = entity.getSpellingConsistency();
+        if (spellingConsistency != null) {
+            stmt.bindString(9, spellingConsistencyConverter.convertToDatabaseValue(spellingConsistency));
+        }
     }
 
     @Override
@@ -130,7 +134,11 @@ public class WordDao extends AbstractDao<Word, Long> {
         stmt.bindString(6, entity.getText());
         stmt.bindString(7, entity.getPhonetics());
         stmt.bindLong(8, entity.getUsageCount());
-        stmt.bindString(9, spellingConsistencyConverter.convertToDatabaseValue(entity.getSpellingConsistency()));
+ 
+        SpellingConsistency spellingConsistency = entity.getSpellingConsistency();
+        if (spellingConsistency != null) {
+            stmt.bindString(9, spellingConsistencyConverter.convertToDatabaseValue(spellingConsistency));
+        }
     }
 
     @Override
@@ -149,7 +157,7 @@ public class WordDao extends AbstractDao<Word, Long> {
             cursor.getString(offset + 5), // text
             cursor.getString(offset + 6), // phonetics
             cursor.getInt(offset + 7), // usageCount
-            spellingConsistencyConverter.convertToEntityProperty(cursor.getString(offset + 8)) // spellingConsistency
+            cursor.isNull(offset + 8) ? null : spellingConsistencyConverter.convertToEntityProperty(cursor.getString(offset + 8)) // spellingConsistency
         );
         return entity;
     }
@@ -164,7 +172,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         entity.setText(cursor.getString(offset + 5));
         entity.setPhonetics(cursor.getString(offset + 6));
         entity.setUsageCount(cursor.getInt(offset + 7));
-        entity.setSpellingConsistency(spellingConsistencyConverter.convertToEntityProperty(cursor.getString(offset + 8)));
+        entity.setSpellingConsistency(cursor.isNull(offset + 8) ? null : spellingConsistencyConverter.convertToEntityProperty(cursor.getString(offset + 8)));
      }
     
     @Override
