@@ -88,7 +88,7 @@ public class ContentProvider {
 
         LetterDao letterDao = daoSession.getLetterDao();
 
-        // Copied from CurriculumHelper.java:
+        // Copied from app/CurriculumHelper.java:
 
         List<Letter> letters = new ArrayList<>();
 
@@ -144,7 +144,7 @@ public class ContentProvider {
 
         NumberDao numberDao = daoSession.getNumberDao();
 
-        // Copied from CurriculumHelper.java:
+        // Copied from app/CurriculumHelper.java:
 
         List<Number> numbers = new ArrayList<>();
 
