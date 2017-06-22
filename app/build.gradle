@@ -10,8 +10,8 @@ android {
         applicationId "org.literacyapp"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1006003
-        versionName "1.6.3"
+        versionCode 1006004
+        versionName "1.6.4"
 
 //        jackOptions {
 //            enabled true

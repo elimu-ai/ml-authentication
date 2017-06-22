@@ -39,6 +39,7 @@ public class DaoMaster extends AbstractDaoMaster {
         VideoDao.createTable(db, ifNotExists);
         NumberDao.createTable(db, ifNotExists);
         StoryBookDao.createTable(db, ifNotExists);
+        SyllableDao.createTable(db, ifNotExists);
         WordDao.createTable(db, ifNotExists);
         DeviceDao.createTable(db, ifNotExists);
         JoinNumbersWithWordsDao.createTable(db, ifNotExists);
@@ -68,6 +69,7 @@ public class DaoMaster extends AbstractDaoMaster {
         VideoDao.dropTable(db, ifExists);
         NumberDao.dropTable(db, ifExists);
         StoryBookDao.dropTable(db, ifExists);
+        SyllableDao.dropTable(db, ifExists);
         WordDao.dropTable(db, ifExists);
         DeviceDao.dropTable(db, ifExists);
         JoinNumbersWithWordsDao.dropTable(db, ifExists);
@@ -111,6 +113,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(VideoDao.class);
         registerDaoClass(NumberDao.class);
         registerDaoClass(StoryBookDao.class);
+        registerDaoClass(SyllableDao.class);
         registerDaoClass(WordDao.class);
         registerDaoClass(DeviceDao.class);
         registerDaoClass(JoinNumbersWithWordsDao.class);

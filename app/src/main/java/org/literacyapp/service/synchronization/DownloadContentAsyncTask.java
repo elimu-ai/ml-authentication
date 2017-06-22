@@ -51,6 +51,7 @@ import org.literacyapp.model.gson.content.AllophoneGson;
 import org.literacyapp.model.gson.content.LetterGson;
 import org.literacyapp.model.gson.content.NumberGson;
 import org.literacyapp.model.gson.content.StoryBookGson;
+import org.literacyapp.model.gson.content.SyllableGson;
 import org.literacyapp.model.gson.content.WordGson;
 import org.literacyapp.model.gson.content.multimedia.AudioGson;
 import org.literacyapp.model.gson.content.multimedia.ImageGson;
@@ -221,6 +222,41 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     } else {
                         Log.i(getClass().getName(), "Number \"" + number.getValue() + "\" already exists in database with id " + number.getId() + " (revision " + number.getRevisionNumber() + ")");
                     }
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(getClass().getName(), null, e);
+        }
+
+
+        publishProgress("Downloading Syllables");
+        url = EnvironmentSettings.getRestUrl() + "/content/syllable/list" +
+                "?deviceId=" + DeviceInfoHelper.getDeviceId(context) +
+                "&locale=" + DeviceInfoHelper.getLocale(context);
+        jsonResponse = JsonLoader.loadJson(url);
+        Log.i(getClass().getName(), "jsonResponse: " + jsonResponse);
+        try {
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            if (!"success".equals(jsonObject.getString("result"))) {
+                Log.w(getClass().getName(), "Download failed");
+            } else {
+                JSONArray jsonArray = jsonObject.getJSONArray("syllables");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    Type type = new TypeToken<SyllableGson>(){}.getType();
+                    SyllableGson syllableGson = new Gson().fromJson(jsonArray.getString(i), type);
+//                    Syllable syllable = GsonToGreenDaoConverter.getSyllable(syllableGson);
+//                    Syllable existingSyllable = syllableDao.queryBuilder()
+//                            .where(SyllableDao.Properties.Id.eq(syllable.getId()))
+//                            .unique();
+//                    if (existingSyllable == null) {
+//                        Log.i(getClass().getName(), "Storing Syllable, id: " + syllable.getId() + ", text: \"" + syllable.getText() + "\", revisionNumber: " + syllable.getRevisionNumber());
+//                        syllableDao.insert(syllable);
+//                    } else if (existingSyllable.getRevisionNumber() < syllable.getRevisionNumber()) {
+//                        Log.i(getClass().getName(), "Updating Syllable with id " + existingSyllable.getId() + " from revisionNumber " + existingSyllable.getRevisionNumber() + " to revisionNumber " + syllable.getRevisionNumber());
+//                        syllableDao.update(syllable);
+//                    } else {
+//                        Log.i(getClass().getName(), "Syllable \"" + syllable.getText() + "\" already exists in database with id " + syllable.getId() + " (revision " + syllable.getRevisionNumber() + ")");
+//                    }
                 }
             }
         } catch (JSONException e) {
