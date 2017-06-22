@@ -25,6 +25,7 @@ import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.contentprovider.model.content.multimedia.Image;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.model.enums.GradeLevel;
+import org.literacyapp.model.enums.content.SpellingConsistency;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,8 +64,8 @@ public class ContentProvider {
 
     // TODO: getUnlockedAllophones
 
-    public static List<Allophone> getAllAllophonesOrderedByFrequency() {
-        Log.i(ContentProvider.class.getName(), "getAllAllophonesOrderedByFrequency");
+    public static List<Allophone> getAllAllophones() {
+        Log.i(ContentProvider.class.getName(), "getAllAllophones");
 
         AllophoneDao allophoneDao = daoSession.getAllophoneDao();
 
@@ -125,18 +126,6 @@ public class ContentProvider {
         LetterDao letterDao = daoSession.getLetterDao();
 
         List<Letter> letters = letterDao.queryBuilder()
-                .orderAsc(LetterDao.Properties.Text)
-                .list();
-
-        return letters;
-    }
-
-    public static List<Letter> getAllLettersOrderedByFrequency() {
-        Log.i(ContentProvider.class.getName(), "getAllLettersOrderedByFrequency");
-
-        LetterDao letterDao = daoSession.getLetterDao();
-
-        List<Letter> letters = letterDao.queryBuilder()
                 .orderDesc(LetterDao.Properties.UsageCount)
                 .orderAsc(LetterDao.Properties.Text)
                 .list();
@@ -193,11 +182,15 @@ public class ContentProvider {
         NumberDao numberDao = daoSession.getNumberDao();
 
         List<Number> numbers = numberDao.loadAll();
+        // TODO: order by value?
 
         return numbers;
     }
 
-//    public static List<Word> getUnlockedWords() {
+//    /**
+//     * Returns a list of all words available to the current student
+//     */
+//    public static List<Word> getUnlockedWords(SpellingConsistency... spellingConsistencies) {
 //        Log.i(ContentProvider.class.getName(), "getUnlockedWords");
 //
 //        WordDao wordDao = daoSession.getWordDao();
@@ -207,24 +200,16 @@ public class ContentProvider {
 //        return words;
 //    }
 
-    public static List<Word> getAllWords() {
+    /**
+     * Returns a list of all words, including those not yet made available to the current student.
+     */
+    public static List<Word> getAllWords(SpellingConsistency... spellingConsistencies) {
         Log.i(ContentProvider.class.getName(), "getAllWords");
 
         WordDao wordDao = daoSession.getWordDao();
 
         List<Word> words = wordDao.queryBuilder()
-                .orderAsc(WordDao.Properties.Text)
-                .list();
-
-        return words;
-    }
-
-    public static List<Word> getAllWordsOrderedByFrequency() {
-        Log.i(ContentProvider.class.getName(), "getAllWordsOrderedByFrequency");
-
-        WordDao wordDao = daoSession.getWordDao();
-
-        List<Word> words = wordDao.queryBuilder()
+                .where(WordDao.Properties.SpellingConsistency.in(spellingConsistencies))
                 .orderDesc(WordDao.Properties.UsageCount)
                 .orderAsc(WordDao.Properties.Text)
                 .list();
@@ -232,9 +217,15 @@ public class ContentProvider {
         return words;
     }
 
+    /**
+     * Returns a list of all StoryBooks available to the current student.
+     */
     // TODO: getUnlockedStoryBooks()
 
-    public static List<StoryBook> getStoryBooks(GradeLevel... gradeLevels) {
+    /**
+     * Returns a list of all StoryBooks, including those not yet made available to the current student.
+     */
+    public static List<StoryBook> getAllStoryBooks(GradeLevel... gradeLevels) {
         Log.i(ContentProvider.class.getName(), "getAllStoryBooks");
 
         StoryBookDao storyBookDao = daoSession.getStoryBookDao();
@@ -245,18 +236,6 @@ public class ContentProvider {
                 .list();
 
         return storyBooks;
-    }
-
-    public static List<StoryBook> getAllStoryBooks() {
-        Log.i(ContentProvider.class.getName(), "getAllStoryBooks");
-
-        StoryBookDao wordDao = daoSession.getStoryBookDao();
-
-        List<StoryBook> words = wordDao.queryBuilder()
-                .orderAsc(StoryBookDao.Properties.Title)
-                .list();
-
-        return words;
     }
 
     public static List<Audio> getAllAudios() {
