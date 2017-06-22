@@ -16,12 +16,14 @@ import java.util.Calendar;
 import org.literacyapp.contentprovider.dao.converter.CalendarConverter;
 import org.literacyapp.contentprovider.dao.converter.ContentStatusConverter;
 import org.literacyapp.contentprovider.dao.converter.LocaleConverter;
+import org.literacyapp.contentprovider.dao.converter.SpellingConsistencyConverter;
 import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinAudiosWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.JoinVideosWithWords;
 import org.literacyapp.model.enums.Locale;
 import org.literacyapp.model.enums.content.ContentStatus;
+import org.literacyapp.model.enums.content.SpellingConsistency;
 
 import org.literacyapp.contentprovider.model.content.Word;
 
@@ -46,11 +48,13 @@ public class WordDao extends AbstractDao<Word, Long> {
         public final static Property Text = new Property(5, String.class, "text", false, "TEXT");
         public final static Property Phonetics = new Property(6, String.class, "phonetics", false, "PHONETICS");
         public final static Property UsageCount = new Property(7, int.class, "usageCount", false, "USAGE_COUNT");
+        public final static Property SpellingConsistency = new Property(8, String.class, "spellingConsistency", false, "SPELLING_CONSISTENCY");
     }
 
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
+    private final SpellingConsistencyConverter spellingConsistencyConverter = new SpellingConsistencyConverter();
     private Query<Word> audio_WordsQuery;
     private Query<Word> image_WordsQuery;
     private Query<Word> video_WordsQuery;
@@ -75,7 +79,8 @@ public class WordDao extends AbstractDao<Word, Long> {
                 "\"CONTENT_STATUS\" TEXT NOT NULL ," + // 4: contentStatus
                 "\"TEXT\" TEXT NOT NULL ," + // 5: text
                 "\"PHONETICS\" TEXT NOT NULL ," + // 6: phonetics
-                "\"USAGE_COUNT\" INTEGER NOT NULL );"); // 7: usageCount
+                "\"USAGE_COUNT\" INTEGER NOT NULL ," + // 7: usageCount
+                "\"SPELLING_CONSISTENCY\" TEXT NOT NULL );"); // 8: spellingConsistency
     }
 
     /** Drops the underlying database table. */
@@ -103,6 +108,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         stmt.bindString(6, entity.getText());
         stmt.bindString(7, entity.getPhonetics());
         stmt.bindLong(8, entity.getUsageCount());
+        stmt.bindString(9, spellingConsistencyConverter.convertToDatabaseValue(entity.getSpellingConsistency()));
     }
 
     @Override
@@ -124,6 +130,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         stmt.bindString(6, entity.getText());
         stmt.bindString(7, entity.getPhonetics());
         stmt.bindLong(8, entity.getUsageCount());
+        stmt.bindString(9, spellingConsistencyConverter.convertToDatabaseValue(entity.getSpellingConsistency()));
     }
 
     @Override
@@ -141,7 +148,8 @@ public class WordDao extends AbstractDao<Word, Long> {
             contentStatusConverter.convertToEntityProperty(cursor.getString(offset + 4)), // contentStatus
             cursor.getString(offset + 5), // text
             cursor.getString(offset + 6), // phonetics
-            cursor.getInt(offset + 7) // usageCount
+            cursor.getInt(offset + 7), // usageCount
+            spellingConsistencyConverter.convertToEntityProperty(cursor.getString(offset + 8)) // spellingConsistency
         );
         return entity;
     }
@@ -156,6 +164,7 @@ public class WordDao extends AbstractDao<Word, Long> {
         entity.setText(cursor.getString(offset + 5));
         entity.setPhonetics(cursor.getString(offset + 6));
         entity.setUsageCount(cursor.getInt(offset + 7));
+        entity.setSpellingConsistency(spellingConsistencyConverter.convertToEntityProperty(cursor.getString(offset + 8)));
      }
     
     @Override
