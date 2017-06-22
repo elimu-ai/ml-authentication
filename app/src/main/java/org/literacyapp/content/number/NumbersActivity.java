@@ -79,7 +79,7 @@ public class NumbersActivity extends AppCompatActivity {
 
                     Log.i(getClass().getName(), "number.getValue(): " + number.getValue());
                     Log.i(getClass().getName(), "number.getSymbol(): " + number.getSymbol());
-                    Log.i(getClass().getName(), "number.getWords(): " + number.getWords());
+                    Log.i(getClass().getName(), "number.getAllWords(): " + number.getWords());
                     if (!number.getWords().isEmpty()) {
                         for (Word numberWord : number.getWords()) {
                             Log.i(getClass().getName(), "numberWord.getText(): " + numberWord.getText());

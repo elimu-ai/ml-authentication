@@ -24,7 +24,6 @@ import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.logic.CurriculumHelper;
-import org.literacyapp.model.enums.content.LiteracySkill;
 import org.literacyapp.util.MediaPlayerHelper;
 import org.literacyapp.contentprovider.util.MultimediaHelper;
 import org.literacyapp.util.TtsHelper;
@@ -58,7 +57,7 @@ public class LettersActivity extends AppCompatActivity {
 
 
         ContentProvider.initializeDb(this);
-        List<Allophone> allophones = ContentProvider.getAllAllophonesOrderedByFrequency();
+        List<Allophone> allophones = ContentProvider.getAllAllophones();
         Log.i(getClass().getName(), "allophones: " + allophones);
         Log.i(getClass().getName(), "allophones.size(): " + allophones.size());
 
