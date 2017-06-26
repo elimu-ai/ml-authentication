@@ -29,6 +29,7 @@ import org.literacyapp.contentprovider.model.content.StoryBook;
 import org.literacyapp.contentprovider.model.content.Syllable;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.Device;
+import org.literacyapp.contentprovider.model.JoinLettersWithAllophones;
 import org.literacyapp.contentprovider.model.JoinNumbersWithWords;
 import org.literacyapp.contentprovider.model.JoinStudentsWithDevices;
 import org.literacyapp.contentprovider.model.Student;
@@ -56,6 +57,7 @@ import org.literacyapp.contentprovider.dao.StoryBookDao;
 import org.literacyapp.contentprovider.dao.SyllableDao;
 import org.literacyapp.contentprovider.dao.WordDao;
 import org.literacyapp.contentprovider.dao.DeviceDao;
+import org.literacyapp.contentprovider.dao.JoinLettersWithAllophonesDao;
 import org.literacyapp.contentprovider.dao.JoinNumbersWithWordsDao;
 import org.literacyapp.contentprovider.dao.JoinStudentsWithDevicesDao;
 import org.literacyapp.contentprovider.dao.StudentDao;
@@ -92,6 +94,7 @@ public class DaoSession extends AbstractDaoSession {
     private final DaoConfig syllableDaoConfig;
     private final DaoConfig wordDaoConfig;
     private final DaoConfig deviceDaoConfig;
+    private final DaoConfig joinLettersWithAllophonesDaoConfig;
     private final DaoConfig joinNumbersWithWordsDaoConfig;
     private final DaoConfig joinStudentsWithDevicesDaoConfig;
     private final DaoConfig studentDaoConfig;
@@ -119,6 +122,7 @@ public class DaoSession extends AbstractDaoSession {
     private final SyllableDao syllableDao;
     private final WordDao wordDao;
     private final DeviceDao deviceDao;
+    private final JoinLettersWithAllophonesDao joinLettersWithAllophonesDao;
     private final JoinNumbersWithWordsDao joinNumbersWithWordsDao;
     private final JoinStudentsWithDevicesDao joinStudentsWithDevicesDao;
     private final StudentDao studentDao;
@@ -192,6 +196,9 @@ public class DaoSession extends AbstractDaoSession {
         deviceDaoConfig = daoConfigMap.get(DeviceDao.class).clone();
         deviceDaoConfig.initIdentityScope(type);
 
+        joinLettersWithAllophonesDaoConfig = daoConfigMap.get(JoinLettersWithAllophonesDao.class).clone();
+        joinLettersWithAllophonesDaoConfig.initIdentityScope(type);
+
         joinNumbersWithWordsDaoConfig = daoConfigMap.get(JoinNumbersWithWordsDao.class).clone();
         joinNumbersWithWordsDaoConfig.initIdentityScope(type);
 
@@ -228,6 +235,7 @@ public class DaoSession extends AbstractDaoSession {
         syllableDao = new SyllableDao(syllableDaoConfig, this);
         wordDao = new WordDao(wordDaoConfig, this);
         deviceDao = new DeviceDao(deviceDaoConfig, this);
+        joinLettersWithAllophonesDao = new JoinLettersWithAllophonesDao(joinLettersWithAllophonesDaoConfig, this);
         joinNumbersWithWordsDao = new JoinNumbersWithWordsDao(joinNumbersWithWordsDaoConfig, this);
         joinStudentsWithDevicesDao = new JoinStudentsWithDevicesDao(joinStudentsWithDevicesDaoConfig, this);
         studentDao = new StudentDao(studentDaoConfig, this);
@@ -255,6 +263,7 @@ public class DaoSession extends AbstractDaoSession {
         registerDao(Syllable.class, syllableDao);
         registerDao(Word.class, wordDao);
         registerDao(Device.class, deviceDao);
+        registerDao(JoinLettersWithAllophones.class, joinLettersWithAllophonesDao);
         registerDao(JoinNumbersWithWords.class, joinNumbersWithWordsDao);
         registerDao(JoinStudentsWithDevices.class, joinStudentsWithDevicesDao);
         registerDao(Student.class, studentDao);
@@ -284,6 +293,7 @@ public class DaoSession extends AbstractDaoSession {
         syllableDaoConfig.clearIdentityScope();
         wordDaoConfig.clearIdentityScope();
         deviceDaoConfig.clearIdentityScope();
+        joinLettersWithAllophonesDaoConfig.clearIdentityScope();
         joinNumbersWithWordsDaoConfig.clearIdentityScope();
         joinStudentsWithDevicesDaoConfig.clearIdentityScope();
         studentDaoConfig.clearIdentityScope();
@@ -373,6 +383,10 @@ public class DaoSession extends AbstractDaoSession {
 
     public DeviceDao getDeviceDao() {
         return deviceDao;
+    }
+
+    public JoinLettersWithAllophonesDao getJoinLettersWithAllophonesDao() {
+        return joinLettersWithAllophonesDao;
     }
 
     public JoinNumbersWithWordsDao getJoinNumbersWithWordsDao() {

@@ -46,6 +46,8 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         public final static Property UsageCount = new Property(6, int.class, "usageCount", false, "USAGE_COUNT");
     }
 
+    private DaoSession daoSession;
+
     private final LocaleConverter localeConverter = new LocaleConverter();
     private final CalendarConverter timeLastUpdateConverter = new CalendarConverter();
     private final ContentStatusConverter contentStatusConverter = new ContentStatusConverter();
@@ -59,6 +61,7 @@ public class LetterDao extends AbstractDao<Letter, Long> {
     
     public LetterDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -118,6 +121,12 @@ public class LetterDao extends AbstractDao<Letter, Long> {
         stmt.bindString(5, contentStatusConverter.convertToDatabaseValue(entity.getContentStatus()));
         stmt.bindString(6, entity.getText());
         stmt.bindLong(7, entity.getUsageCount());
+    }
+
+    @Override
+    protected final void attachEntity(Letter entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     @Override

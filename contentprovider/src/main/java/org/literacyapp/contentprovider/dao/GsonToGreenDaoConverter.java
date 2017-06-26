@@ -38,6 +38,7 @@ public class GsonToGreenDaoConverter {
 
             allophone.setValueIpa(allophoneGson.getValueIpa());
             allophone.setValueSampa(allophoneGson.getValueSampa());
+            allophone.setDiacritic(allophoneGson.isDiacritic());
             allophone.setSoundType(allophoneGson.getSoundType());
             allophone.setVowelLength(allophoneGson.getVowelLength());
             allophone.setVowelHeight(allophoneGson.getVowelHeight());
@@ -66,6 +67,7 @@ public class GsonToGreenDaoConverter {
             letter.setContentStatus(letterGson.getContentStatus());
 
             letter.setText(letterGson.getText());
+            // Allophones are set during download from server
             letter.setUsageCount(letterGson.getUsageCount());
 
             return letter;
@@ -87,6 +89,7 @@ public class GsonToGreenDaoConverter {
 
             number.setValue(numberGson.getValue());
             number.setSymbol(numberGson.getSymbol());
+            // Words are set during download from server
 
             return number;
         }

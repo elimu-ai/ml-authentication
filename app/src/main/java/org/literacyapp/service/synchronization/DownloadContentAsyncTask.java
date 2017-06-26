@@ -22,6 +22,7 @@ import org.literacyapp.contentprovider.dao.JoinAudiosWithWordsDao;
 import org.literacyapp.contentprovider.dao.JoinImagesWithLettersDao;
 import org.literacyapp.contentprovider.dao.JoinImagesWithNumbersDao;
 import org.literacyapp.contentprovider.dao.JoinImagesWithWordsDao;
+import org.literacyapp.contentprovider.dao.JoinLettersWithAllophonesDao;
 import org.literacyapp.contentprovider.dao.JoinVideosWithLettersDao;
 import org.literacyapp.contentprovider.dao.JoinVideosWithNumbersDao;
 import org.literacyapp.contentprovider.dao.JoinVideosWithWordsDao;
@@ -30,6 +31,7 @@ import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.dao.StoryBookDao;
 import org.literacyapp.contentprovider.dao.VideoDao;
 import org.literacyapp.contentprovider.dao.WordDao;
+import org.literacyapp.contentprovider.model.JoinLettersWithAllophones;
 import org.literacyapp.contentprovider.model.content.Allophone;
 import org.literacyapp.contentprovider.model.content.Letter;
 import org.literacyapp.contentprovider.model.content.Number;
@@ -80,6 +82,8 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
     private AudioDao audioDao;
     private ImageDao imageDao;
     private VideoDao videoDao;
+
+    private JoinLettersWithAllophonesDao joinLettersWithAllophonesDao;
     
     private JoinVideosWithLettersDao joinVideosWithLettersDao;
     private JoinVideosWithNumbersDao joinVideosWithNumbersDao;
@@ -105,6 +109,8 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
         audioDao = literacyApplication.getDaoSession().getAudioDao();
         imageDao = literacyApplication.getDaoSession().getImageDao();
         videoDao = literacyApplication.getDaoSession().getVideoDao();
+
+        joinLettersWithAllophonesDao = literacyApplication.getDaoSession().getJoinLettersWithAllophonesDao();
         
         joinVideosWithLettersDao = literacyApplication.getDaoSession().getJoinVideosWithLettersDao();
         joinVideosWithNumbersDao = literacyApplication.getDaoSession().getJoinVideosWithNumbersDao();
@@ -181,9 +187,26 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                     if (existingLetter == null) {
                         Log.i(getClass().getName(), "Storing Letter, id: " + letter.getId() + ", text: \"" + letter.getText() + "\", revisionNumber: " + letter.getRevisionNumber());
                         letterDao.insert(letter);
+
+                        for (AllophoneGson allophoneGson : letterGson.getAllophones()) {
+                            Allophone allophone = allophoneDao.queryBuilder()
+                                    .where(
+                                            AllophoneDao.Properties.Locale.eq(allophoneGson.getLocale()),
+                                            AllophoneDao.Properties.ValueSampa.eq(allophoneGson.getValueSampa())
+                                    )
+                                    .unique();
+                            Log.i(getClass().getName(), "Storing Allophone, id: " + allophone.getId() + ", valueIpa: /" + allophone.getValueIpa() + "/, valueSampa: \"" + allophone.getValueSampa() + "\", for letter '" + letter.getText() + "'");
+
+                            JoinLettersWithAllophones joinLettersWithAllophones = new JoinLettersWithAllophones();
+                            joinLettersWithAllophones.setLetterId(letter.getId());
+                            joinLettersWithAllophones.setAllophoneId(allophone.getId());
+                            joinLettersWithAllophonesDao.insert(joinLettersWithAllophones);
+                        }
                     } else if (existingLetter.getRevisionNumber() < letter.getRevisionNumber()) {
                         Log.i(getClass().getName(), "Updating Letter with id " + existingLetter.getId() + " from revisionNumber " + existingLetter.getRevisionNumber() + " to revisionNumber " + letter.getRevisionNumber());
                         letterDao.update(letter);
+
+                        // TODO: update JoinLettersWithAllophones
                     } else {
                         Log.i(getClass().getName(), "Letter \"" + letter.getText() + "\" already exists in database with id " + letter.getId() + " (revision " + letter.getRevisionNumber() + ")");
                     }
