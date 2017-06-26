@@ -58,6 +58,8 @@ public class Allophone {
     @NotNull
     private String valueSampa; // X-SAMPA - Extended Speech Assessment Methods Phonetic Alphabet
 
+    private boolean diacritic;
+
     @Convert(converter = SoundTypeConverter.class, columnType = String.class)
     private SoundType soundType;
 
@@ -84,13 +86,13 @@ public class Allophone {
 
     private int usageCount;
 
-    @Generated(hash = 405598671)
+    @Generated(hash = 1936568992)
     public Allophone(Long id, @NotNull Locale locale, Calendar timeLastUpdate,
             @NotNull Integer revisionNumber, @NotNull ContentStatus contentStatus,
-            @NotNull String valueIpa, @NotNull String valueSampa, SoundType soundType,
-            VowelLength vowelLength, VowelHeight vowelHeight, VowelFrontness vowelFrontness,
-            LipRounding lipRounding, ConsonantType consonantType, ConsonantPlace consonantPlace,
-            ConsonantVoicing consonantVoicing, int usageCount) {
+            @NotNull String valueIpa, @NotNull String valueSampa, boolean diacritic,
+            SoundType soundType, VowelLength vowelLength, VowelHeight vowelHeight,
+            VowelFrontness vowelFrontness, LipRounding lipRounding, ConsonantType consonantType,
+            ConsonantPlace consonantPlace, ConsonantVoicing consonantVoicing, int usageCount) {
         this.id = id;
         this.locale = locale;
         this.timeLastUpdate = timeLastUpdate;
@@ -98,6 +100,7 @@ public class Allophone {
         this.contentStatus = contentStatus;
         this.valueIpa = valueIpa;
         this.valueSampa = valueSampa;
+        this.diacritic = diacritic;
         this.soundType = soundType;
         this.vowelLength = vowelLength;
         this.vowelHeight = vowelHeight;
@@ -239,5 +242,13 @@ public class Allophone {
 
     public void setUsageCount(int usageCount) {
         this.usageCount = usageCount;
+    }
+
+    public boolean getDiacritic() {
+        return this.diacritic;
+    }
+
+    public void setDiacritic(boolean diacritic) {
+        this.diacritic = diacritic;
     }
 }
