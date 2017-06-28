@@ -17,8 +17,8 @@ Then, add the following dependencies:
 dependencies {
    ...
 
-   compile 'org.literacyapp:literacyapp-model:1.1.53'
-   compile 'org.literacyapp:contentprovider:1.0.8'
+   compile 'org.literacyapp:literacyapp-model:1.1.56'
+   compile 'org.literacyapp:contentprovider:1.1.1'
    compile 'org.greenrobot:greendao:3.2.0'
 }
 ```

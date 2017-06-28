@@ -433,6 +433,8 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         } else if (existingAudio.getRevisionNumber() < audio.getRevisionNumber()) {
                             Log.i(getClass().getName(), "Updating Audio with id " + existingAudio.getId() + " from revisionNumber " + existingAudio.getRevisionNumber() + " to revisionNumber " + audio.getRevisionNumber());
                             audioDao.update(audio);
+
+                            // TODO: update JoinAudiosWithWords
                         } else {
                             Log.i(getClass().getName(), "Audio \"" + audio.getTranscription() + "\" already exists in database with id " + audio.getId() + " (revision " + audio.getRevisionNumber() + ")");
                         }
@@ -519,6 +521,8 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         } else if (existingImage.getRevisionNumber() < image.getRevisionNumber()) {
                             Log.i(getClass().getName(), "Updating Image with id " + existingImage.getId() + " from revisionNumber " + existingImage.getRevisionNumber() + " to revisionNumber " + image.getRevisionNumber());
                             imageDao.update(image);
+
+                            // TODO: update JoinImagesWithWords
                         } else {
                             Log.i(getClass().getName(), "Image \"" + image.getTitle() + "\" already exists in database with id " + image.getId() + " (revision " + image.getRevisionNumber() + ")");
                         }
@@ -623,6 +627,8 @@ public class DownloadContentAsyncTask extends AsyncTask<Void, String, String> {
                         } else if (existingVideo.getRevisionNumber() < video.getRevisionNumber()) {
                             Log.i(getClass().getName(), "Updating Video with id " + existingVideo.getId() + " from revisionNumber " + existingVideo.getRevisionNumber() + " to revisionNumber " + video.getRevisionNumber());
                             videoDao.update(video);
+
+                            // TODO: update JoinVideosWithWords
                         } else {
                             Log.i(getClass().getName(), "Video \"" + video.getTitle() + "\" already exists in database with id " + video.getId() + " (revision " + video.getRevisionNumber() + ")");
                         }
