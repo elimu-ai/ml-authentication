@@ -10,6 +10,7 @@ import org.literacyapp.contentprovider.dao.AudioDao;
 import org.literacyapp.contentprovider.dao.DaoMaster;
 import org.literacyapp.contentprovider.dao.DaoSession;
 import org.literacyapp.contentprovider.dao.ImageDao;
+import org.literacyapp.contentprovider.dao.JoinImagesWithWordsDao;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.contentprovider.dao.NumberDao;
 import org.literacyapp.contentprovider.dao.StoryBookDao;
@@ -23,6 +24,7 @@ import org.literacyapp.contentprovider.model.content.StoryBook;
 import org.literacyapp.contentprovider.model.content.Word;
 import org.literacyapp.contentprovider.model.content.multimedia.Audio;
 import org.literacyapp.contentprovider.model.content.multimedia.Image;
+import org.literacyapp.contentprovider.model.content.multimedia.JoinImagesWithWords;
 import org.literacyapp.contentprovider.model.content.multimedia.Video;
 import org.literacyapp.model.enums.GradeLevel;
 import org.literacyapp.model.enums.content.SpellingConsistency;
@@ -217,6 +219,18 @@ public class ContentProvider {
         return words;
     }
 
+    public static Word getWord(String title) {
+        Log.i(ContentProvider.class.getName(), "getWord");
+
+        WordDao wordDao = daoSession.getWordDao();
+
+        Word word = wordDao.queryBuilder()
+                .where(WordDao.Properties.Text.eq(title))
+                .unique();
+
+        return word;
+    }
+
     /**
      * Returns a list of all StoryBooks available to the current student.
      */
@@ -261,7 +275,7 @@ public class ContentProvider {
 
         return audio;
     }
-    
+
     public static List<Image> getAllImages() {
         Log.i(ContentProvider.class.getName(), "getAllImages");
 
@@ -271,6 +285,28 @@ public class ContentProvider {
                 .orderAsc(ImageDao.Properties.Title)
                 .list();
         
+        return images;
+    }
+
+    /**
+     * Returns a list of all Images labeled by a Word
+     */
+    public static List<Image> getAllImagesLabeledByWord(Word word) {
+        Log.i(ContentProvider.class.getName(), "getAllImagesLabeledByWord");
+
+        JoinImagesWithWordsDao joinImagesWithWordsDao = daoSession.getJoinImagesWithWordsDao();
+        List<JoinImagesWithWords> joinImagesWithWordsList = joinImagesWithWordsDao.queryBuilder()
+                .where(JoinImagesWithWordsDao.Properties.WordId.eq(word.getId()))
+                .list();
+
+        List<Image> images = new ArrayList<>();
+
+        ImageDao imageDao = daoSession.getImageDao();
+        for (JoinImagesWithWords joinImagesWithWords : joinImagesWithWordsList) {
+            Image image = imageDao.load(joinImagesWithWords.getImageId());
+            images.add(image);
+        }
+
         return images;
     }
 

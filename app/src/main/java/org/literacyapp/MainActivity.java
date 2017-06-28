@@ -15,9 +15,6 @@ import org.literacyapp.contentprovider.ContentProvider;
 import org.literacyapp.contentprovider.dao.LetterDao;
 import org.literacyapp.service.synchronization.ReadDeviceAsyncTask;
 import org.literacyapp.util.ConnectivityHelper;
-import org.literacyapp.util.RootHelper;
-
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
