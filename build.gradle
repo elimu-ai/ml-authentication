@@ -25,6 +25,9 @@ allprojects {
         maven {
             url "https://dl.bintray.com/elimu-ai/maven/"
         }
+        maven {
+            url "https://dl.bintray.com/qualeams/Android-Face-Recognition-Deep-Learning-Library/"
+        }
     }
 }
 
