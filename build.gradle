@@ -23,7 +23,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven {
-            url "https://dl.bintray.com/elimu-ai/maven/"
+            url "http://archiva.educativo.eu:8081/repository/internal/"
         }
     }
 }
