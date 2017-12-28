@@ -17,7 +17,7 @@ Then, add the following dependencies:
 dependencies {
    ...
 
-   compile 'org.literacyapp:literacyapp-model:1.1.67'
+   compile 'ai.elimu:model:1.1.67'
    compile 'org.literacyapp:contentprovider:1.1.1'
    compile 'org.greenrobot:greendao:3.2.0'
 }
