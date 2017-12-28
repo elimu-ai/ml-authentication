@@ -6,7 +6,7 @@ To import the library, you first need to add our repository in app/build.gradle:
 repositories {
     mavenLocal()
     maven {
-        url "http://archiva.educativo.eu:8081/repository/internal/"
+        url "https://dl.bintray.com/elimu-ai/maven/"
     }
 }
 ```
@@ -17,7 +17,7 @@ Then, add the following dependencies:
 dependencies {
    ...
 
-   compile 'org.literacyapp:literacyapp-model:1.1.56'
+   compile 'org.literacyapp:literacyapp-model:1.1.67'
    compile 'org.literacyapp:contentprovider:1.1.1'
    compile 'org.greenrobot:greendao:3.2.0'
 }
